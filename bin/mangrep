@@ -1,0 +1,27 @@
+#!/usr/bin/zsh
+
+PAGER=${PAGER:-less}
+if [ -n "$verbose" -a "$verbose" = "1" ]; then
+	entries=$(man -k $* | grep $* --color=never)
+else
+	entries=$(man -k $* | grep $* --color=never | cut -d ' ' -f -2)
+fi
+
+[ -z "$entries" ] && return
+
+j=$(wc -l <<< $entries)
+range="[1,$j] U [-$j,-1]"
+cat -n <<< $entries | column
+
+while { echo "Select a page ($range) " && read i }; do
+	[ -z "$i" ] || [[ "$i" =~ "[Qq]" ]] || \
+		[[ "$i" =~ "[Qq][Uu][Ii][Tt]" ]] && break
+	[[ "$i" =~ "-[0-9]{1,}" ]] && let i="$j+$i+1"
+	if [[ "$i" =~ "[0-9]{1,}" ]]; then
+		if [ "$i" -ge 1 -a "$i" -le "$j" ]; then
+			man -P $PAGER $(echo $entries | awk NR==$i | cut -d' ' -f1)
+		else
+			echo -n "$i is out of range. "
+		fi
+	fi
+done
