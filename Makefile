@@ -1,18 +1,22 @@
 default: config
 
-ZSH_FILES:=.zshrc .zshenv
-TMUX_FILES:=.tmux.conf
-VIM_FILES:=.vimrc
-SOURCE_PREFIX:=~/
-DEST_FILES:=$(ZSH_FILES) $(TMUX_FILES) $(VIM_FILES)
-SOURCE_FILES:=$(foreach F,$(DEST_FILES),$(SOURCE_PREFIX)$(F))
+PRESERVE_MODE?='--no-preserve=mode'
 
+define extract=
+sed -e 's/[# \t].*$$//' -e '/^$$/d' tracked.conf
+endef
+
+SOURCE_FILES=$(shell $(extract))
+DEST_FILES=$(foreach f,$(SOURCE_FILES),$(f:~%=.%))
 config: $(DEST_FILES)
 
-$(DEST_FILES): %: $(SOURCE_PREFIX)%
-	@cp $(SOURCE_PREFIX)$(@) .
+$(DEST_FILES): ./%: ~/%
+	cp $(PRESERVE_MODE) ~/$@ ./$*
+
+clean:
+	@$(RM) $(DEST_FILES)
 
 echo-%:
 	@echo "$*=$($*)"
 
-.PHONY: config echo-%
+.PHONY: config clean echo-%
