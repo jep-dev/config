@@ -1,10 +1,11 @@
+export EDITOR='vim'
 alias please='sudo'
 alias fucking='sudo'
 
 alias zsh-update='source ~/.zshrc'
-alias zshconfig='vim ~/.zshrc && zsh-update'
-alias zshenv='vim ~/.zshenv && zsh-update'
-alias tmuxconfig='vim ~/.tmux.conf && tmux source-file ~/.tmux.conf'
+alias zshconfig='$EDITOR ~/.zshrc && zsh-update'
+alias zshenv='$EDITOR ~/.zshenv && zsh-update'
+alias tmuxconfig='$EDITOR ~/.tmux.conf && tmux source-file ~/.tmux.conf'
 alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
 alias win32-g++='x86_64-w64-mingw32-g++-win32'
 
@@ -23,21 +24,20 @@ compdef vman="man"
 alias todo='grep -IrHn TODO'
 
 #dev
-export EDITOR='vim'
 alias vi='vim'
-alias vimconfig='vim ~/.vimrc'
-alias vim="stty stop '' -ixoff ; vim"
+alias vimconfig='$EDITOR ~/.vimrc'
+alias vim="stty stop '' -ixoff ; $EDITOR"
 dev="Makefile\|\.mk$\|\.[ch]$\|\.[ch]pp$\|\.frag$\|\.vert$"
 dev+="\|\.lua$\|\.py$\|\.s$\|\.lst$"
-alias -s c='vim' cpp='vim' tpp='vim' h='vim' hpp='vim' mk='vim'
-alias -s lua='vim' frag='vim' vert='vim'
+alias -s c='$EDITOR' cpp='$EDITOR' tpp='$EDITOR' h='$EDITOR' hpp='$EDITOR' mk='$EDITOR'
+alias -s lua='$EDITOR' frag='$EDITOR' vert='$EDITOR'
 alias -s mp3='vlc'
 
 alias lessh='LESSOPEN="| source-highlight %s -o STDOUT" less -M '
 
 alias filter-sed='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
-alias Makefile='vim Makefile'
-alias readme='vim `ls -R | grep -i readme`'
+alias Makefile='$EDITOR Makefile'
+alias readme='$EDITOR `ls -R | grep -i readme`'
 alias sloc='xargs wc -l'
 alias find-sloc='find . -type f | grep $dev | sloc | column | grep "[0-9]* "'
 alias wrap-column="sed -e 's/.\{'$(($COLUMNS/2-4))'\}/&\n/g' | column"
