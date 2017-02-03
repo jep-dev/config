@@ -12,6 +12,21 @@ sfilter(){
 		tee | grep ${${@:2}:-.*}
 }
 
+git-statuses(){
+	local dir="${1:-.}"
+	for d in $dir/*; do
+		if [ -d "$d" ] && [ -d "$d/.git" ]; then
+			pushd $d >/dev/null
+			git status -s | {
+				while read i; do
+					echo $d: $i
+				done
+			}
+			popd >/dev/null
+		fi
+	done
+}
+
 findgrep(){
 	find "${1:-.}" \! -readable -prune -o -name "${${@:2}:-.*}"
 }
@@ -113,19 +128,13 @@ comments(){
 	done }
 }
 
-# find-grep(){
-# 	while read i; do echo $i; cat -n $i | grep "$1"; done
-# }
 nongrep(){
 	grep "$*" | grep -v grep
 }
+
 set-grep(){
 	grep $* -a <(set)
 }
-# set-grep(){
-#         set | {while read i; do grep "$1" <(echo $i); done}
-#         return 0
-# }
 
 nm-filter() {
 	nm -gC $1 | grep ".* $2 .*"
@@ -243,9 +252,4 @@ progress(){
 		echo -n $spacer
 	done
 	echo -n "$endshade$rborder"
-}
-
-battery(){
-	bat1=/sys/class/power_supply/BAT1
-	progress $(cat $bat1/charge_now) $(cat $bat1/charge_full)
 }
