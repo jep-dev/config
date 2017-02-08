@@ -14,9 +14,6 @@ alias grep="grep --color=always"
 alias tree="tree --charset=ascii"
 alias list='cat -n'
 alias compgen='sort -u <(ls $path 2>/dev/null) <(zsh-functions) <(zsh-aliases)'
-#alias compgen='{ foreach p in $path; do \
-#ls $p 2>/dev/null; done; zsh-functions; zsh-aliases; } | sort -u'
-#alias compgrep='compgen | GREP_COLORS="mt=01;32" grep'
 alias compgrep='compgen | grep'
 alias listgrep='list $@ | grep'
 
@@ -25,6 +22,7 @@ alias todo='grep -IrHn TODO'
 
 #dev
 alias vi='vim'
+alias vimu='vim +PluginInstall +qall'
 alias vimconfig='$EDITOR ~/.vimrc'
 alias vim="stty stop '' -ixoff ; $EDITOR"
 dev="Makefile\|\.mk$\|\.[ch]$\|\.[ch]pp$\|\.frag$\|\.vert$"
