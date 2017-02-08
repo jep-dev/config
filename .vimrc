@@ -189,6 +189,7 @@ Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'vim-scripts/CompleteHelper'
 Plugin 'vim-scripts/ingo-library'
 Plugin 'vim-scripts/BidiComplete'
+Plugin 'airblade/vim-gitgutter'
 
 set guifont=FuraMono-Medium\ Powerline\ 10
 let g:airline_powerline_fonts=1
@@ -227,3 +228,8 @@ for co in cpp_color_set
 		endfor
 	endfor
 endfor
+
+hi SignColumn cterm=inverse
+hi GitGutterAdd cterm=inverse
+hi GitGutterDelete cterm=inverse
+hi GitGutterChangeDelete cterm=inverse
