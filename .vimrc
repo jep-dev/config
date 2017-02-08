@@ -44,7 +44,7 @@ let cpp_color_set=[
 			\'Label', 'UserLabel', 'Conditional', 'CustomTemplate', 'Structure'], 8],
 		\[['PreProc', 'CustomAngleBracketStart'], 9],
 		\[['Operator'], 10],
-		\[['CustomClass', 'Comment'], 11],
+		\[['cCustomClass', 'CustomClass', 'Comment'], 11],
 		\[['CustomTemplateClass'], 12], [['Function', 'CustomFunc'], 13]
 	\]
 
@@ -102,6 +102,7 @@ let g:clang_use_library=1
 let g:clang_library_path="/home/john/Downloads/llvm/lib/"
 let g:clang_sort_algo='alpha'
 let g:clang_user_options=' -I/home/john/workspace/boost/boost ||exit 0'
+" imap <F4> <Plug>(BidiComplete)
 
 Plugin 'octol/vim-cpp-enhanced-highlight'
 let g:cpp_class_scope_highlight=1
@@ -129,7 +130,6 @@ set completeopt-=preview
 set pumheight=20
 
 " set foldmethod=indent
-" noremap! <T-c> <Esc>:wq
 inoremap <F2> <c-o>:
 
 syntax on
@@ -142,7 +142,6 @@ autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$")
 			\| exe "normal! g'\"4kzt4j" | endif
-" au BufNewFile,BufRead,BufEnter *.cpp,*.hpp set omnifunc=omni#cpp#complete#Main
 
 let buf_nre='au BufNewFile,BufRead,BufEnter'
 
@@ -187,6 +186,9 @@ Plugin 'ryanoasis/vim-devicons'
 Plugin 'jez/vim-superman'
 Plugin 'vim-scripts/DoxygenToolkit.vim'
 Plugin 'ntpeters/vim-better-whitespace'
+Plugin 'vim-scripts/CompleteHelper'
+Plugin 'vim-scripts/ingo-library'
+Plugin 'vim-scripts/BidiComplete'
 
 set guifont=FuraMono-Medium\ Powerline\ 10
 let g:airline_powerline_fonts=1
