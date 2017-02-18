@@ -13,18 +13,26 @@ sfilter(){
 }
 
 git-statuses(){
+	old_pwd="$PWD"
 	local dir="${1:-.}"
-	for d in $dir/*; do
-		if [ -d "$d" ] && [ -d "$d/.git" ]; then
-			pushd $d >/dev/null
-			git status -s | {
-				while read i; do
-					echo $d: $i
-				done
-			}
-			popd >/dev/null
-		fi
+	for d in $(find $dir -type d -regex ".*\.git" -print0); do
+		([ -n "$d" ] && cd $d/.. && st=$(hub status -s) && \
+			[ -n "$st" ] && pwd && echo "$st")
 	done
+#	local cur=$(pwd)
+#	local dir="${1:-.}"
+#	for d in $dir $dir/*; do
+#		if [ -d "$d" ] && [ -d "$d/.git" ]; then
+#			pushd $d >/dev/null
+#			git status -s | {
+#				while read i; do
+#					echo $d: $i
+#				done
+#			}
+#			popd >/dev/null
+#		fi
+#	done
+#	cd "$cur" >/dev/null
 }
 
 findgrep(){
