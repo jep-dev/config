@@ -52,6 +52,10 @@ alias search='apt-cache search'
 alias update='_ apt-get update'
 alias upgrade='_ apt-get upgrade'
 
+#misc
+alias dryer='sleep 2700 && notify-send -u critical "Dryer"'
+alias washer='sleep 1800 && notify-send -u critical "Washer"'
+
 #net
 alias firefox='firefox --new-tab'
 alias -s com='firefox'
