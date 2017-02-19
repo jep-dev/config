@@ -180,22 +180,31 @@ nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
 set encoding=utf8
+
+" Themes, colors, icons
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'ryanoasis/vim-devicons'
-Plugin 'jez/vim-superman'
-Plugin 'vim-scripts/DoxygenToolkit.vim'
-Plugin 'ntpeters/vim-better-whitespace'
-Plugin 'vim-scripts/CompleteHelper'
-Plugin 'vim-scripts/ingo-library'
-Plugin 'vim-scripts/BidiComplete'
+
+" Decorations
 Plugin 'airblade/vim-gitgutter'
+" Whitespace visualization
+Plugin 'Yggdroot/indentLine'
+Plugin 'ntpeters/vim-better-whitespace'
+set list lcs=tab:\|\ "
+let g:indentLine_char = '|'
+
+Plugin 'vim-scripts/DoxygenToolkit.vim'
+Plugin 'vim-scripts/CompleteHelper'
+
+" RO plugins
+Plugin 'jez/vim-superman'
+
+" Language support
+Plugin 'vim-scripts/bash-support.vim'
 
 set guifont=FuraMono-Medium\ Powerline\ 10
 let g:airline_powerline_fonts=1
-" let g:airline_theme='hybridline'
-" let g:airline_theme='behelit'
-" let g:airline_theme='base16color'
 let g:airline_theme='base16_eighties'
 set laststatus=2
 
