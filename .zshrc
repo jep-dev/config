@@ -2,6 +2,8 @@ export EDITOR='vim'
 alias please='sudo'
 alias fucking='sudo'
 
+[ -n "$TMUX" ] && printf "\033]2;tmux/zsh\033\\"
+
 alias zsh-update='source ~/.zshrc'
 alias zshconfig='$EDITOR ~/.zshrc && zsh-update'
 alias zshenv='$EDITOR ~/.zshenv && zsh-update'
@@ -29,6 +31,11 @@ dev="Makefile\|\.mk$\|\.[ch]$\|\.[ch]pp$\|\.frag$\|\.vert$"
 dev+="\|\.lua$\|\.py$\|\.s$\|\.lst$"
 alias -s c='$EDITOR' cpp='$EDITOR' tpp='$EDITOR' h='$EDITOR' hpp='$EDITOR' mk='$EDITOR'
 alias -s lua='$EDITOR' frag='$EDITOR' vert='$EDITOR'
+alias dryad='git add -An'
+alias add='git add'
+alias push='git push'
+alias commit='git commit -m'
+alias pcom='push && commit'
 alias -s mp3='vlc'
 
 alias lessh='LESSOPEN="| source-highlight %s -o STDOUT" less -M '
