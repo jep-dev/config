@@ -35,7 +35,10 @@ alias dryad='git add -An'
 alias add='git add'
 alias push='git push'
 alias commit='git commit -m'
-alias pcom='push && commit'
+pcom(){
+	commit "$1" && push
+}
+# alias pcom='commit && push'
 alias -s mp3='vlc'
 
 alias lessh='LESSOPEN="| source-highlight %s -o STDOUT" less -M '
