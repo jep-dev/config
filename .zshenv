@@ -30,6 +30,24 @@ vman(){
 		-c "%y z | bd | set buftype=nofile | 0put=@z | %!sed 's/    / /g'"
 }
 
+rand-chars(){
+	m=${1:-1}
+	p="${2:-[A-Za-z]}"
+	j=0
+	src=""
+	dest=""
+	while [[ "$j" -lt "$m" ]]; do
+		src=$(grep -a -o "$p" -m 1 /dev/urandom | \
+			tr -d '\n' | cut -b 1-$(($m-$j)))
+		dest="$dest$src"
+		let "j=$j+${#src}"
+	done
+	echo "$dest"
+}
+rand-line(){
+	fd=${1:-/dev/stdin}
+	head -n $(($(rand-chars 16 "[0-9]") % $(wc -l <$fd))) <$fd | tail -n 1
+}
 columnate(){
 	delim=${1:-' '}
 	delim_size=${#delim}
