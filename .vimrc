@@ -50,7 +50,14 @@ let cpp_color_set=[
 
 
 set cc=80
+set columns=80
+set wrap
+set linebreak
+set showbreak=...
+set textwidth=80
+set wrapmargin=80
 set ruler
+set fo=cqt wm=0
 highlight ColorColumn ctermbg=240 "130
 
 set t_Co=256
