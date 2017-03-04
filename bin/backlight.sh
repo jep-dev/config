@@ -16,8 +16,7 @@ cur_pc=$(echo "scale=2; ${br[0]} * 100 / ${br[1]}" | bc)
 if [ -z "$2" ]; then
 	isfloat "$1" && new_pc="$1" || usage
 elif [[ "$1" = '+' ]] || [[ "$1" = '-' ]]; then
-	isfloat "$2" && new_pc="$2" || usage
-	new_pc=$(echo "scale=2; $cur_pc $1 ${2:-1}" | bc)
+	isfloat "$2" && new_pc=$(echo "scale=2; $cur_pc $1 $2" | bc) || usage
 else
 	usage
 fi
