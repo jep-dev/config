@@ -8,9 +8,9 @@ isfloat(){
 	return $(echo "$1" | grep -Eq '^[0-9]+\.?[0-9]*$|^\.[0-9]+$')
 }
 
-# TODO detect the name of the raw interface, exclude firmware/platform?
-ib="/sys/class/backlight/intel_backlight"
-br=($(cat "$ib"/{,max_}brightness))
+bl="/sys/class/backlight"
+raw=$(dirname $(grep -l raw "$bl"/*/type | head -n 1))
+br=($(cat "$raw"/{,max_}brightness))
 cur_pc=$(echo "scale=2; ${br[0]} * 100 / ${br[1]}" | bc)
 [ -z "$1" ] && echo "$cur_pc%" && exit 0
 if [ -z "$2" ]; then
@@ -23,4 +23,4 @@ fi
 
 new_pc=$(echo "scale=2; if($new_pc < 0) 0 else if($new_pc > 100) 100 else $new_pc" | bc)
 new_val=$(echo "scale=0; $new_pc * ${br[1]} / 100" | bc)
-sudo cp /dev/stdin "$ib"/brightness <<<$new_val
+sudo cp /dev/stdin "$raw"/brightness <<<$new_val
