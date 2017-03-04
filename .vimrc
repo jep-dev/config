@@ -57,6 +57,7 @@ set showbreak=...
 set textwidth=80
 set wrapmargin=80
 set ruler
+set nolist
 set fo=cqt wm=0
 highlight ColorColumn ctermbg=240 "130
 
