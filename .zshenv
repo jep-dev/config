@@ -1,5 +1,3 @@
-fpath=(~/bin/completions $fpath)
-
 zsh-functions(){
 	functions | sed -e "s/\([A-Za-z0-9_\-]\)[ ]*().*/\1/" -e "tx" -e "d" -e ":x"
 }
