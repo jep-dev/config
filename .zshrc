@@ -1,79 +1,84 @@
 
 [ -n "$TMUX" ] && printf "\033]2;tmux/zsh\033\\"
-[ -z "$NUM_SOURCED" ] && export NUM_SOURCED=0
+[ -z "$ZSHRC_SOURCED" ] && export ZSHRC_SOURCED=0
+[ -z "$ZSHRC_FORCE" ] && export ZSHRC_FORCE=0
 
-if [ "$NUM_SOURCED" -eq 0 ]; then
-	export EDITOR='vim'
-	alias please='sudo'
-	alias fucking='sudo'
+export EDITOR='vim'
+export TERM="screen-256color"
+export ZSH=~/.oh-my-zsh
 
-	alias zsh-update='source ~/.zshrc'
-	alias zshconfig='$EDITOR ~/.zshrc && zsh-update'
-	alias zshenv='$EDITOR ~/.zshenv && zsh-update'
-	alias tmuxconfig='$EDITOR ~/.tmux.conf && tmux source-file ~/.tmux.conf'
-	alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
-	alias win32-g++='x86_64-w64-mingw32-g++-win32'
+alias please='sudo'
+alias fucking='sudo'
 
-	#info
-	alias grep="grep --color=always"
-	alias tree="tree --charset=ascii"
-	alias list='cat -n'
-	alias compgen='sort -u <(ls $path 2>/dev/null) <(zsh-functions) <(zsh-aliases)'
-	alias compgrep='compgen | grep'
-	alias listgrep='list $@ | grep'
+zsh-update(){
+	if [ "$1" = "-f" ]; then export ZSHRC_FORCE=1; fi
+	# [[ "$1" = "-f" ]] && export ZSHRC_FORCE=1
+	source ~/.zshrc
+}
+#alias zsh-update='source ~/.zshrc'
+alias zshconfig='$EDITOR ~/.zshrc && zsh-update'
+alias zshenv='$EDITOR ~/.zshenv && zsh-update'
+alias tmuxconfig='$EDITOR ~/.tmux.conf && tmux source-file ~/.tmux.conf'
 
-	compdef vman="man"
-	alias todo='grep -IrHn TODO'
+#info
+alias grep="grep --color=always"
+alias tree="tree --charset=ascii"
+alias list='cat -n'
+alias compgen='sort -u <(ls $path 2>/dev/null) <(zsh-functions) <(zsh-aliases)'
+alias compgrep='compgen | grep'
+alias listgrep='list $@ | grep'
 
-	#dev
-	alias vi='vim'
-	alias vimu='vim +PluginInstall +qall'
-	alias vimconfig='$EDITOR ~/.vimrc'
-	alias vim="stty stop '' -ixoff ; $EDITOR"
-	dev="Makefile\|\.mk$\|\.[ch]$\|\.[ch]pp$\|\.frag$\|\.vert$"
-	dev+="\|\.lua$\|\.py$\|\.s$\|\.lst$"
-	alias -s c='$EDITOR' cpp='$EDITOR' tpp='$EDITOR' h='$EDITOR' hpp='$EDITOR' mk='$EDITOR'
-	alias -s lua='$EDITOR' frag='$EDITOR' vert='$EDITOR'
-	alias dryad='git add -An'
-	alias add='git add'
-	alias push='git push'
-	alias commit='git commit -m'
-	pcom(){
-		commit "$1" && push
-	}
-	# alias pcom='commit && push'
-	alias -s mp3='vlc'
+compdef vman="man"
+alias todo='grep -IrHn TODO'
 
-	alias lessh='LESSOPEN="| source-highlight %s -o STDOUT" less -M '
+#vim
+alias vi='vim'
+alias vimu='vim +PluginInstall +qall'
+alias vimconfig='$EDITOR ~/.vimrc'
+alias vim="stty stop '' -ixoff ; $EDITOR"
 
-	alias filter-sed='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
-	alias Makefile='$EDITOR Makefile'
-	alias readme='$EDITOR `ls -R | grep -i readme`'
-	alias sloc='xargs wc -l'
-	alias find-sloc='find . -type f | grep $dev | sloc | column | grep "[0-9]* "'
-	alias wrap-column="sed -e 's/.\{'$(($COLUMNS/2-4))'\}/&\n/g' | column"
+#dev
+alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
+alias win32-g++='x86_64-w64-mingw32-g++-win32'
+dev="Makefile\|\.mk$\|\.[ch]$\|\.[ch]pp$\|\.frag$\|\.vert$"
+dev+="\|\.lua$\|\.py$\|\.s$\|\.lst$"
+alias -s c='$EDITOR' cpp='$EDITOR' tpp='$EDITOR' h='$EDITOR' hpp='$EDITOR' mk='$EDITOR'
+alias -s lua='$EDITOR' frag='$EDITOR' vert='$EDITOR'
 
-	#apt
-	alias autoremove='_ apt-get autoremove'
-	alias clean='_ apt-get clean'
-	alias repo='_ add-apt-repository'
-	alias dist-upgrade='_ apt-get dist-upgrade'
-	alias install='_ apt-get install'
-	alias purge='_ apt-get purge'
-	alias remove='_ apt-get remove'
-	alias search='apt-cache search'
-	alias update='_ apt-get update'
-	alias upgrade='_ apt-get upgrade'
+#media
+alias -s mp3='vlc'
 
-	#misc
-	alias dryer='sleep 2700 && notify-send -u critical "Dryer"'
-	alias washer='sleep 1800 && notify-send -u critical "Washer"'
+alias lessh='LESSOPEN="| source-highlight %s -o STDOUT" less -M '
 
-	#net
-	alias firefox='firefox --new-tab'
-	alias -s com='firefox'
-	alias -s org='firefox'
+alias filter-sed='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
+alias Makefile='$EDITOR Makefile'
+alias readme='$EDITOR `ls -R | grep -i readme`'
+alias sloc='xargs wc -l'
+alias find-sloc='find . -type f | grep $dev | sloc | column | grep "[0-9]* "'
+alias wrap-column="sed -e 's/.\{'$(($COLUMNS/2-4))'\}/&\n/g' | column"
 
+#apt
+alias autoremove='_ apt-get autoremove'
+alias clean='_ apt-get clean'
+alias repo='_ add-apt-repository'
+alias dist-upgrade='_ apt-get dist-upgrade'
+alias install='_ apt-get install'
+alias purge='_ apt-get purge'
+alias remove='_ apt-get remove'
+alias search='apt-cache search'
+alias update='_ apt-get update'
+alias upgrade='_ apt-get upgrade'
+
+#misc
+alias dryer='sleep 2700 && notify-send -u critical "Dryer"'
+alias washer='sleep 1800 && notify-send -u critical "Washer"'
+
+#net
+alias firefox='firefox --new-tab'
+alias -s com='firefox'
+alias -s org='firefox'
+
+if [ "$ZSHRC_SOURCED" -eq 0 ]; then
 	#env
 	local new_path=(
 	"$HOME/bin"
@@ -104,48 +109,46 @@ if [ "$NUM_SOURCED" -eq 0 ]; then
 	export MANPATH="${new_manpath[*]}:$MANPATH"
 	export LD_LIBRARY_PATH="${new_ldpath[*]}:$LD_LIBRARY_PATH"
 	export IFS="$old_ifs"
+	export fpath=(~/bin/completions $fpath)
+fi
 
+
+COMPLETION_WAITING_DOTS="true"
+plugins=(git gitfast github wd zsh-_url-httplink)
+
+ZSH_THEME="bullet-train/bullet-train"
+BULLETTRAIN_PROMPT_SEPARATE_LINE=false
+BULLETTRAIN_PROMPT_ADD_NEWLINE=false
+BULLETTRAIN_STATUS_BG=black
+BULLETTRAIN_EXEC_TIME_FG=cyan
+BULLETTRAIN_EXEC_TIME_BG=black
+BULLETTRAIN_TIME_BG=black
+BULLETTRAIN_TIME_FG=white
+BULLETTRAIN_NVM_FG=white
+BULLETTRAIN_NVM_BG=black
+BULLETTRAIN_PROMPT_ORDER=( time status custom context \
+	dir go git hg cmd_exec_time )
+# echo "ZSHRC_SOURCED=$ZSHRC_SOURCED, ZSHRC_FORCE=$ZSHRC_FORCE"
+if [ "$ZSHRC_SOURCED" -eq 0 ] || [ "$ZSHRC_FORCE" -eq 1 ]; then
 	#zsh
-	export TERM="screen-256color"
-
-	export UPDATE_FPS=10
-	export UPDATE_DELAY=$((1.0/$UPDATE_FPS))
-
-	COMPLETION_WAITING_DOTS="true"
-	plugins=(git gitfast github wd zsh-_url-httplink)
-
-	ZSH_THEME="bullet-train/bullet-train"
-	BULLETTRAIN_PROMPT_SEPARATE_LINE=false
-	BULLETTRAIN_PROMPT_ADD_NEWLINE=false
-	BULLETTRAIN_STATUS_BG=black
-	BULLETTRAIN_EXEC_TIME_FG=cyan
-	BULLETTRAIN_EXEC_TIME_BG=black
-	BULLETTRAIN_TIME_BG=black
-	BULLETTRAIN_TIME_FG=white
-	BULLETTRAIN_NVM_FG=white
-	BULLETTRAIN_NVM_BG=black
-	BULLETTRAIN_PROMPT_ORDER=( time status custom context \
-		dir go git hg cmd_exec_time )
-
-	export ZSH=~/.oh-my-zsh
 	source $ZSH/oh-my-zsh.sh
-	unalias grep
-	alias grep='grep --color=auto'
-	# source ~/.tmuxinator.zsh
 	source ~/bin/completions/tmuxinator.zsh
+fi
 
-	export PROMPT="$(tr -d '\n' <<< $PROMPT)"
-	export PS1="$(tr -d '\n' <<< $PS1)"
-	export PS2="$(tr -d '\n' <<< $PS2)"
-	export PS3="$(tr -d '\n' <<< $PS3)"
-	export PS4="$(tr -d '\n' <<< $PS4)"
+export UPDATE_FPS=10
+export UPDATE_DELAY=$((1.0/$UPDATE_FPS))
 
-	pidof thd >/dev/null || sudo ~/bin/thd.sh
+unalias grep
+alias grep='grep --color=auto'
 
-	export NUM_SOURCED=$(($NUM_SOURCED+1))
-	fi
+export PROMPT="$(tr -d '\n' <<< $PROMPT)"
+export PS1="$(tr -d '\n' <<< $PS1)"
+export PS2="$(tr -d '\n' <<< $PS2)"
+export PS3="$(tr -d '\n' <<< $PS3)"
+export PS4="$(tr -d '\n' <<< $PS4)"
+
+export ZSHRC_SOURCED=$(($ZSHRC_SOURCED+1))
+
+pidof thd >/dev/null || sudo ~/bin/thd.sh
+
 source ~/.zshenv
-#if [ -z "$STARTED_THD" ]; then
-#	sudo ~/bin/thd.sh && export STARTED_THD=1
-#	# sudo ~/bin/thd.sh && STARTED_THD=1
-#fi
