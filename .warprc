@@ -9,3 +9,8 @@ share:~/share
 hunie:~/Downloads/Games/HuniePop/game
 cfg:~/workspace/config
 Drives:~/Drives
+ff:~/workspace/firefox
+ff-john:~/.mozilla/firefox/84wahy9d.default-1472923257189
+ff-lite:~/.mozilla/firefox/16fxw8j1.Lite
+bak:~/Backups
+chrome:~/.mozilla/firefox/84wahy9d.default-1472923257189/chrome

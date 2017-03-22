@@ -30,6 +30,7 @@ alias listgrep='list $@ | grep'
 
 compdef vman="man"
 alias todo='grep -IrHn TODO'
+alias irhn='grep -IrHn'
 
 #vim
 alias vi='vim'
@@ -52,7 +53,8 @@ alias lessh='LESSOPEN="| source-highlight %s -o STDOUT" less -M '
 
 alias filter-sed='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
 alias Makefile='$EDITOR Makefile'
-alias readme='$EDITOR `ls -R | grep -i readme`'
+#alias readme='$EDITOR `ls -R | grep -i readme`'
+alias readme='$EDITOR README.md'
 alias sloc='xargs wc -l'
 alias find-sloc='find . -type f | grep $dev | sloc | column | grep "[0-9]* "'
 alias wrap-column="sed -e 's/.\{'$(($COLUMNS/2-4))'\}/&\n/g' | column"
@@ -82,6 +84,8 @@ if [ "$ZSHRC_SOURCED" -eq 0 ]; then
 	#env
 	local new_path=(
 	"$HOME/bin"
+	"$HOME/workspace/markdown/bin"
+	"/opt/shashlik/bin"
 	"/usr/local/sbin"
 	"/usr/local/bin"
 	"/usr/sbin"

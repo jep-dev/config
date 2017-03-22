@@ -3,6 +3,8 @@ filetype off                  " required
 set shortmess=a				  " shorten load message
 set number
 
+" vertical resize 80
+
 set undofile
 set undodir=$HOME/share/vimundo
 set undolevels=1000
@@ -49,17 +51,15 @@ let cpp_color_set=[
 	\]
 
 
-set cc=80
-set columns=80
-set wrap
-set linebreak
-set showbreak=...
-set textwidth=80
-set wrapmargin=80
 set ruler
-set nolist
-set fo=cqt wm=0
-highlight ColorColumn ctermbg=240 "130
+set cc=80
+highlight ColorColumn ctermbg=0
+
+set noet ci pi sts=0 sw=4 ts=4
+set backspace=indent,eol,start
+set cinoptions=l1
+
+set showbreak=...
 
 set t_Co=256
 highlight Visual term=reverse cterm=reverse guibg=Black ctermbg=Black
@@ -79,9 +79,6 @@ highlight CursorLineNr ctermfg=214
 highlight confString ctermfg=106
 highlight markdownCodeDelimiter ctermfg=159
 
-set noet ci pi sts=0 sw=4 ts=4
-set backspace=indent,eol,start
-set cinoptions=l1
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -250,3 +247,7 @@ hi SignColumn cterm=inverse
 hi GitGutterAdd cterm=inverse
 hi GitGutterDelete cterm=inverse
 hi GitGutterChangeDelete cterm=inverse
+
+exec buf_nre . ' * vertical resize 80'
+exec buf_nre . ' * set fo= winwidth=80 columns=80 wrap linebreak nolist tw=0 wm=2'
+"exec buf_nre . ' * set fo=roq wrap linebreak nolist tw=0 wm=0'

@@ -195,19 +195,31 @@ count-chars(){
 }
 
 color-range(){
-    while [ $# -gt 1 ]; do
-		j=1
-        for ((i=$1;i<$2;i++,j++)); do
-				if [[ $j -eq 1 ]]; then
-					printf " $i"
-				fi
-				if [[ $j -eq 10 ]]; then
-					j=0
-				fi
-                printf "\e[38;5;"$i"m\u2588\e[0m"
-        done
-        shift 2
-    done
+	if [ "$1" = "-a" ]; then
+		sp=' '
+		cols=${2:-16}
+		title="\e[7m %3d \e[0m\ue0b0$sp"
+		printf "     $sp"
+		printf "$sp\e[7m%2d \e[0m" {0..$((cols-1))}
+		echo
+		for i ({0..255..$cols}) \
+			printf "$title" $i && \
+			printf "\e[48;5;%dm   \e[48;5;232m$sp\e[0m" {$i..$((i+cols-1))} && echo
+	else
+    	while [ $# -gt 1 ]; do
+			j=1
+        	for ((i=$1;i<$2;i++,j++)); do
+					if [[ $j -eq 1 ]]; then
+						printf " $i"
+					fi
+					if [[ $j -eq 10 ]]; then
+						j=0
+					fi
+                	printf "\e[38;5;"$i"m\u2588\e[0m"
+        	done
+        	shift 2
+    	done
+	fi
 }
 
 slider(){
@@ -262,4 +274,12 @@ progress(){
 		echo -n $spacer
 	done
 	echo -n "$endshade$rborder"
+}
+
+gmkd2html(){
+	ifname="${1:-README.md}"
+	ofname="${2:-${ifname//.md/.html}}"
+	echo "<body class=markdown-body>" >$ofname
+	github-markdown $ifname -f gfm -h >>$ofname
+	echo "</body>" >>$ofname
 }
