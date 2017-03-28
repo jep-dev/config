@@ -53,7 +53,6 @@ alias lessh='LESSOPEN="| source-highlight %s -o STDOUT" less -M '
 
 alias filter-sed='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
 alias Makefile='$EDITOR Makefile'
-#alias readme='$EDITOR `ls -R | grep -i readme`'
 alias readme='$EDITOR README.md'
 alias sloc='xargs wc -l'
 alias find-sloc='find . -type f | grep $dev | sloc | column | grep "[0-9]* "'
@@ -72,8 +71,11 @@ alias update='_ apt-get update'
 alias upgrade='_ apt-get upgrade'
 
 #misc
-alias dryer='sleep 2700 && notify-send -u critical "Dryer"'
-alias washer='sleep 1800 && notify-send -u critical "Washer"'
+alias ns='notify-send'
+alias nsc='notify-send -u critical'
+
+alias washer='sleep 1800 && nsc "Washer"'
+alias dryer='sleep 2700 && nsc "Dryer"'
 
 #net
 alias firefox='firefox --new-tab'
@@ -123,16 +125,29 @@ plugins=(git gitfast github wd zsh-_url-httplink)
 ZSH_THEME="bullet-train/bullet-train"
 BULLETTRAIN_PROMPT_SEPARATE_LINE=false
 BULLETTRAIN_PROMPT_ADD_NEWLINE=false
-BULLETTRAIN_STATUS_BG=black
-BULLETTRAIN_EXEC_TIME_FG=cyan
-BULLETTRAIN_EXEC_TIME_BG=black
-BULLETTRAIN_TIME_BG=black
-BULLETTRAIN_TIME_FG=white
-BULLETTRAIN_NVM_FG=white
-BULLETTRAIN_NVM_BG=black
-BULLETTRAIN_PROMPT_ORDER=( time status custom context \
-	dir go git hg cmd_exec_time )
-# echo "ZSHRC_SOURCED=$ZSHRC_SOURCED, ZSHRC_FORCE=$ZSHRC_FORCE"
+
+BULLETTRAIN_EXEC_TIME_ELAPSED=0
+BULLETTRAIN_PROMPT_ORDER=(time custom dir git cmd_exec_time status)
+BULLETTRAIN_DIR_CONTEXT_SHOW=true
+BULLETTRAIN_STATUS_EXIT_SHOW=true
+
+BULLETTRAIN_TIME_BG=95
+BULLETTRAIN_DIR_BG=101
+BULLETTRAIN_GIT_BG=107
+BULLETTRAIN_GIT_COLORIZE_DIRTY_BG_COLOR=107
+BULLETTRAIN_STATUS_BG=78
+BULLETTRAIN_STATUS_ERROR_BG=78
+BULLETTRAIN_EXEC_TIME_BG=78
+
+BULLETTRAIN_TIME_FG=15
+BULLETTRAIN_CONTEXT_FG=16
+BULLETTRAIN_DIR_FG=16
+BULLETTRAIN_GIT_FG=16
+BULLETTRAIN_GIT_COLORIZE_DIRTY_FG_COLOR=16
+BULLETTRAIN_STATUS_FG=16
+BULLETTRAIN_STATUS_ERROR_FG=16
+BULLETTRAIN_EXEC_TIME_FG=16
+
 if [ "$ZSHRC_SOURCED" -eq 0 ] || [ "$ZSHRC_FORCE" -eq 1 ]; then
 	#zsh
 	source $ZSH/oh-my-zsh.sh
@@ -146,10 +161,6 @@ unalias grep
 alias grep='grep --color=auto'
 
 export PROMPT="$(tr -d '\n' <<< $PROMPT)"
-export PS1="$(tr -d '\n' <<< $PS1)"
-export PS2="$(tr -d '\n' <<< $PS2)"
-export PS3="$(tr -d '\n' <<< $PS3)"
-export PS4="$(tr -d '\n' <<< $PS4)"
 
 export ZSHRC_SOURCED=$(($ZSHRC_SOURCED+1))
 
