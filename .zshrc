@@ -45,6 +45,7 @@ dev="Makefile\|\.mk$\|\.[ch]$\|\.[ch]pp$\|\.frag$\|\.vert$"
 dev+="\|\.lua$\|\.py$\|\.s$\|\.lst$"
 alias -s c='$EDITOR' cpp='$EDITOR' tpp='$EDITOR' h='$EDITOR' hpp='$EDITOR' mk='$EDITOR'
 alias -s lua='$EDITOR' frag='$EDITOR' vert='$EDITOR'
+alias dryad='git add -An'
 
 #media
 alias -s mp3='vlc'
