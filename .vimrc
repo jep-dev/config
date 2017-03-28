@@ -126,6 +126,7 @@ noremap! <F3> <Esc>
 noremap! <n> <NOP>
 noremap! <m> <NOP>
 :inoremap <\<> <NOP>
+noremap! <M-'> <NOP>
 
 set conceallevel=2
 set concealcursor=vin
@@ -249,5 +250,5 @@ hi GitGutterDelete cterm=inverse
 hi GitGutterChangeDelete cterm=inverse
 
 exec buf_nre . ' * vertical resize 80'
-exec buf_nre . ' * set fo= winwidth=80 columns=80 wrap linebreak nolist tw=0 wm=2'
+exec buf_nre . ' * set fo= winwidth=80 co=80 wrap lbr nolist tw=0 wm=2'
 "exec buf_nre . ' * set fo=roq wrap linebreak nolist tw=0 wm=0'
