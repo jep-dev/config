@@ -1,5 +1,6 @@
 #!/usr/bin/zsh
 
+dim='#[dim]'
 bold='#[bold]'
 def='#[default]'
 none='#[none]'
@@ -7,7 +8,14 @@ inv='#[reverse]'
 bk='#[fg=0]'
 
 # Config
-vert=' @ '
+#vert=' @ '
+#vert=' '$'\u24ff''  '
+#vert=' '$'\u2b9e'' '
+#vert=' '$'\u2b50'' '
+#2aa2 29c1
+#vert=' '$inv' '$'\u29c1'' '$none' '
+#vert=' '$'\u2847'' '
+vert=' '$'\u273e'' '
 #vert=$'\u26fe'' ' # user/host separator
 lbra=$'\ue0b2' # left bracket
 rbra=$'\ue0b0' # right bracket
@@ -26,16 +34,39 @@ sw=2 # index of center segment
 #cf=('colour'${^cf})
 #cb=('colour'${^cb})
 
-cb=('#993380' '#993333' '#993380' '#663399' '#334d99' '#339999' \
-	'#33994d' '#338899' '#33995e' '#559933' '#999133' '#993333')
-cf=(16 16 16 16 16 16 16 16 16 16 16 16)
-ci=( 1  0  1  0  0  0  0  0  0  0  0 -9)
+#cb=('#862d59' '#862d2d' '#862d59' '#862d86' '#592d86' '#2d2d86' '#2d5986' \
+#	'#2d8686' '#2d8659' '#2d862d' '#59862d' '#86862d' '#86592d' '#862d2d')
+#cb=('#2d8659' '#2d8686' '#2d8659' '#2d862d' '#59862d' '#86862d' '#86592d' \
+#	'#862d2d' '#862d59' '#862d86' '#592d86' '#2d2d86' '#2d5986' '#2d8686')
+#cf=(15 15 15 15 15 15 15 15 15 15 15 15 15  15)
+#ci=( 1  0  1  0  0  0  0  0  0  0  0  0  0 -11)
+#cb=('#4d1f7a' '#1f367a' '#4d1f7a' '#7a1f63' '#7a1f1f'
+#	'#7a631f' '#4d7a1f' '#1f7a36' '#1f7a7a' '#1f367a')
+cb=(
+'#f7d46d'
+'#f76d6d'
+'#f7d46d'
+'#b2f76d'
+'#6df790'
+'#6df7f7'
+'#6d90f7'
+'#b26df7'
+'#f76dd4'
+'#f76d6d'
+)
+#cf=(15 15 15 15 15 15 15 15 15 15)
+cf=(16 16 16 16 16 16 16 16 16 16)
+ci=( 1  0  1  0  0  0  0  0  0 -7)
+#cb=(214 208 214 221 222 223)
+#cf=( 16  16  16  16  16  16)
+#ci=(  1   0   1   0   0  -1)
+#cb=('colour'${^cb})
 cf=('colour'${^cf})
 
 cn=${#cb}
 
 {
-	printf '%s\n%s%s%s\n' "$(battery.sh -g)" "$USER" "$vert" "$HOST"
+	printf '%s\n' "$(battery.sh -g)" "$HOST$vert$USER"
 	ps ho args t $(tmux display -p -F '#{pane_tty}')
 } | {
 	j=1
