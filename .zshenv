@@ -1,8 +1,9 @@
 zsh-functions(){
-	functions | sed -e "s/\([A-Za-z0-9_\-]\)[ ]*().*/\1/" -e "tx" -e "d" -e ":x"
+	functions | grep -o '^[^ ^=]*[ ]\?()' | \
+		sed 's/\(.*\)[ ]*()/\1/' | wrap-to | column
 }
 zsh-aliases(){
-	alias | sed -e "s/^\([A-Za-z0-9_\-]*\)=.*/\1/" -e "tx" -e "d" -e ":x"
+	alias | sed 's/^\([^=]*\).*/\1/' | wrap-to | column
 }
 
 sfilter(){
@@ -46,23 +47,16 @@ rand-line(){
 	fd=${1:-/dev/stdin}
 	head -n $(($(rand-chars 16 "[0-9]") % $(wc -l <$fd))) <$fd | tail -n 1
 }
-columnate(){
-	delim=${1:-' '}
-	delim_size=${#delim}
-	fill=${3:-' '}
-	fill_size=${#fill}
-	M=${2:-$COLUMNS}
-	sep_pre="\e[7m"
-	sep_post="\e[0m"
-	N=$(($M/2-$delim_size-${#sep_pre}-${#sep_post}))
-
+wrap-to(){
+	cols=6
+	len=${1:-$((COLUMNS/cols))}
+	j=0
 	while read i; do
-		lhs=${i%%$1*}; rhs=${i#*$1}; sep=$delim
-		while [ -n "$lhs$rhs" ]; do
-			lhs_head=${lhs:0:$N}; rhs_head=${rhs:0:$N}
-			printf "%"$N"s"$sep_pre"%"$delim_size"s"$sep_post"%-"$N"s\n" \
-				"$lhs_head" "$sep" "$rhs_head"
-			lhs=${lhs:$N}; rhs=${rhs:$N}; sep=
+		pre='-'
+		while [ ${#i} -gt 0 ]; do
+			printf '%'$pre$len's\n' ${i:0:$len}
+			i=${i:$len}
+			pre=''
 		done
 	done
 }
@@ -181,13 +175,13 @@ hi-make(){
 	make $* | hi "\-o [^ ].*"
 }
 read-chars(){
-        while [ $# -gt 0 ]; do
-                for ((i=0;i<${#1};i++)); do
-                        echo "${1:$i:1}"
-                done
-                shift
-                read-chars $*
-        done
+	while [ $# -gt 0 ]; do
+		for ((i=0;i<${#1};i++)); do
+			echo "${1:$i:1}"
+		done
+		shift
+		read-chars $*
+	done
 }
 count-chars(){
 	sed 's/\(.\)/\1\n/g' | \
@@ -208,39 +202,39 @@ color-range(){
 	else
     	while [ $# -gt 1 ]; do
 			j=1
-        	for ((i=$1;i<$2;i++,j++)); do
-					if [[ $j -eq 1 ]]; then
-						printf " $i"
-					fi
-					if [[ $j -eq 10 ]]; then
-						j=0
-					fi
-                	printf "\e[38;5;"$i"m\u2588\e[0m"
-        	done
-        	shift 2
-    	done
+			for ((i=$1;i<$2;i++,j++)); do
+				if [[ $j -eq 1 ]]; then
+					printf " $i"
+				fi
+				if [[ $j -eq 10 ]]; then
+					j=0
+				fi
+				printf "\e[38;5;"$i"m\u2588\e[0m"
+			done
+		shift 2
+		done
 	fi
 }
 
 slider(){
-        if [ $# -eq 1 ]; then
-                local str=$(echo -n "\u2591\u2592\u2593\u2588\u2588\u2593\u2592")
-                let "str_len=7"
-                for ((i=0;i<$1*$UPDATE_FPS;i++)); do
-                        for ((j=0;j<$COLUMNS;j++)); do
-                                printf "${str:($j+$i)%$str_len:1}"
-                        done
-                        sleep $UPDATE_DELAY
-                        echo -n "\r"
-                done
-                echo -n '\r'
-        fi
+	if [ $# -eq 1 ]; then
+		local str=$(echo -n "\u2591\u2592\u2593\u2588\u2588\u2593\u2592")
+		let "str_len=7"
+		for ((i=0;i<$1*$UPDATE_FPS;i++)); do
+			for ((j=0;j<$COLUMNS;j++)); do
+				printf "${str:($j+$i)%$str_len:1}"
+			done
+			sleep $UPDATE_DELAY
+			echo -n "\r"
+		done
+		echo -n '\r'
+	fi
 }
 
 hrule(){
-        for (( i=0; i<$COLUMNS; i++ )); do
-                echo -n "."
-        done
+	for (( i=0; i<$COLUMNS; i++ )); do
+		echo -n "."
+	done
 }
 
 
