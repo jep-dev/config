@@ -28,8 +28,8 @@ alias compgrep='compgen | grep'
 alias listgrep='list $@ | grep'
 
 compdef vman="man"
-alias todo='grep -IrHn TODO'
 alias irhn='grep -IrHn'
+alias todo='irhn TODO'
 
 #vim
 alias vi='vim'
@@ -40,13 +40,9 @@ alias vim="stty stop '' -ixoff ; $EDITOR"
 #dev
 alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
 alias win32-g++='x86_64-w64-mingw32-g++-win32'
-devs=('Makefile' '.mk$' '.[ch]$' '.[ch]pp$' '.frag$' '.vert$'
-	'.lua$' '.py$' '.s$' '.lst$')
-for d (${devs[@]}) alias -s $d='$EDITOR'
-#dev="Makefile\|\.mk\$\|\.[ch]\$\|\.[ch]pp\$\|\.frag\$\|\.vert\$"
-#dev+="\|\.lua\$\|\.py\$\|\.s\$\|\.lst\$"
-#alias -s c='$EDITOR' cpp='$EDITOR' tpp='$EDITOR' h='$EDITOR' hpp='$EDITOR' mk='$EDITOR'
-#alias -s lua='$EDITOR' frag='$EDITOR' vert='$EDITOR'
+devs=('.*Makefile' 'mk' 'c' 'h' 'cpp' 'hpp' 'frag' 'vert' 'lua' 'py' 's' 'lst')
+for d (${devs[@]}) alias -s "$d"='$EDITOR';
+
 alias dryad='git add -An'
 
 #media
@@ -107,7 +103,7 @@ plugins=(git gitfast github wd zsh-_url-httplink)
 
 ZSH_THEME="bullet-train/bullet-train"
 
-local at=$(printf "\u273e")
+local at=$(printf "\u273b")
 BULLETTRAIN_PROMPT_ORDER=(time custom dir git cmd_exec_time status)
 BULLETTRAIN_PROMPT_SEPARATE_LINE=false
 BULLETTRAIN_PROMPT_ADD_NEWLINE=false
@@ -116,19 +112,21 @@ BULLETTRAIN_CUSTOM_MSG="\$(printf '%s %s %s' $USER $at $HOST)"
 BULLETTRAIN_STATUS_EXIT_SHOW=true
 BULLETTRAIN_EXEC_TIME_ELAPSED=0
 
-BULLETTRAIN_TIME_BG=214 #202
-BULLETTRAIN_CUSTOM_BG=221 #208
-BULLETTRAIN_DIR_BG=214 #208
-BULLETTRAIN_GIT_BG=208
-BULLETTRAIN_GIT_COLORIZE_DIRTY_BG_COLOR=208 #214
-BULLETTRAIN_STATUS_BG=202 #221
-BULLETTRAIN_STATUS_ERROR_BG=202 #221
-BULLETTRAIN_EXEC_TIME_BG=202 #221
+BG_PALETTE=(202 208 214 220 220 221 222)
+BULLETTRAIN_TIME_BG=${BG_PALETTE[1]}
+BULLETTRAIN_CUSTOM_BG=${BG_PALETTE[2]}
+BULLETTRAIN_DIR_BG=${BG_PALETTE[3]}
+BULLETTRAIN_GIT_BG=${BG_PALETTE[4]}
+BULLETTRAIN_GIT_COLORIZE_DIRTY_BG_COLOR=${BG_PALETTE[4]}
+BULLETTRAIN_STATUS_BG=${BG_PALETTE[6]}
+BULLETTRAIN_STATUS_ERROR_BG=${BG_PALETTE[6]}
+BULLETTRAIN_EXEC_TIME_BG=${BG_PALETTE[5]}
 
 for v ('TIME_FG' 'CUSTOM_FG' 'CONTEXT_FG' 'DIR_FG'
 	'GIT_FG' 'GIT_COLORIZE_DIRTY_FG_COLOR'
 	'STATUS_FG' 'STATUS_ERROR_FG' 'EXEC_TIME_FG') \
 		export "BULLETTRAIN_$v"=16;
+#BULLETTRAIN_CUSTOM_FG=15
 
 if [ "$ZSHRC_SOURCED" -eq 0 ] || [ "$ZSHRC_FORCE" -eq 1 ]; then
 	source $ZSH/oh-my-zsh.sh
@@ -144,5 +142,18 @@ pidof thd >/dev/null || sudo ~/bin/thd.sh
 
 export PROMPT="$(tr -d '\n' <<< $PROMPT)"
 unalias grep
+
+local co_255="38;5;255"
+local co_155="38;5;155"
+local co_143="38;5;143"
+local co_215="38;5;215"
+export GREP_COLORS='sl='$co_255';;1:mt='$co_155':cx=2:se='$co_255';;1:fn='$co_143':ln='$co_143
+export LS_COLORS="${LS_COLORS//ex=[^:]*/ex=$co_215;1}"
+export LS_COLORS="${LS_COLORS//fi=[^:]*/fi=$co_243}"
+export LS_COLORS="${LS_COLORS//di=[^:]*/di=$co_155;1}"
+#export GREP_COLORS="mt=38;5;204:fn=38;5;204:ln=38;5;211"
+#export GREP_COLORS="mt=38;5;220:fn=38;5;187:ln=38;5;180"
+#export LS_COLORS=$(sed 's/di=[^:]*/di=38;5;155/;' <<< $LS_COLORS)
+#export LS_COLORS=$(sed 's/or=[^:]*/fi=38;5;215/' <<< $LS_COLORS)
 alias grep='grep --color=auto'
 source ~/.zshenv
