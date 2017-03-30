@@ -62,15 +62,7 @@ wrap-to(){
 }
 
 find-definitions(){
-	{ [ -z $1 ] && find include -type f || find $1 -type f } |
-		{ while read i; do {
-			p1="[ \t]*\(.*\)(\(.*\));"; r1="\1 (\2)"
-			p2="[ \t]*\(.*typedef .*\)"; r2="\1"
-			p3="[ \t]*\(.*using .*\)"; r3="\1"
-			sed -e "s/$p1/$r1/" -e "tx" -e "d" -e ":x" $i
-			sed -e "s/$p2/$r2/" -e "tx" -e "d" -e ":x" $i
-			sed -e "s/$p3/$r3/" -e "tx" -e "d" -e ":x" $i
-		}; done }
+	irhn "^[ \t]*.*(.*);\|^[ \t].*typedef.*\|^[ \t]*using.*" ${*:-include}
 }
 numbered(){
 	lines=0
@@ -188,17 +180,26 @@ count-chars(){
 		{i=0; while read j; do let "i=i+1"; done; echo $i}
 }
 
+to_hex(){
+	val=${1:-0}
+	maj=$((val/16+1))
+	min=$((val%16+1))
+	src='0123456789abcdef'
+	echo "${src[maj]}""${src[min]}"
+}
+
 color-range(){
 	if [ "$1" = "-a" ]; then
 		sp=' '
 		cols=${2:-16}
-		title="\e[7m %3d \e[0m\ue0b0$sp"
+		#title="\e[7m %3d \e[0m\ue0b0$sp"
 		printf "     $sp"
-		printf "$sp\e[7m%2d \e[0m" {0..$((cols-1))}
+		#printf "$sp\e[7m%2d \e[0m" {0..$((cols-1))}
 		echo
 		for i ({0..255..$cols}) \
-			printf "$title" $i && \
-			printf "\e[48;5;%dm   \e[48;5;232m$sp\e[0m" {$i..$((i+cols-1))} && echo
+			printf "$i" && \
+			printf "\e[48;5;%dm\e[48;5;232m   $sp\e[0m" {$i..$((i+cols-1))} && echo
+		#printf "$title" $i && \
 	else
     	while [ $# -gt 1 ]; do
 			j=1
