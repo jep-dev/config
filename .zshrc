@@ -21,9 +21,8 @@ alias zshenv='$EDITOR ~/.zshenv && zsh-update'
 alias tmuxconfig='$EDITOR ~/.tmux.conf && tmux source-file ~/.tmux.conf'
 
 #info
-alias grep="grep --color=always"
 alias tree="tree --charset=ascii"
-alias list='cat -n'
+alias list='cat -n | sed "s/^[ ]*\([0-9]*\)[ \t]*\(.*\)/\1. \2/"'
 alias compgen='sort -u <(ls $path 2>/dev/null) <(zsh-functions) <(zsh-aliases)'
 alias compgrep='compgen | grep'
 alias listgrep='list $@ | grep'
@@ -41,10 +40,13 @@ alias vim="stty stop '' -ixoff ; $EDITOR"
 #dev
 alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
 alias win32-g++='x86_64-w64-mingw32-g++-win32'
-dev="Makefile\|\.mk$\|\.[ch]$\|\.[ch]pp$\|\.frag$\|\.vert$"
-dev+="\|\.lua$\|\.py$\|\.s$\|\.lst$"
-alias -s c='$EDITOR' cpp='$EDITOR' tpp='$EDITOR' h='$EDITOR' hpp='$EDITOR' mk='$EDITOR'
-alias -s lua='$EDITOR' frag='$EDITOR' vert='$EDITOR'
+devs=('Makefile' '.mk$' '.[ch]$' '.[ch]pp$' '.frag$' '.vert$'
+	'.lua$' '.py$' '.s$' '.lst$')
+for d (${devs[@]}) alias -s $d='$EDITOR'
+#dev="Makefile\|\.mk\$\|\.[ch]\$\|\.[ch]pp\$\|\.frag\$\|\.vert\$"
+#dev+="\|\.lua\$\|\.py\$\|\.s\$\|\.lst\$"
+#alias -s c='$EDITOR' cpp='$EDITOR' tpp='$EDITOR' h='$EDITOR' hpp='$EDITOR' mk='$EDITOR'
+#alias -s lua='$EDITOR' frag='$EDITOR' vert='$EDITOR'
 alias dryad='git add -An'
 
 #media
@@ -84,39 +86,19 @@ alias -s com='firefox'
 alias -s org='firefox'
 
 if [ "$ZSHRC_SOURCED" -eq 0 ]; then
-	#env
-	local new_path=(
-	"$HOME/bin"
-	"$HOME/workspace/markdown/bin"
-	"/opt/shashlik/bin"
-	"/usr/local/sbin"
-	"/usr/local/bin"
-	"/usr/sbin"
-	"/usr/bin"
-	"/usr/games"
-	"/usr/local/games"
-	"/sbin"
-	"/bin")
-	local new_manpath=(
-	"$HOME/.man"
-	"/usr/local/man"
-	"$HOME/.linuxbrew/share/man")
-
-	new_ldpath=(
-	"$HOME/lib"
-	"$HOME/Downloads/llvm/lib"
-	"/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu"
-	"/usr/lib/python2.7/config-x86_64-linux-gnu"
-	"/usr/local/lib"
-	"/usr/lib"
-	"/lib")
-	old_ifs="$IFS"
-	export IFS=":"
-	export PATH="${new_path[*]}"
-	export MANPATH="${new_manpath[*]}:$MANPATH"
-	export LD_LIBRARY_PATH="${new_ldpath[*]}:$LD_LIBRARY_PATH"
-	export IFS="$old_ifs"
-	export fpath=(~/bin/completions $fpath)
+	new_path=($HOME'/bin' $HOME'/workspace/markdown/bin'
+		'/opt/shashlik/bin' $PATH)
+	new_ldpath=($HOME'/lib' $HOME'/Downloads/llvm/lib'
+		'/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu'
+		'/usr/lib/python2.7/config-x86_64-linux-gnu'
+		$LD_LIBRARY_PATH)
+	new_manpath=($HOME'/.man')
+	old_ifs=$IFS
+	export IFS=:
+	export PATH="$new_path"
+	export MANPATH="$new_manpath"":$MANPATH"
+	export LD_LIBRARY_PATH="$new_ldpath"
+	export IFS=$old_ifs
 fi
 
 
@@ -124,47 +106,43 @@ COMPLETION_WAITING_DOTS="true"
 plugins=(git gitfast github wd zsh-_url-httplink)
 
 ZSH_THEME="bullet-train/bullet-train"
+
+local at=$(printf "\u273e")
+BULLETTRAIN_PROMPT_ORDER=(time custom dir git cmd_exec_time status)
 BULLETTRAIN_PROMPT_SEPARATE_LINE=false
 BULLETTRAIN_PROMPT_ADD_NEWLINE=false
-
-BULLETTRAIN_EXEC_TIME_ELAPSED=0
-BULLETTRAIN_PROMPT_ORDER=(time custom dir git cmd_exec_time status)
-BULLETTRAIN_DIR_CONTEXT_SHOW=true
+BULLETTRAIN_DIR_CONTEXT_SHOW=false
+BULLETTRAIN_CUSTOM_MSG="\$(printf '%s %s %s' $USER $at $HOST)"
 BULLETTRAIN_STATUS_EXIT_SHOW=true
+BULLETTRAIN_EXEC_TIME_ELAPSED=0
 
-BULLETTRAIN_TIME_BG=95
-BULLETTRAIN_DIR_BG=101
-BULLETTRAIN_GIT_BG=107
-BULLETTRAIN_GIT_COLORIZE_DIRTY_BG_COLOR=107
-BULLETTRAIN_STATUS_BG=78
-BULLETTRAIN_STATUS_ERROR_BG=78
-BULLETTRAIN_EXEC_TIME_BG=78
+BULLETTRAIN_TIME_BG=214 #202
+BULLETTRAIN_CUSTOM_BG=221 #208
+BULLETTRAIN_DIR_BG=214 #208
+BULLETTRAIN_GIT_BG=208
+BULLETTRAIN_GIT_COLORIZE_DIRTY_BG_COLOR=208 #214
+BULLETTRAIN_STATUS_BG=202 #221
+BULLETTRAIN_STATUS_ERROR_BG=202 #221
+BULLETTRAIN_EXEC_TIME_BG=202 #221
 
-BULLETTRAIN_TIME_FG=15
-BULLETTRAIN_CONTEXT_FG=16
-BULLETTRAIN_DIR_FG=16
-BULLETTRAIN_GIT_FG=16
-BULLETTRAIN_GIT_COLORIZE_DIRTY_FG_COLOR=16
-BULLETTRAIN_STATUS_FG=16
-BULLETTRAIN_STATUS_ERROR_FG=16
-BULLETTRAIN_EXEC_TIME_FG=16
+for v ('TIME_FG' 'CUSTOM_FG' 'CONTEXT_FG' 'DIR_FG'
+	'GIT_FG' 'GIT_COLORIZE_DIRTY_FG_COLOR'
+	'STATUS_FG' 'STATUS_ERROR_FG' 'EXEC_TIME_FG') \
+		export "BULLETTRAIN_$v"=16;
 
 if [ "$ZSHRC_SOURCED" -eq 0 ] || [ "$ZSHRC_FORCE" -eq 1 ]; then
-	#zsh
 	source $ZSH/oh-my-zsh.sh
 	source ~/bin/completions/tmuxinator.zsh
 fi
 
-export UPDATE_FPS=10
-export UPDATE_DELAY=$((1.0/$UPDATE_FPS))
+#export UPDATE_FPS=10
+#export UPDATE_DELAY=$((1.0/$UPDATE_FPS))
 
-unalias grep
-alias grep='grep --color=auto'
-
-export PROMPT="$(tr -d '\n' <<< $PROMPT)"
-
-export ZSHRC_SOURCED=$(($ZSHRC_SOURCED+1))
+export ZSHRC_SOURCED=$((ZSHRC_SOURCED+1))
 
 pidof thd >/dev/null || sudo ~/bin/thd.sh
 
+export PROMPT="$(tr -d '\n' <<< $PROMPT)"
+unalias grep
+alias grep='grep --color=auto'
 source ~/.zshenv
