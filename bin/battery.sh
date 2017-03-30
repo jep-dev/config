@@ -6,35 +6,28 @@ cur=$(cat $bat1/charge_now)
 max=$(cat $bat1/charge_full)
 
 empty=$'\u25a2'
-#blocks=($'\u25a7' $'\u25a9' $'\u25a0')
-#last=${#blocks}
-#min=$((last-1))
 maj=10
-#space=''
-#charging=$'\u2296'
-#on_ac_power && charging=$'\u2295'
 
-#charging='-'
-#on_ac_power && charging='+'
-#charging=$'\u3280'
-#on_ac_power && charging=$'\u3289'
-charging=$'\u26a1'
-on_ac_power || charging=$'\u2718'
+#charging=$'\u26a1'
+#on_ac_power || charging=$'\u2718'
+charging='\u2796'
+on_ac_power && charging='\u2795'
 
 if [ "$1" = "-g" ]; then
-	case "${2:-3}" in
+	case "${2:-4}" in
 		1) blocks=($'\u25a7' $'\u25a9' $'\u25a0')
 			empty=$'\u25a2'
 			;;
-		2) blocks=('\u24ea ' '\u2460 ' '\u2461 ' '\u2462 ' '\u2463 ' '\u2464 '
-			'\u2465 ' '\u2466 ' '\u2467 ' '\u2468 ' '\u3248 ') #'\u2469 ')
-			empty='\u24ea '
+		2) blocks=('\u2777 ' '\u2778 ' '\u2779 ' '\u277a ' '\u277b ' '\u277c ' '\u277d ' '\u277e ' '\u277f ')
+			empty='\u2776 '
 			;;
-		3) blocks=('\u2bcf' '\u2bcd' '\u2b1b')
-			#empty='\u2bcf'
-			empty='\u2b1e'
+		3) blocks=('\u2bcf' '\u2bcd')
+			empty='\u25b1'
 			;;
-		*) blocks=(' ' '#')
+		4) blocks=('\u25a5' '\u25a9' '\u25a3')
+			empty='\u25a1'
+			;;
+		*) blocks=('-' '=' '#')
 			empty=' '
 			;;
 	esac
@@ -50,7 +43,7 @@ if [ "$1" = "-g" ]; then
 		elif [ "$i" -eq "${split[1]}" ]; then out+=${blocks[${split[2]}+1]}$space
 		else out+=$empty$space; fi
 	done
-	echo -n "$charging $out"
+	echo -n "$out $charging"
 else
 	pc=$(echo "scale=$scale; $cur * 100 / $max" | bc)
 	prefix="${1:-}"
