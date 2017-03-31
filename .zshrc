@@ -103,14 +103,20 @@ plugins=(git gitfast github wd zsh-_url-httplink)
 
 ZSH_THEME="bullet-train/bullet-train"
 
+local co_wt="38;5;255"
+local co_lg="38;5;155"
+local co_dg="38;5;143"
+local co_or="38;5;215"
+local co_ye="38;5;221"
 local at=$(printf "\u273b")
 BULLETTRAIN_PROMPT_ORDER=(time custom dir git cmd_exec_time status)
 BULLETTRAIN_PROMPT_SEPARATE_LINE=false
 BULLETTRAIN_PROMPT_ADD_NEWLINE=false
 BULLETTRAIN_DIR_CONTEXT_SHOW=false
-BULLETTRAIN_CUSTOM_MSG="\$(printf '%s %s %s' $USER $at $HOST)"
+BULLETTRAIN_CUSTOM_MSG="\$(printf '%%n %s %%m' $at)"
 BULLETTRAIN_STATUS_EXIT_SHOW=true
 BULLETTRAIN_EXEC_TIME_ELAPSED=0
+BULLETTRAIN_PROMPT_CHAR=$at
 
 BG_PALETTE=(202 208 214 220 220 221 222)
 BULLETTRAIN_TIME_BG=${BG_PALETTE[1]}
@@ -141,19 +147,12 @@ export ZSHRC_SOURCED=$((ZSHRC_SOURCED+1))
 pidof thd >/dev/null || sudo ~/bin/thd.sh
 
 export PROMPT="$(tr -d '\n' <<< $PROMPT)"
-unalias grep
+alias grep >&/dev/null && \
+	unalias grep && alias grep='grep --color=auto'
 
-local co_255="38;5;255"
-local co_155="38;5;155"
-local co_143="38;5;143"
-local co_215="38;5;215"
-export GREP_COLORS='sl='$co_255';;1:mt='$co_155':cx=2:se='$co_255';;1:fn='$co_143':ln='$co_143
-export LS_COLORS="${LS_COLORS//ex=[^:]*/ex=$co_215;1}"
-export LS_COLORS="${LS_COLORS//fi=[^:]*/fi=$co_243}"
-export LS_COLORS="${LS_COLORS//di=[^:]*/di=$co_155;1}"
-#export GREP_COLORS="mt=38;5;204:fn=38;5;204:ln=38;5;211"
-#export GREP_COLORS="mt=38;5;220:fn=38;5;187:ln=38;5;180"
-#export LS_COLORS=$(sed 's/di=[^:]*/di=38;5;155/;' <<< $LS_COLORS)
-#export LS_COLORS=$(sed 's/or=[^:]*/fi=38;5;215/' <<< $LS_COLORS)
-alias grep='grep --color=auto'
+export GREP_COLORS=\
+	'sl='$co_wt';;1:mt='$co_lg':cx=2:se='$co_wt';;1:fn='$co_dg':ln='$co_dg
+export LS_COLORS="${LS_COLORS//ex=[^:]*/ex=$co_or}"
+export LS_COLORS="${LS_COLORS//fi=[^:]*/fi=$co_dg}"
+export LS_COLORS="${LS_COLORS//di=[^:]*/di=$co_ye}"
 source ~/.zshenv
