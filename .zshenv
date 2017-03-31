@@ -189,6 +189,21 @@ to_hex(){
 	echo "${src[maj]}${src[min]}"
 }
 
+prompt_chars() {
+	local bt_prompt_chars
+	bt_prompt_chars=""
+	#if [[ ${#BULLETTRAIN_PROMPT_CHAR} -eq 1 ]]; then
+		bt_prompt_chars="$BULLETTRAIN_PROMPT_CHAR"
+	#fi
+	if [[ $BULLETTRAIN_PROMPT_ROOT == true ]]; then
+		bt_prompt_chars="%(!.%F{${co_root:-red}}${bt_prompt_chars}.%F{${co_user:-green}}${bt_prompt_chars}%f)"
+	fi
+	if [[ $BULLETTRAIN_PROMPT_SEPARATE_LINE == false ]]; then
+		bt_prompt_chars="${bt_prompt_chars}"
+	fi
+	echo -n $bt_prompt_chars' '
+}
+
 color-range(){
 	if [ "$1" = "-a" ]; then
 		sp=' '

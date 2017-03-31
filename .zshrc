@@ -103,6 +103,8 @@ plugins=(git gitfast github wd zsh-_url-httplink)
 
 ZSH_THEME="bullet-train/bullet-train"
 
+export co_user="215"
+export co_root="221"
 local co_wt="38;5;255"
 local co_lg="38;5;155"
 local co_dg="38;5;143"
@@ -117,6 +119,7 @@ BULLETTRAIN_CUSTOM_MSG="\$(printf '%%n %s %%m' $at)"
 BULLETTRAIN_STATUS_EXIT_SHOW=true
 BULLETTRAIN_EXEC_TIME_ELAPSED=0
 BULLETTRAIN_PROMPT_CHAR=$at
+
 
 BG_PALETTE=(202 208 214 220 220 221 222)
 BULLETTRAIN_TIME_BG=${BG_PALETTE[1]}
