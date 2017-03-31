@@ -16,22 +16,9 @@ sw=2 # index where lhs/rhs segment separator switches
 join_segments(){
 	cb=('#320f56' '#0f2156' '#320f56' '#560f0f'
 		'#56440f' '#0f5621' '#0f5656' '#0f2156')
-
-	# '#f7d46d' '#f76d6d' '#f7d46d' '#b2f76d' '#6df790'
-	# '#6df7f7' '#6d90f7' '#b26df7' '#f76dd4' '#f76d6d'
-
-	# dark to light
-	#  'colour208' 'colour202' 'colour208'
-	#  'colour214' 'colour220' 'colour221' 'colour222'
-	# light to dark
-	#  'colour220' 'colour222' 'colour220'
-	#  'colour214' 'colour208' 'colour202' 'colour208'
-
 	cf=(15 15 15 15 15 15 15 15)
 	ci=( 1  0  1  0  0  0  0 -5)
-	#cb=('colour'${^cb})
 	cf=('colour'${^cf})
-
 	cn=${#cb}
 
 	j=1
@@ -56,5 +43,5 @@ if [ "$side" = "-l" ]; then
 		#echo -n {a..z}'\n'
 	} | join_segments
 elif [ "$side" = '-r' ]; then
-	time.sh 'wide' | join_segments
+	{ echo && time.sh 'wide' } | join_segments
 fi
