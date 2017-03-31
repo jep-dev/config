@@ -14,7 +14,8 @@ sfilter(){
 git-statuses(){
 	old_pwd="$PWD"
 	local dir="${1:-.}"
-	for d in $(find $dir -type d -regex ".*\.git" -print0); do
+	local md=${2:-2}
+	for d in $(find $dir -maxdepth $md -type d -regex ".*\.git\$" -print0); do
 		([ -n "$d" ] && cd $d/.. && st=$(hub status -s) && \
 			[ -n "$st" ] && pwd && echo "$st")
 	done
@@ -53,7 +54,7 @@ wrap-to(){
 	j=0
 	while read i; do
 		pre='-'
-		while [ ${#i} -gt 0 ]; do
+		while [ ${#i} -gt 0 ] || [ -n "$pre" ]; do
 			printf '%'$pre$len's\n' ${i:0:$len}
 			i=${i:$len}
 			pre=''
