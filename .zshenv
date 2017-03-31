@@ -185,21 +185,22 @@ to_hex(){
 	val=${1:-0}
 	maj=$((val/16+1))
 	min=$((val%16+1))
-	src='0123456789abcdef'
-	echo "${src[maj]}""${src[min]}"
+	src="0123456789abcdef"
+	echo "${src[maj]}${src[min]}"
 }
 
 color-range(){
 	if [ "$1" = "-a" ]; then
 		sp=' '
 		cols=${2:-16}
-		#title="\e[7m %3d \e[0m\ue0b0$sp"
-		printf "     $sp"
-		#printf "$sp\e[7m%2d \e[0m" {0..$((cols-1))}
+		title="\e[7m %3d \e[0m\ue0b0$sp"
+		printf "  $sp"
+		printf "$sp\e[7m%2d \e[0m" {0..$((cols-1))}
 		echo
 		for i ({0..255..$cols}) \
-			printf "$i" && \
-			printf "\e[48;5;%dm\e[48;5;232m   $sp\e[0m" {$i..$((i+cols-1))} && echo
+			printf "%3i" $i && \
+			printf "\e[48;5;232m$sp\e[48;5;%dm   \e[0m" {$i..$((i+cols-1))} \
+				&& echo
 		#printf "$title" $i && \
 	else
     	while [ $# -gt 1 ]; do
