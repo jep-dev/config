@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/usr/bin/zsh
 
-#date +\ %I%n:%M%n:%S%n\ %p%n%n%a%n%b%n\ %d
-#date +\ %k%n:%M%n%n%b%n\ %d
-#date +\ %k:%_M%n\ \ \ %a%n\ %_m/%e
-date +---%n\ %k%n:%_M%n:%_S%n---%n%a%n%b%n\ %e%n---
+mode=${1:-'thin'}
+if [ "$mode" = 'thin' ]; then
+	date +\ %H:%M:%S\ %a%b\ %e | wrap-to 3
+else
+	date +\ %H:%M:%S%n%A,\ %B\ %e,\ %Y
+fi
