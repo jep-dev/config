@@ -183,10 +183,17 @@ count-chars(){
 
 to_hex(){
 	val=${1:-0}
-	maj=$((val/16+1))
-	min=$((val%16+1))
+	len=${2:-2}
 	src="0123456789abcdef"
-	echo "${src[maj]}${src[min]}"
+	dest=""
+	i=0
+	val=$((val%(16**len)))
+	while [ "$i" -lt $len ] && [ $val -ge 0 ] ; do
+		dest=${src[val%16+1]}$dest
+		val=$((val/16))
+		let "i++"
+	done
+	echo $dest
 }
 
 prompt_chars() {
@@ -234,20 +241,20 @@ color-range(){
 	fi
 }
 
-slider(){
-	if [ $# -eq 1 ]; then
-		local str=$(echo -n "\u2591\u2592\u2593\u2588\u2588\u2593\u2592")
-		let "str_len=7"
-		for ((i=0;i<$1*$UPDATE_FPS;i++)); do
-			for ((j=0;j<$COLUMNS;j++)); do
-				printf "${str:($j+$i)%$str_len:1}"
-			done
-			sleep $UPDATE_DELAY
-			echo -n "\r"
-		done
-		echo -n '\r'
-	fi
-}
+#slider(){
+#	if [ $# -eq 1 ]; then
+#		local str=$(echo -n "\u2591\u2592\u2593\u2588\u2588\u2593\u2592")
+#		let "str_len=7"
+#		for ((i=0;i<$1*$UPDATE_FPS;i++)); do
+#			for ((j=0;j<$COLUMNS;j++)); do
+#				printf "${str:($j+$i)%$str_len:1}"
+#			done
+#			sleep $UPDATE_DELAY
+#			echo -n "\r"
+#		done
+#		echo -n '\r'
+#	fi
+#}
 
 hrule(){
 	for (( i=0; i<$COLUMNS; i++ )); do
@@ -256,37 +263,37 @@ hrule(){
 }
 
 
-progress(){
-	lborder=""
-	rborder=""
-	filler="\u2588"
-	separator="$(($1*100/$2))%"
-	spacer=" "
-	total=$(($COLUMNS-$#lborder-$#rborder-$#separator-1))
-	filled=$(($1*$total/$2))
-	empty=$(($total-$filled))
-	index=$(($1*4/$2))
-	startshade=""
-	endshade="\e[0m"
-	if [ $index -eq 0 ]; then
-		startshade="\e[38;5;1m";
-	elif [ $index -eq 1 ]; then
-		startshade="\e[38;5;3m";
-	elif [ $index -eq 2 ]; then
-		startshade="\e[38;5;2m";
-	else
-		startshade+="\e[38;5;2m";
-	fi
-	echo -n "$lborder$startshade"
-	for (( i=0; i<$filled; i++ )); do
-		echo -n $filler
-	done
-	echo -n "\e[7m$separator\e[0m$startshade\ue0b0"
-	for (( i=0; i<$empty; i++ )); do
-		echo -n $spacer
-	done
-	echo -n "$endshade$rborder"
-}
+# progress(){
+#	lborder=""
+#	rborder=""
+#	filler="\u2588"
+#	separator="$(($1*100/$2))%"
+#	spacer=" "
+#	total=$(($COLUMNS-$#lborder-$#rborder-$#separator-1))
+#	filled=$(($1*$total/$2))
+#	empty=$(($total-$filled))
+#	index=$(($1*4/$2))
+#	startshade=""
+#	endshade="\e[0m"
+#	if [ $index -eq 0 ]; then
+#		startshade="\e[38;5;1m";
+#	elif [ $index -eq 1 ]; then
+#		startshade="\e[38;5;3m";
+#	elif [ $index -eq 2 ]; then
+#		startshade="\e[38;5;2m";
+#	else
+#		startshade+="\e[38;5;2m";
+#	fi
+#	echo -n "$lborder$startshade"
+#	for (( i=0; i<$filled; i++ )); do
+#		echo -n $filler
+#	done
+#	echo -n "\e[7m$separator\e[0m$startshade\ue0b0"
+#	for (( i=0; i<$empty; i++ )); do
+#		echo -n $spacer
+#	done
+#	echo -n "$endshade$rborder"
+#}
 
 gmkd2html(){
 	ifname="${1:-README.md}"
