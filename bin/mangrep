@@ -2,24 +2,31 @@
 
 PAGER=${PAGER:-less}
 if [ -n "$verbose" -a "$verbose" = "1" ]; then
-	entries=$(man -k $* | grep $* --color=never)
+	entries=$(man -k --names-only --regex $1 | grep $* --color=never)
 else
-	entries=$(man -k $* | grep $* --color=never | cut -d ' ' -f -2)
+	entries=$(man -k --names-only --regex $1 | grep $* --color=never \
+		| cut -d ' ' -f -2 | grep $*)
 fi
 
 [ -z "$entries" ] && return
-
+#column <<<$entries
+#j=$k
 j=$(wc -l <<< $entries)
-range="[1,$j] U [-$j,-1]"
-cat -n <<< $entries | column
+range="1..$j, -$j..-1"
+quit="<enter>, 0"
+#cat -n <<< $entries | sed 's/[ \t]\{1,\}/ /g' | column
+awk '/./{printf "%3d. %s\n", NR, $0}' <<<$entries | column
 
-while { echo "Select a page ($range) " && read i }; do
+while { echo "Select a page ($range) or quit ($quit)" && read i }; do
 	[ -z "$i" ] || [[ "$i" =~ "[Qq]" ]] || \
 		[[ "$i" =~ "[Qq][Uu][Ii][Tt]" ]] && break
 	[[ "$i" =~ "-[0-9]{1,}" ]] && let i="$j+$i+1"
 	if [[ "$i" =~ "[0-9]{1,}" ]]; then
 		if [ "$i" -ge 1 -a "$i" -le "$j" ]; then
-			man -P $PAGER $(echo $entries | awk NR==$i | cut -d' ' -f1)
+			#man -P $PAGER $(echo $entries | awk NR==$i | cut -d' ' -f1)
+			man -P $PAGER $(head -n $j <<<$entries | tail -n 1 | cut -d ' ' -f1)
+		elif [ "$i" = 0 ]; then
+			break
 		else
 			echo -n "$i is out of range. "
 		fi
