@@ -1,9 +1,9 @@
 zsh-functions(){
 	functions | grep -o '^[^ ^=]*[ ]\?()' | \
-		sed 's/\(.*\)[ ]*()/\1/' | wrap-to | column
+		sed 's/\(.*\)[ ]*()/\1/'
 }
 zsh-aliases(){
-	alias | sed 's/^\([^=]*\).*/\1/' | wrap-to | column
+	alias | sed 's/^\([^=]*\).*/\1/'
 }
 
 sfilter(){
@@ -45,19 +45,48 @@ rand-chars(){
 	echo "$dest"
 }
 rand-line(){
-	fd=${1:-/dev/stdin}
-	head -n $(($(rand-chars 16 "[0-9]") % $(wc -l <$fd))) <$fd | tail -n 1
+	n=${1:-1}; shift
+	#fd=${1:-/dev/stdin}
+	#n=${2:-1}
+	for ((i=0;i<n;i++)); do
+		for fd in ${*:-/dev/stdin}; do
+			echo -n $(head -n $(($(rand-chars 16 "[0-9]") % $(wc -l <$fd))) <$fd \
+				| tail -n 1 | tr -d '\r')' '
+		done
+		echo
+	done
 }
 wrap-to(){
-	cols=6
-	len=${1:-$((COLUMNS/cols))}
+	len=${1:-$COLUMNS}
+	sep=${2:-'|'}
+	cols=${3:-6}
+	len=$((len/cols))
+	#cols=${3:-6}
+	#len=${2:-$((COLUMNS/cols))}
 	j=0
 	while read i; do
 		pre='-'
-		while [ ${#i} -gt 0 ] || [ -n "$pre" ]; do
-			printf '%'$pre$len's\n' ${i:0:$len}
-			i=${i:$len}
-			pre=''
+		post=$'\u2026'
+		indent=''
+		first=1
+		while [ "${#i}" -gt 0 ] || [ $first -eq 1 ]; do
+			cur_len=$((len-${#indent}))
+			if [ ${#i} -gt $cur_len ]; then
+				line=${i:0:$((len-${#post}-${#indent}))}$post
+				i=${i:$((len-${#post}-${#indent}))}
+			else
+				line=$i
+				i=''
+			fi
+			let "first=0"
+			printf $sep'%s%'$pre$cur_len's'$sep'\n' \
+				"$indent" "$line"
+#			printf $sep'%s%'$pre$cur_len's'$sep'\n' \
+#				"$indent" "${i:0:$cur_len}"
+#			i=${i:$len}
+			#pre=''
+			#indent='...'
+			indent=' '$'\u2026'
 		done
 	done
 }

@@ -7,6 +7,10 @@ export EDITOR='vim'
 export TERM="screen-256color"
 export ZSH=~/.oh-my-zsh
 
+alias -g ~ws=~/workspace
+alias -g ~dl=~/Downloads
+alias -g ~dicts=~/workspace/dicts
+
 alias please='sudo'
 alias fucking='sudo'
 
