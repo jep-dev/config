@@ -12,10 +12,8 @@ alias fucking='sudo'
 
 zsh-update(){
 	if [ "$1" = "-f" ]; then export ZSHRC_FORCE=1; fi
-	# [[ "$1" = "-f" ]] && export ZSHRC_FORCE=1
 	source ~/.zshrc
 }
-#alias zsh-update='source ~/.zshrc'
 alias zshconfig='$EDITOR ~/.zshrc && zsh-update'
 alias zshenv='$EDITOR ~/.zshenv && zsh-update'
 alias tmuxconfig='$EDITOR ~/.tmux.conf && tmux source-file ~/.tmux.conf'
@@ -139,11 +137,7 @@ for v ('TIME_FG' 'CUSTOM_FG' 'CONTEXT_FG' 'DIR_FG'
 
 if [ "$ZSHRC_SOURCED" -eq 0 ] || [ "$ZSHRC_FORCE" -eq 1 ]; then
 	source $ZSH/oh-my-zsh.sh
-	source ~/bin/completions/tmuxinator.zsh
 fi
-
-#export UPDATE_FPS=10
-#export UPDATE_DELAY=$((1.0/$UPDATE_FPS))
 
 export ZSHRC_SOURCED=$((ZSHRC_SOURCED+1))
 
