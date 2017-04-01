@@ -1,12 +1,22 @@
 #!/usr/bin/zsh
 
 PAGER=${PAGER:-less}
-if [ -n "$verbose" -a "$verbose" = "1" ]; then
-	entries=$(man -k --names-only --regex $1 | grep $* --color=never)
-else
-	entries=$(man -k --names-only --regex $1 | grep $* --color=never \
-		| cut -d ' ' -f -2 | grep $*)
-fi
+#if [ -n "$verbose" -a "$verbose" = "1" ]; then
+#	entries=$(man -k --names-only --regex $1 | grep $* --color=never)
+#else
+#	entries=$(man -k --names-only --regex $1 | grep $* --color=never \
+#		| cut -d ' ' -f -2 | grep $*)
+#fi
+entries=$(man -k --names-only --regex $1 | \
+	while read line; do
+		if cut -d ' ' -f -1 <<< $line | grep $* >&/dev/null; then
+			if [ "${verbose:-0}" = 1 ]; then
+				echo $line
+			else
+				cut -d ' ' -f -2 <<<$line
+			fi
+		fi
+	done)
 
 [ -z "$entries" ] && return
 #column <<<$entries
