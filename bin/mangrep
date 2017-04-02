@@ -7,16 +7,20 @@ PAGER=${PAGER:-less}
 #	entries=$(man -k --names-only --regex $1 | grep $* --color=never \
 #		| cut -d ' ' -f -2 | grep $*)
 #fi
-entries=$(man -k --names-only --regex $1 | \
-	while read line; do
-		if cut -d ' ' -f -1 <<< $line | grep $* >&/dev/null; then
-			if [ "${verbose:-0}" = 1 ]; then
-				echo $line
-			else
-				cut -d ' ' -f -2 <<<$line
-			fi
-		fi
-	done)
+#entries=$(whatis --regex $1 | \
+#	while read line; do
+#		if cut -d ' ' -f -1 <<< $line | grep $* >&/dev/null; then
+#			if [ "${verbose:-0}" = 1 ]; then
+#				echo $line
+#			else
+#				cut -d ' ' -f -2 <<<$line
+#			fi
+#		fi
+#	done)
+
+entries=$(whatis --regex $*)
+[ ${verbose:-0} = 0 ] && \
+	entries=$(cut -d ' ' -f -1 <<<$entries)
 
 [ -z "$entries" ] && return
 #column <<<$entries
@@ -25,7 +29,8 @@ j=$(wc -l <<< $entries)
 range="1..$j, -$j..-1"
 quit="<enter>, 0"
 #cat -n <<< $entries | sed 's/[ \t]\{1,\}/ /g' | column
-awk '/./{printf "%3d. %s\n", NR, $0}' <<<$entries | column
+awk '/./{printf "%3d. %s\n", NR, $0}' <<<$entries | \
+	wrap-to $((verbose?3:4)) | column
 
 while { echo "Select a page ($range) or quit ($quit)" && read i }; do
 	[ -z "$i" ] || [[ "$i" =~ "[Qq]" ]] || \

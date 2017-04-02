@@ -26,8 +26,11 @@ alias tmuxconfig='$EDITOR ~/.tmux.conf && tmux source-file ~/.tmux.conf'
 alias tree="tree --charset=ascii"
 alias list='cat -n | sed "s/^[ ]*\([0-9]*\)[ \t]*\(.*\)/\1. \2/"'
 alias compgen='sort -u <(ls $path 2>/dev/null) <(zsh-functions) <(zsh-aliases)'
-alias compgrep='compgen | grep'
-alias listgrep='list $@ | grep'
+# compgrep(){
+#	compgen | grep $* | wrap-to | column
+#}
+#alias compgrep='compgen | grep'
+#alias listgrep='list $@ | grep'
 
 compdef vman="man"
 alias irhn='grep -IrHn'
