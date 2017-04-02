@@ -49,8 +49,6 @@ rand-chars(){
 }
 rand-line(){
 	n=${1:-1}; shift
-	#fd=${1:-/dev/stdin}
-	#n=${2:-1}
 	for ((i=0;i<n;i++)); do
 		for fd in ${*:-/dev/stdin}; do
 			echo -n $(head -n $(($(rand-chars 16 "[0-9]") % $(wc -l <$fd))) <$fd \
@@ -61,16 +59,13 @@ rand-line(){
 }
 wrap-to(){
 	local cols=${1:-5}
-	local len=${2:-$COLUMNS}
-	local lsep=''; local rsep='';
-	if [ ${border:-1} -eq 1 ]; then
-		lsep='| '
-		rsep=' |'
-	fi
-	len=$((len/cols-${#lsep}-${#rsep}))
+	local len=$((${2:-$COLUMNS}/cols))
+	local lsep=$'\u2595'' '
+	local rsep=' '$'\u258f'
+	len=$((len-${#lsep}-${#rsep}))
 	local j=0
-	local pre=' ...'
-	local post='...'
+	local pre=$'\u2025'
+	local post=$pre
 	local i=''
 	while read i; do
 		local indent=''
@@ -86,31 +81,41 @@ wrap-to(){
 				i=''
 			fi
 			let "first=0"
-			printf $lsep'%s%-'$cur_len's'$rsep'\n' \
-				"$indent" "$line"
+			printf '%s%s%-'$cur_len's%s\n' "$lsep" "$indent" "$line" "$rsep"
+			#printf $lsep'%s%-'$cur_len's'$rsep'\n' \
+			#	"$indent" "$line"
 			indent=$pre
 		done
 	done
 }
 columnate(){
 	local cols=${1:-5}
-	lines=$(wrap-to $cols $2)
+	lines="$(wrap-to $cols $2)"
 	local n=$(wc -l <<<$lines)
-	#local n=${#lines}
 	local m=$((n/cols+1))
+
+	local usep="$(printf '%'$((${2:-$COLUMNS}-3))'s ' '')"
+	local bsep=' '$(sed 's/ /'$(printf '\u23ba')'/g' <<<$usep)'\n'
+	usep=' '$(sed 's/ /'$(printf '\u23bd')'/g' <<<$usep)'\n'
+	#local n=${#lines}
 	#for ((k=0;k<$((n-m*cols));k++)); do lines="$lines\n"; done
 	#let "n=$n+$((n-m*cols))"
 	n=$(wc -l <<<$lines)
 	#echo "$n lines, $m lines/column, $((m)) - $((m+m)) in first column"
 	local -a arr=()
 
+	empty=$(echo|wrap-to $cols $2)
 	echo $lines | { k=1; while read line; do arr[k]=$line; let "k++"; done }
+	echo -n $usep
 	for ((row=0;row<m;row++)); do
 		for ((col=0;col<cols;col++)); do
-			echo -n ${arr[col*m+row+1]}
+			line=${arr[col*m+row+1]}
+			[ -z "$line" ] && printf '%s' $empty || printf '%s' $line
+			#echo -n ${arr[col*m+row+1]}
 		done
 		echo
 	done
+	echo -n $bsep
 
 #	local k=0
 #	local l=0
