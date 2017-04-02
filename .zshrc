@@ -14,10 +14,7 @@ alias -g ~dicts=~/workspace/dicts
 alias please='sudo'
 alias fucking='sudo'
 
-zsh-update(){
-	if [ "$1" = "-f" ]; then export ZSHRC_FORCE=1; fi
-	source ~/.zshrc
-}
+alias zsh-aliases='alias | sed "s/^\([^=]*\).*/\1/"'
 alias zshconfig='$EDITOR ~/.zshrc && zsh-update'
 alias zshenv='$EDITOR ~/.zshenv && zsh-update'
 alias tmuxconfig='$EDITOR ~/.tmux.conf && tmux source-file ~/.tmux.conf'
@@ -26,11 +23,6 @@ alias tmuxconfig='$EDITOR ~/.tmux.conf && tmux source-file ~/.tmux.conf'
 alias tree="tree --charset=ascii"
 alias list='cat -n | sed "s/^[ ]*\([0-9]*\)[ \t]*\(.*\)/\1. \2/"'
 alias compgen='sort -u <(ls $path 2>/dev/null) <(zsh-functions) <(zsh-aliases)'
-# compgrep(){
-#	compgen | grep $* | wrap-to | column
-#}
-#alias compgrep='compgen | grep'
-#alias listgrep='list $@ | grep'
 
 compdef vman="man"
 alias irhn='grep -IrHn'
@@ -47,6 +39,7 @@ alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
 alias win32-g++='x86_64-w64-mingw32-g++-win32'
 devs=('.*Makefile' 'mk' 'c' 'h' 'cpp' 'hpp' 'frag' 'vert' 'lua' 'py' 's' 'lst')
 for d (${devs[@]}) alias -s "$d"='$EDITOR';
+#alias find-definitions='irhn "^[ \t]*.*(.*);\|^[ \t]*.*typedef.*\|^[ \t]*.*using.*"'
 
 alias dryad='git add -An'
 

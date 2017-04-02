@@ -2,10 +2,10 @@ zsh-functions(){
 	functions | grep -o '^[^ ^=]*[ ]\?()' | \
 		sed 's/\(.*\)[ ]*()/\1/'
 }
-zsh-aliases(){
-	alias | sed 's/^\([^=]*\).*/\1/'
+zsh-update(){
+	[ "$1" = "-f" ] && export ZSHRC_FORCE=1
+	source ~/.zshrc
 }
-
 sfilter(){
 	script --flush -q -c "$1" /dev/null 2>/dev/null | \
 		tee | grep ${${@:2}:-.*}
@@ -28,8 +28,7 @@ compgrep(){
 	compgen | grep $* | columnate
 }
 vman(){
-	man -k $* 2>&1 | grep "^$1\|^$2" \
-		&& vim -c "SuperMan $*" \
+	man -k $* 2>&1 | grep "^$1\|^$2" && vim -c "SuperMan $*" \
 		-c "%y z | bd | set buftype=nofile | 0put=@z | %!sed 's/    / /g'"
 }
 
@@ -50,19 +49,20 @@ rand-chars(){
 rand-line(){
 	n=${1:-1}; shift
 	for ((i=0;i<n;i++)); do
-		for fd in ${*:-/dev/stdin}; do
-			echo -n $(head -n $(($(rand-chars 16 "[0-9]") % $(wc -l <$fd))) <$fd \
-				| tail -n 1 | tr -d '\r')' '
+		for fd in $*; do
+			echo -n $(head -n \
+				$(($(rand-chars 16 "[0-9]") % $(wc -l <$fd))) <$fd | \
+				tail -n 1 | tr -d '\r')' '
 		done
 		echo
 	done
 }
 wrap-to(){
 	local cols=${1:-5}
-	local len=$((${2:-$COLUMNS}/cols))
-	local lsep=$'\u2595'' '
-	local rsep=' '$'\u258f'
-	len=$((len-${#lsep}-${#rsep}))
+	#local len=$((${2:-$COLUMNS}/cols))
+	local lsep=${3:-$'\u2595'' '}
+	local rsep=${4:-' '$'\u258f'}
+	len=$((${2:-$COLUMNS}/cols-${#lsep}-${#rsep}))
 	local j=0
 	local pre=$'\u2025'
 	local post=$pre
@@ -93,15 +93,15 @@ columnate(){
 	lines="$(wrap-to $cols $2)"
 	local n=$(wc -l <<<$lines)
 	local m=$((n/cols+1))
+	local lsep=${3:-$'\u2595'' '}
+	local rsep=${4:-' '$'\u258f'}
 
-	local usep="$(printf '%'$((${2:-$COLUMNS}-3))'s ' '')"
+	local usep="$(printf '%'$((${2:-$COLUMNS}-1-${#lsep}-${#rsep}))'s ' '')"
+	#local usep="$(printf '%'$(((COLUMNS/cols)*cols))'s ' '')"
+	#local usep="$(printf '%'$((COLUMNS/cols))'s ' '')"
 	local bsep=' '$(sed 's/ /'$(printf '\u23ba')'/g' <<<$usep)'\n'
 	usep=' '$(sed 's/ /'$(printf '\u23bd')'/g' <<<$usep)'\n'
-	#local n=${#lines}
-	#for ((k=0;k<$((n-m*cols));k++)); do lines="$lines\n"; done
-	#let "n=$n+$((n-m*cols))"
 	n=$(wc -l <<<$lines)
-	#echo "$n lines, $m lines/column, $((m)) - $((m+m)) in first column"
 	local -a arr=()
 
 	empty=$(echo|wrap-to $cols $2)
@@ -114,41 +114,14 @@ columnate(){
 			#echo -n ${arr[col*m+row+1]}
 		done
 		echo
+		#[ "$row" -eq $((m-1)) ] && echo $empty2 || echo
 	done
 	echo -n $bsep
-
-#	local k=0
-#	local l=0
-#	while [ ${#lines} -gt 0 ]; do
-#		let "k++"
-#		arr[k]=$(head -n $m<<<$lines)
-#		#lines=$(tail -n $((n-m)))
-#		n=$((n-m))
-#		lines=$(tail -n $n)
-#	done
-#	for ((i=0;i<m;i++)); do
-#		for ((j=0;j<cols;j++)); do
-#			col=${arr[j+1]}
-#			printf "$(head -n $((i+1)) <<<${arr[j+1]} | tail -n1)"
-#		done
-#		echo
-#	done
-
-
-	#echo ${lines[1]}, ${lines[2]}
-	#echo $(head -n 1 <<< $lines), $(head -n2 <<<$lines | tail -n1)
-	#echo "n=$n; m=$m; lines:\n$lines"
-#	for ((i=0;i<m;i++)); do
-#		for ((j=0;j<cols;j++)); do
-#			printf "%s" "$(head -n $((i*cols+j+1)) <<< $lines | tail -n 1)"
-#		done
-#		echo
-#	done
 }
 
-find-definitions(){
-	irhn "^[ \t]*.*(.*);\|^[ \t].*typedef.*\|^[ \t]*using.*" ${*:-include}
-}
+# find-definitions(){
+#	irhn "^[ \t]*.*(.*);\|^[ \t].*typedef.*\|^[ \t]*using.*" ${*:-include}
+#}
 numbered(){
 	lines=0
 	files=""
@@ -305,19 +278,21 @@ color-range(){
 		echo
 		for i ({0..255..$cols}) \
 			printf "%3i" $i && \
-			printf "\e[48;5;232m$sp\e[48;5;%dm   \e[0m" {$i..$((i+cols-1))} \
-				&& echo
+			printf "\e[48;5;232m$sp\e[48;5;%dm   \e[0m" \
+				{$i..$((i+cols-1))} \
+			&& echo
 	else
 		while [ $# -gt 1 ]; do
 			j=1
-			for ((i=$1;i<$2;i++,j++)); do
-				if [[ $j -eq 1 ]]; then
+			for ((i=$1;i<$2;i++)); do
+				if [ "$j" -eq 1 ]; then
 					printf " $i"
 				fi
 				if [[ $j -eq 10 ]]; then
 					j=0
 				fi
 				printf "\e[38;5;"$i"m\u2588\e[0m"
+				let "j++"
 			done
 		shift 2
 		done
