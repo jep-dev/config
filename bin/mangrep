@@ -28,8 +28,9 @@ entries=$(whatis --regex $*)
 j=$(wc -l <<< $entries)
 range="1..$j, -$j..-1"
 quit="<enter>, 0"
-#cat -n <<< $entries | sed 's/[ \t]\{1,\}/ /g' | column
-awk '/./{printf "%3d. %s\n", NR, $0}' <<<$entries | \
+#column
+sed 's/[ \t]\{1,\}/ /g' <<<$entries | \
+	awk '/./{printf "%3d. %s\n", NR, $0}' | \
 	columnate $((${verbose:-0}?3:4))
 	#wrap-to | column
 
