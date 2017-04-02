@@ -25,7 +25,7 @@ findgrep(){
 	find "${1:-.}" \! -readable -prune -o -name "${${@:2}:-.*}"
 }
 compgrep(){
-	compgen | grep $* | wrap-to | column
+	compgen | grep $* | columnate
 }
 vman(){
 	man -k $* 2>&1 | grep "^$1\|^$2" \
@@ -60,20 +60,21 @@ rand-line(){
 	done
 }
 wrap-to(){
-	cols=${1:-5}
-	len=${2:-$COLUMNS}
-	lsep=''; rsep='';
+	local cols=${1:-5}
+	local len=${2:-$COLUMNS}
+	local lsep=''; local rsep='';
 	if [ ${border:-1} -eq 1 ]; then
 		lsep='| '
 		rsep=' |'
 	fi
-	len=$((len/cols))
-	j=0
-	pre=' ...'
-	post='...'
+	len=$((len/cols-${#lsep}-${#rsep}))
+	local j=0
+	local pre=' ...'
+	local post='...'
+	local i=''
 	while read i; do
-		indent=''
-		first=1
+		local indent=''
+		local first=1
 		while [ "${#i}" -gt 0 ] || [ $first -eq 1 ]; do
 			cur_len=$((len-${#indent}))
 			if [ ${#i} -gt $cur_len ]; then
@@ -90,6 +91,54 @@ wrap-to(){
 			indent=$pre
 		done
 	done
+}
+columnate(){
+	local cols=${1:-5}
+	lines=$(wrap-to $cols $2)
+	local n=$(wc -l <<<$lines)
+	#local n=${#lines}
+	local m=$((n/cols+1))
+	#for ((k=0;k<$((n-m*cols));k++)); do lines="$lines\n"; done
+	#let "n=$n+$((n-m*cols))"
+	n=$(wc -l <<<$lines)
+	#echo "$n lines, $m lines/column, $((m)) - $((m+m)) in first column"
+	local -a arr=()
+
+	echo $lines | { k=1; while read line; do arr[k]=$line; let "k++"; done }
+	for ((row=0;row<m;row++)); do
+		for ((col=0;col<cols;col++)); do
+			echo -n ${arr[col*m+row+1]}
+		done
+		echo
+	done
+
+#	local k=0
+#	local l=0
+#	while [ ${#lines} -gt 0 ]; do
+#		let "k++"
+#		arr[k]=$(head -n $m<<<$lines)
+#		#lines=$(tail -n $((n-m)))
+#		n=$((n-m))
+#		lines=$(tail -n $n)
+#	done
+#	for ((i=0;i<m;i++)); do
+#		for ((j=0;j<cols;j++)); do
+#			col=${arr[j+1]}
+#			printf "$(head -n $((i+1)) <<<${arr[j+1]} | tail -n1)"
+#		done
+#		echo
+#	done
+
+
+	#echo ${lines[1]}, ${lines[2]}
+	#echo $(head -n 1 <<< $lines), $(head -n2 <<<$lines | tail -n1)
+	#echo "n=$n; m=$m; lines:\n$lines"
+#	for ((i=0;i<m;i++)); do
+#		for ((j=0;j<cols;j++)); do
+#			printf "%s" "$(head -n $((i*cols+j+1)) <<< $lines | tail -n 1)"
+#		done
+#		echo
+#	done
 }
 
 find-definitions(){
@@ -167,11 +216,11 @@ nm-filter() {
 	nm -gC $1 | grep ".* $2 .*"
 }
 demangle(){
-        nm -S --demangle "$1" | cut -d' ' -f3-
+	nm -S --demangle "$1" | cut -d' ' -f3-
 }
 
 dpkg-grep(){
-        dpkg -l | grep "$1" | cut -d ' ' -f 3
+	dpkg -l | grep "$1" | cut -d ' ' -f 3
 }
 hi(){
 	lhs="\\\\e[7m"
@@ -254,7 +303,7 @@ color-range(){
 			printf "\e[48;5;232m$sp\e[48;5;%dm   \e[0m" {$i..$((i+cols-1))} \
 				&& echo
 	else
-    	while [ $# -gt 1 ]; do
+		while [ $# -gt 1 ]; do
 			j=1
 			for ((i=$1;i<$2;i++,j++)); do
 				if [[ $j -eq 1 ]]; then
