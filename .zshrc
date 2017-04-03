@@ -14,6 +14,7 @@ alias -g ~dicts=~/workspace/dicts
 alias please='sudo'
 alias fucking='sudo'
 
+#term
 alias zsh-aliases='alias | sed "s/^\([^=]*\).*/\1/"'
 alias zshconfig='$EDITOR ~/.zshrc && zsh-update'
 alias zshenv='$EDITOR ~/.zshenv && zsh-update'
@@ -24,6 +25,9 @@ alias tree="tree --charset=ascii"
 alias list='cat -n | sed "s/^[ ]*\([0-9]*\)[ \t]*\(.*\)/\1. \2/"'
 alias compgen='sort -u <(ls $path 2>/dev/null) <(zsh-functions) <(zsh-aliases)'
 alias count-chars='sed "s/\(.\)/\1\n/g" | grep -o ".\+" | wc -l'
+alias filter-sed='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
+alias wrap-column="sed -e 's/.\{'$(($COLUMNS/2-4))'\}/&\n/g' | column"
+alias set-grep='set|grep -a'
 
 compdef vman="man"
 alias irhn='grep -IrHn'
@@ -40,7 +44,10 @@ alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
 alias win32-g++='x86_64-w64-mingw32-g++-win32'
 devs=('.*Makefile' 'mk' 'c' 'h' 'cpp' 'hpp' 'frag' 'vert' 'lua' 'py' 's' 'lst')
 for d (${devs[@]}) alias -s "$d"='$EDITOR';
-#alias find-definitions='irhn "^[ \t]*.*(.*);\|^[ \t]*.*typedef.*\|^[ \t]*.*using.*"'
+alias Makefile='$EDITOR Makefile'
+alias readme='$EDITOR README.md'
+alias sloc='xargs wc -l'
+alias find-sloc='find . -type f | grep $dev | sloc | column | grep "[0-9]* "'
 
 alias dryad='git add -An'
 
@@ -49,12 +56,6 @@ alias -s mp3='vlc'
 
 alias lessh='LESSOPEN="| source-highlight %s -o STDOUT" less -M '
 
-alias filter-sed='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
-alias Makefile='$EDITOR Makefile'
-alias readme='$EDITOR README.md'
-alias sloc='xargs wc -l'
-alias find-sloc='find . -type f | grep $dev | sloc | column | grep "[0-9]* "'
-alias wrap-column="sed -e 's/.\{'$(($COLUMNS/2-4))'\}/&\n/g' | column"
 
 #apt
 alias autoremove='_ apt-get autoremove'
@@ -67,6 +68,7 @@ alias remove='_ apt-get remove'
 alias search='apt-cache search'
 alias update='_ apt-get update'
 alias upgrade='_ apt-get upgrade'
+alias dpkg-grep='dpkg -l | cut -d " " -f 3 | grep'
 
 #misc
 alias ns='notify-send'
@@ -74,6 +76,8 @@ alias nsc='notify-send -u critical'
 
 alias washer='sleep 1800 && nsc "Washer"'
 alias dryer='sleep 2700 && nsc "Dryer"'
+
+alias hrule='sed "s/././g" <(printf "%"$COLUMNS"s" "")'
 
 #net
 alias firefox='firefox --new-tab'
@@ -148,8 +152,7 @@ export PROMPT="$(tr -d '\n' <<< $PROMPT)"
 alias grep >&/dev/null && \
 	unalias grep && alias grep='grep --color=auto'
 
-export GREP_COLORS=\
-	'sl='$co_wt';;1:mt='$co_lg':cx=2:se='$co_wt';;1:fn='$co_dg':ln='$co_dg
+export GREP_COLORS='sl='$co_wt';;1:mt='$co_lg':cx=2:se='$co_wt';;1:fn='$co_dg':ln='$co_dg
 eval "$(dircolors -b ~/.dircolors)"
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
