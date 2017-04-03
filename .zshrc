@@ -23,6 +23,7 @@ alias tmuxconfig='$EDITOR ~/.tmux.conf && tmux source-file ~/.tmux.conf'
 alias tree="tree --charset=ascii"
 alias list='cat -n | sed "s/^[ ]*\([0-9]*\)[ \t]*\(.*\)/\1. \2/"'
 alias compgen='sort -u <(ls $path 2>/dev/null) <(zsh-functions) <(zsh-aliases)'
+alias count-chars='sed "s/\(.\)/\1\n/g" | grep -o ".\+" | wc -l'
 
 compdef vman="man"
 alias irhn='grep -IrHn'
@@ -149,7 +150,7 @@ alias grep >&/dev/null && \
 
 export GREP_COLORS=\
 	'sl='$co_wt';;1:mt='$co_lg':cx=2:se='$co_wt';;1:fn='$co_dg':ln='$co_dg
-export LS_COLORS="${LS_COLORS//ex=[^:]*/ex=$co_or}"
-export LS_COLORS="${LS_COLORS//fi=[^:]*/fi=$co_dg}"
-export LS_COLORS="${LS_COLORS//di=[^:]*/di=$co_ye}"
+eval "$(dircolors -b ~/.dircolors)"
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
 source ~/.zshenv
