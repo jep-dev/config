@@ -97,10 +97,8 @@ columnate(){
 	local rsep=${4:-' '$'\u258f'}
 
 	local usep="$(printf '%'$((${2:-$COLUMNS}-1-${#lsep}-${#rsep}))'s ' '')"
-	#local usep="$(printf '%'$(((COLUMNS/cols)*cols))'s ' '')"
-	#local usep="$(printf '%'$((COLUMNS/cols))'s ' '')"
 	local bsep=' '$(sed 's/ /'$(printf '\u23ba')'/g' <<<$usep)'\n'
-	usep=' '$(sed 's/ /'$(printf '\u23bd')'/g' <<<$usep)'\n'
+	usep=' '$(sed 's/ /_/g' <<<$usep)'\n'
 	n=$(wc -l <<<$lines)
 	local -a arr=()
 
@@ -111,17 +109,12 @@ columnate(){
 		for ((col=0;col<cols;col++)); do
 			line=${arr[col*m+row+1]}
 			[ -z "$line" ] && printf '%s' $empty || printf '%s' $line
-			#echo -n ${arr[col*m+row+1]}
 		done
 		echo
-		#[ "$row" -eq $((m-1)) ] && echo $empty2 || echo
 	done
 	echo -n $bsep
 }
 
-# find-definitions(){
-#	irhn "^[ \t]*.*(.*);\|^[ \t].*typedef.*\|^[ \t]*using.*" ${*:-include}
-#}
 numbered(){
 	lines=0
 	files=""
@@ -233,24 +226,18 @@ read-chars(){
 		read-chars $*
 	done
 }
-count-chars(){
-	sed 's/\(.\)/\1\n/g' | \
-		{i=0; while read j; do let "i=i+1"; done; echo $i}
-}
 
 to_hex(){
-	val=${1:-0}
-	len=${2:-2}
-	src="0123456789abcdef"
-	dest=""
-	i=0
+	val=${1:-0}; len=${2:-8}
 	val=$((val%(16**len)))
+	src="0123456789abcdef"
+	i=0
 	while [ "$i" -lt $len ] && [ $val -ge 0 ] ; do
-		dest=${src[val%16+1]}$dest
+		echo -n ${src[val%16+1]}
 		val=$((val/16))
 		let "i++"
-	done
-	echo $dest
+	done | rev && echo
+	#echo $dest
 }
 
 prompt_chars() {
