@@ -115,29 +115,10 @@ columnate(){
 	echo -n $bsep
 }
 
-numbered(){
-	lines=0
-	files=""
-	for arg in $*; do
-		case "$arg" in
-			-n ) lines=1 ;;
-			-* ) ;;
-			* ) files+="$arg " ;;
-		esac
-	done
-	for i in $files; do
-		file="$(echo $i | xargs)"
-		if [[ "$lines" -gt 0 ]]; then
-			cat -n "$file"
-		else
-			cat "$file"
-		fi
-	done
-}
-
 comments(){
 	args=""
 	langs=""
+	files=()
 	lines=0
 	skip=0
 	invert=0
@@ -151,7 +132,7 @@ comments(){
 				-l=* ) langs+="${${arg//-l=/}//,/\\n}" ;;
 				-l ) skip=1 ;;
 				-n ) lines=1 ;;
-				* ) ;;
+				* ) files+=$arg ;;
 			esac
 		fi
 	done
@@ -159,73 +140,25 @@ comments(){
 	echo "$langs" | { while read lang; do
 		if [[ "$invert" -gt 0 ]]; then
 			case "$lang" in
-				C ) numbered $* | sed 's/\/\/.*//g' ;;
-				C++ ) numbered $* | sed 's/\/\*.*\*\///g' ;;
+				C ) cat -n $files | sed 's/\/\/.*//g' ;;
+				C++ ) cat -n $files | sed 's/\/\*.*\*\///g' ;;
 				* ) ;;
 			esac
 		else
 			case "$lang" in
-				C ) numbered $* | perl -lne 'print if /\/\// .. /$/' \
-					| sed 's/\([ \t]*[0-9]*[ \t]*\).*\(\/\/.*\)/\1\2/g' ; ;;
-				C++ ) numbered $* | perl -lne 'print if /\/\*/ .. /\*\//' \
-					| sed 's/\([ \t]*[0-9]*[ \t]*\).*\(\/\*.*\*\/\).*/\1\2/g' ; ;;
-				* ) numbered $* ; ;;
+				C ) cat -n $files | perl -lne 'print if /\/\// .. /$/' | \
+					sed 's/\([ \t]*[0-9]*[ \t]*\).*\(\/\/.*\)/\1\2/g' ;;
+				C++ ) cat -n $files | perl -lne 'print if /\/\*/ .. /\*\//' | \
+					sed 's/\([ \t]*[0-9]*[ \t]*\).*\(\/\*.*\*\/\).*/\1\2/g' ;;
+				* ) cat -n $files ;;
 			esac
 		fi
 	done }
 }
 
-nongrep(){
-	grep "$*" | grep -v grep
-}
-
-set-grep(){
-	grep $* -a <(set)
-}
-
-nm-filter() {
-	nm -gC $1 | grep ".* $2 .*"
-}
-demangle(){
-	nm -S --demangle "$1" | cut -d' ' -f3-
-}
-
-dpkg-grep(){
-	dpkg -l | grep "$1" | cut -d ' ' -f 3
-}
-hi(){
-	lhs="\\\\e[7m"
-	rhs="\\\\e[0m"
-	line=""
-	line_no=0
-	pattern_no=1
-	patterns=""
-	pattern="$1"
-	while read line; do
-		any=0
-		let "line_no++"
-		while [[ "$#" -gt 0 ]]; do
-			if [ echo $line | grep "$1" ]; then
-				let "any=1"
-			fi
-			let "pattern=$1"
-			shift
-		done
-		printf "%3d: %s\n" $line_no "$line"
-	done
-}
-hi-make(){
-	make $* | hi "\-o [^ ].*"
-}
-read-chars(){
-	while [ $# -gt 0 ]; do
-		for ((i=0;i<${#1};i++)); do
-			echo "${1:$i:1}"
-		done
-		shift
-		read-chars $*
-	done
-}
+nongrep(){grep $* | grep -v grep}
+nm-filter(){nm -gC $1 | grep ".* $2 .*"}
+demangle(){nm -S --demangle "$1" | cut -d ' ' -f3-}
 
 to_hex(){
 	val=${1:-0}; len=${2:-8}
@@ -237,17 +170,13 @@ to_hex(){
 		val=$((val/16))
 		let "i++"
 	done | rev && echo
-	#echo $dest
 }
 
 prompt_chars() {
-	local bt_prompt_chars
-	bt_prompt_chars=""
-	#if [[ ${#BULLETTRAIN_PROMPT_CHAR} -eq 1 ]]; then
-		bt_prompt_chars="$BULLETTRAIN_PROMPT_CHAR"
-	#fi
+	local bt_prompt_chars="$BULLETTRAIN_PROMPT_CHAR"
 	if [[ $BULLETTRAIN_PROMPT_ROOT == true ]]; then
-		bt_prompt_chars="%(!.%F{${co_root:-red}}${bt_prompt_chars}.%F{${co_user:-green}}${bt_prompt_chars}%f)"
+		bt_prompt_chars="%(!.%F{${co_root:-red}}${bt_prompt_chars}.\
+%F{${co_user:-green}}${bt_prompt_chars}%f)"
 	fi
 	if [[ $BULLETTRAIN_PROMPT_SEPARATE_LINE == false ]]; then
 		bt_prompt_chars="${bt_prompt_chars}"
@@ -284,12 +213,6 @@ color-range(){
 		shift 2
 		done
 	fi
-}
-
-hrule(){
-	for (( i=0; i<$COLUMNS; i++ )); do
-		echo -n "."
-	done
 }
 
 gmkd2html(){
