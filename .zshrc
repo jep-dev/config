@@ -106,7 +106,7 @@ plugins=(git gitfast github wd zsh-_url-httplink)
 
 ZSH_THEME="bullet-train/bullet-train"
 
-export co_user="215"
+export co_user="231"
 export co_root="221"
 local co_wt="38;5;255"
 local co_lg="38;5;155"
@@ -114,6 +114,7 @@ local co_dg="38;5;143"
 local co_or="38;5;215"
 local co_ye="38;5;221"
 local at=$(printf "\u273b")
+
 BULLETTRAIN_PROMPT_ORDER=(time custom dir git cmd_exec_time status)
 BULLETTRAIN_PROMPT_SEPARATE_LINE=false
 BULLETTRAIN_PROMPT_ADD_NEWLINE=false
@@ -122,7 +123,6 @@ BULLETTRAIN_CUSTOM_MSG="\$(printf '%%n %s %%m' $at)"
 BULLETTRAIN_STATUS_EXIT_SHOW=true
 BULLETTRAIN_EXEC_TIME_ELAPSED=0
 BULLETTRAIN_PROMPT_CHAR=$at
-
 
 BG_PALETTE=(202 208 214 220 220 221 222)
 BULLETTRAIN_TIME_BG=${BG_PALETTE[1]}
@@ -138,7 +138,6 @@ for v ('TIME_FG' 'CUSTOM_FG' 'CONTEXT_FG' 'DIR_FG'
 	'GIT_FG' 'GIT_COLORIZE_DIRTY_FG_COLOR'
 	'STATUS_FG' 'STATUS_ERROR_FG' 'EXEC_TIME_FG') \
 		export "BULLETTRAIN_$v"=16;
-#BULLETTRAIN_CUSTOM_FG=15
 
 if [ "$ZSHRC_SOURCED" -eq 0 ] || [ "$ZSHRC_FORCE" -eq 1 ]; then
 	source $ZSH/oh-my-zsh.sh
@@ -149,6 +148,7 @@ export ZSHRC_SOURCED=$((ZSHRC_SOURCED+1))
 pidof thd >/dev/null || sudo ~/bin/thd.sh
 
 export PROMPT="$(tr -d '\n' <<< $PROMPT)"
+
 alias grep >&/dev/null && \
 	unalias grep && alias grep='grep --color=auto'
 
