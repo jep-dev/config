@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/bin/bash
 
 mode=${1:-'thin'}
 if [ "$mode" = 'thin' ]; then
