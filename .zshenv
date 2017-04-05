@@ -113,9 +113,6 @@ gmkd2html(){
 	github-markdown $ifname -f gfm -h >>$ofname
 	echo "</body>" >>$ofname
 }
-# Useful for ps ... | nongrep; matches normally but excludes itself
-# Try excluding self pid instead of any grep process
-nongrep(){grep $* | grep -v grep}
 # Search inside compiled objects
 nm-filter(){nm -gC $1 | grep ".* $2 .*"}
 # Override used to customize prompt
