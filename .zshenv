@@ -119,12 +119,13 @@ nm-filter(){nm -gC $1 | grep ".* $2 .*"}
 prompt_chars() {
 	local bt_prompt_chars="$BULLETTRAIN_PROMPT_CHAR"
 	if [[ $BULLETTRAIN_PROMPT_ROOT == true ]]; then
-		bt_prompt_chars="%(!.%F{${co_root:-red}}${bt_prompt_chars}.\
-%F{${co_user:-green}}${bt_prompt_chars}%f)"
+		local u_prompt="%F{${co_root:-red}}${bt_prompt_chars}"
+		local r_prompt="%F{${co_user:-green}}${bt_prompt_chars}"
+		bt_prompt_chars='%(!.'$u_prompt'.'$r_prompt'%f)'
 	fi
-	if [[ $BULLETTRAIN_PROMPT_SEPARATE_LINE == false ]]; then
-		bt_prompt_chars="${bt_prompt_chars}"
-	fi
+#	if [[ $BULLETTRAIN_PROMPT_SEPARATE_LINE == false ]]; then
+#		bt_prompt_chars="${bt_prompt_chars}"
+#	fi
 	echo -n $bt_prompt_chars' '
 }
 # Get the first $1 random characters matching the set $2
@@ -175,6 +176,15 @@ to_hex(){
 vman(){
 	man -k $* 2>&1 | grep "^$1\|^$2" && vim -c "SuperMan $*" \
 		-c "%y z | bd | set buftype=nofile | 0put=@z | %!sed 's/    / /g'"
+}
+web-search(){
+	query="$1"; shift
+	first=1
+	for arg in $*; do
+		[ $first -eq 1 ] && first=0 || query+='+'
+		query+=$arg
+	done
+	firefox "$query"
 }
 # Wrap input to $1 columns, $2 total per line; frame columns with $3, $4
 wrap-to(){

@@ -81,8 +81,14 @@ alias hrule='sed "s/././g" <(printf "%"$COLUMNS"s" "")'
 
 #net
 alias firefox='firefox --new-tab'
-alias -s com='firefox'
-alias -s org='firefox'
+alias -s com='firefox' org='firefox' net='firefox'
+alias google='web-search "google.com/search?q="'
+alias google-images='web-search "google.com/search?tbm=isch&q="'
+alias gimgs='google-images'
+alias duckduckgo='web-search "duckduckgo.com/?q="'
+alias ddg='duckduckgo'
+alias duckduckgo-images='web-search "duckduckgo.com/?ia=images&iax=1&q="'
+alias ddgimgs='duckduckgo-images'
 
 if [ "$ZSHRC_SOURCED" -eq 0 ]; then
 	new_path=($HOME'/bin' $HOME'/workspace/markdown/bin'
@@ -147,12 +153,11 @@ export ZSHRC_SOURCED=$((ZSHRC_SOURCED+1))
 
 pidof thd >/dev/null || sudo ~/bin/thd.sh
 
-export PROMPT="$(tr -d '\n' <<< $PROMPT)"
-
 alias grep >&/dev/null && \
 	unalias grep && alias grep='grep --color=auto'
 
-export GREP_COLORS='sl='$co_wt';;1:mt='$co_lg':cx=2:se='$co_wt';;1:fn='$co_dg':ln='$co_dg
+export GREP_COLORS='sl='$co_wt';;1:mt='$co_lg':'\
+'cx=2:se='$co_wt';;1:fn='$co_dg':ln='$co_dg
 eval "$(dircolors -b ~/.dircolors)"
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
