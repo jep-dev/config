@@ -89,6 +89,8 @@ alias duckduckgo='web-search "duckduckgo.com/?q="'
 alias ddg='duckduckgo'
 alias duckduckgo-images='web-search "duckduckgo.com/?ia=images&iax=1&q="'
 alias ddgimgs='duckduckgo-images'
+alias wiki='web-search "en.wikipedia.org/w/index.php?search="'
+alias youtube='web-search "youtube.com/results?q="'
 
 if [ "$ZSHRC_SOURCED" -eq 0 ]; then
 	new_path=($HOME'/bin' $HOME'/workspace/markdown/bin'
