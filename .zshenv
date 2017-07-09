@@ -1,6 +1,6 @@
 # Wrap lines and format to $1 columns
 columnate(){
-	local cols=${1:-5}
+	local cols="${cols:-${1:-5}}"
 	lines="$(wrap-to $cols $2)"
 	local n=$(wc -l <<<$lines)
 	local m=$((n/cols+1))
@@ -56,6 +56,9 @@ color-range(){
 		done
 	fi
 }
+
+
+
 # Extract comments from files by language
 comments(){
 	args=""
@@ -89,12 +92,27 @@ comments(){
 		esac
 	done }
 }
+
+
 # Search the path, functions, and aliases with regex
 compgrep(){
-	compgen | grep $* | columnate
+	compgen | grep "$1" ${*:2} | columnate
 }
 # Extract functions from compiled objects
 demangle(){nm -S --demangle "$1" | cut -d ' ' -f3-}
+
+dev-grep(){
+	foreach x in $devs; do
+		y=({{1:-.}/*\.$x} {{1:-.}/$x\.*}) 2>/dev/null
+		# y=(${1:-.}/**/*$x) 2>/dev/null
+		printf '%s\n' $y
+	done
+}
+
+#files2(){
+#	for f ("$1") echo "$2$f" && [ -d $f ] && files2 "$(ls $2$f)" "$2"
+#}
+
 # Check brief statuses of git-managed subdirectories
 git-statuses(){
 	old_pwd="$PWD"
@@ -143,6 +161,12 @@ rand-chars(){
 	done
 	echo "$dest"
 }
+rem-query(){
+	fds=${1:-'.'}
+	for file in $fds; do
+		# TODO
+	done
+}
 # Get the first $1 random lines from the remaining args (file descriptors)
 rand-line(){
 	n=${1:-1}; shift
@@ -177,11 +201,25 @@ vman(){
 	man -k $* 2>&1 | grep "^$1\|^$2" && vim -c "SuperMan $*" \
 		-c "%y z | bd | set buftype=nofile | 0put=@z | %!sed 's/    / /g'"
 }
+
+# web-select(){
+# 	local callback="${1:-$browser}"; shift
+# 	declare -A locations
+# 	locations=(\
+# 		['google']='https://google.com' \
+# 		['duckduckgo']='https://duckduckgo.com' \
+# 	)
+# 	shorthands=(['ddg']='duckduckgo')
+# 	for s in "${!shorthands[@]}"; do
+# 		locations+=([$s] = ${locations[${shorthands[$s]}]})
+# 	done
+# }
+
 web-search(){
 	query="$1"; shift
 	first=1
 	for arg in $*; do
-		[ $first -eq 1 ] && first=0 || query+='+'
+		[ "$first" -eq 1 ] && first=0 || query+='+'
 		query+=$arg
 	done
 	firefox "$query"
