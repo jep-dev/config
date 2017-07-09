@@ -1,10 +1,9 @@
-
-[ -n "$TMUX" ] && printf "\033]2;tmux/zsh\033\\"
 [ -z "$ZSHRC_SOURCED" ] && export ZSHRC_SOURCED=0
 [ -z "$ZSHRC_FORCE" ] && export ZSHRC_FORCE=0
 
 export EDITOR='vim'
-export TERM="screen-256color"
+#export TERM="screen-256color"
+export TERM='xterm-256color'
 export ZSH=~/.oh-my-zsh
 
 alias -g ~ws=~/workspace
@@ -14,10 +13,12 @@ alias -g ~dicts=~/workspace/dicts
 alias please='sudo'
 alias fucking='sudo'
 
-#term
-alias zsh-aliases='alias | sed "s/^\([^=]*\).*/\1/"'
+
 alias zshconfig='$EDITOR ~/.zshrc && zsh-update'
 alias zshenv='$EDITOR ~/.zshenv && zsh-update'
+
+#term
+alias zsh-aliases='alias | sed "s/^\([^=]*\).*/\1/"'
 alias tmuxconfig='$EDITOR ~/.tmux.conf && tmux source-file ~/.tmux.conf'
 
 #info
@@ -28,6 +29,9 @@ alias count-chars='sed "s/\(.\)/\1\n/g" | grep -o ".\+" | wc -l'
 alias filter-sed='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
 alias wrap-column="sed -e 's/.\{'$(($COLUMNS/2-4))'\}/&\n/g' | column"
 alias set-grep='set|grep -a'
+#alias files='(){find $(cat) | difftree "/" " "} <<<'
+alias files='(){find $(cat) -type f | difftree "/" " "} <<<'
+
 
 compdef vman="man"
 alias irhn='grep -IrHn'
@@ -38,18 +42,102 @@ alias vi='vim'
 alias vimu='vim +PluginInstall +qall'
 alias vimconfig='$EDITOR ~/.vimrc'
 alias vim="stty stop '' -ixoff ; $EDITOR"
+vim-cmd(){
+	# local infile="$(mktemp --suffix=$1)"
+	# local outfile="$(mktemp)"
+#	shift
+#	vim $1 -c "${*:2}" $infile
+#	cat $outfile
+#	rm $outfile
+}
+#vim-keys(){
+#	# ft="$1"
+#	# [ $# -gt 1 ] && shift
+#	vim-cmd ':set filetype='$1 ' | :map'
+#	# vim-cmd-plaintext 'set filetype='"$ft" | :map' $@
+#}
+
+
+vim-cmd(){
+	outfile="$(mktemp --suffix=$1)"
+	trap 'rm '"$outfile" EXIT; {
+		vim $outfile -c "$2" >/dev/tty
+		cat $outfile
+	}
+}
+
+vim-hi(){
+	# vim-cmd "$1" "${
+	vim-cmd $1 $2
+	#vim $infile -c 'runtime syntax/hitest.vim | TOhtml | w! | q! | q!'
+	#awk -v 'a=0' -v 'b=0' \
+	#	'/<style/{a=1}/<!--/{D;if(a) b=1}/-->/{a=0;b=0}a && b' $outfile
+	#rm $infile $outfile
+	# vim-cmd $1 ${*:2}' | runtime syntax/hitest.vim | TOhtml | :w! $outfile'
+	# vim-cmd ':set filetype='$1' | :runtime syntax/hitest.vim'
+}
 
 #dev
+devs=('Makefile' 'mk' 'README' 'md' \
+	'c' 'h' 'cpp' 'hpp' 's' 'lst' \
+	'frag' 'vert' 'lua' 'py')
 alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
 alias win32-g++='x86_64-w64-mingw32-g++-win32'
-devs=('.*Makefile' 'mk' 'c' 'h' 'cpp' 'hpp' 'frag' 'vert' 'lua' 'py' 's' 'lst')
-for d (${devs[@]}) alias -s "$d"='$EDITOR';
-alias Makefile='$EDITOR Makefile'
-alias readme='$EDITOR README.md'
-alias sloc='xargs wc -l'
-alias find-sloc='find . -type f | grep $dev | sloc | column | grep "[0-9]* "'
+
+for d ($devs) { alias -s $d='$EDITOR' }
+# for d ($devs) { alias -s $d='$EDITOR' }
+
+# alias Makefile='$EDITOR Makefile'
+alias makefile='(){ (){ $EDITOR ${1:-./Makefile} } ${^:-${1:-.}/{Makefile,*.mk}*(N)} }'
+# alias readme='$EDITOR README'
+alias readme='(){ (){ $EDITOR ${1:-./README} } ${^:-${1:-.}/{README,*.md}*(N)} }'
+
+#alias sloc='(){ printf "\r" | wc -l $(dev-grep $*) }'
+#		| awk -v 'a=1' -v 'b=1' \
+#			'/\/\*/{a=0;b=0}/\*\//{a=1}{if(a&&b) print; if(a) b=1}'
+
+sloc-real(){
+	for arg; do
+		if [ -r $arg ]; then
+			ftype="Generic"
+			lines=$(cat $arg)
+
+			#echo $(printf '%q' $lines)
+			real_lines="$lines"
+			n_lines=$(wc -l $arg)
+			case $arg in
+				*.[ch] | *.[cht]pp )
+					ftype="C"
+					if [[ "$arg" =~ '.*pp' ]]; then
+						ftype="C++"
+						real_lines=$(sed ':n N
+							:s { s/\/\*\(.*\)\*\///; Tn }
+							/\/\*/bs' <<<$lines);
+					fi
+					real_lines=$(sed 's/\/\/.*//' <<<$lines)
+					;;
+				Makefile )
+					ftype="Makefile"
+					real_lines="$(grep -v '^\ *#' $arg)"
+					;;
+				* )
+					real_lines="$lines"
+					#ftype="${arg//*./}"
+					;;
+			esac
+			real_lines=$(echo $real_lines | grep -o '.*[^ ^\t].*')
+			lines=$(echo $lines | grep -o '.*[^ ^\t]+.*')
+			# lines=$(grep -o '.*[^ ^\t]+.*' <<<"$lines")
+			# lines="$(echo -n $lines | grep -o '.*[^ ^\t].*')"
+			echo "$(echo $real_lines | wc -l)/$(wc -l $arg)" \
+				"(as $ftype)"
+			#echo $real_lines
+		fi
+ done
+}
 
 alias dryad='git add -An'
+alias gaan='dryad'
 
 #media
 alias -s mp3='vlc'
@@ -81,7 +169,9 @@ alias hrule='sed "s/././g" <(printf "%"$COLUMNS"s" "")'
 
 #net
 alias firefox='firefox --new-tab'
-alias -s com='firefox' org='firefox' net='firefox'
+alias browser='firefox'
+google_base='https://google.com'
+alias -s com='browser' org='browser' net='browser'
 alias google='web-search "google.com/search?q="'
 alias google-images='web-search "google.com/search?tbm=isch&q="'
 alias gimgs='google-images'
@@ -91,6 +181,21 @@ alias duckduckgo-images='web-search "duckduckgo.com/?ia=images&iax=1&q="'
 alias ddgimgs='duckduckgo-images'
 alias wiki='web-search "en.wikipedia.org/w/index.php?search="'
 alias youtube='web-search "youtube.com/results?q="'
+
+# alias bak_='(){ ${3:-tar cvf} $1 $2 }'
+alias bak='(){
+src="$(realpath ${3:-.})";
+name="$(basename $src)";
+cmd="${1:-tar}"
+dest="$(realpath ${2:-~/Backups/bak/})";
+suffix="$(date +%s)"
+[ -d "$dest" ] || mkdir "$dest";
+if [[ "${cmd:-tar}" =~ "tar.*" ]]; then
+tar $4 cf "$dest/$name-$suffix.tar" "$src";
+else
+cp -R $4 "$src" "$dest/$name-$suffix";
+fi
+}'
 
 if [ "$ZSHRC_SOURCED" -eq 0 ]; then
 	new_path=($HOME'/bin' $HOME'/workspace/markdown/bin'
