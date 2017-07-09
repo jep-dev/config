@@ -1,254 +1,307 @@
-set nocompatible              " be iMproved, required
-filetype off                  " required
-set shortmess=a				  " shorten load message
-set number
+" Use a file type with no associations to sandbox new ideas.
 
-" vertical resize 80
+" TODO from help -> 'insert.txt':
+"    inserting, inserting-ex from 'insert.txt' --
+"      n/v/o modes; <N>g(Ii|Aa|Oo)
+"    Idea -- using line('.'),col('.'), fill/align/etc.
+"      :{range}{a=prepend,i=append}[!]        1+ lines
+"    Exclusions following ftype patterns
+"      let g:omni_syntax_group_exclude_<lang> = '<regex>,...'
+"      So use key bindings with parameters to change visibility
 
-set undofile
-set undodir=$HOME/share/vimundo
-set undolevels=1000
-set undoreload=10000
-
-let color_palette=[
-		\225, 216, 186, 185, 247, 15, 203, 217,
-		\155, 139, 208, 81, 6, 214, 106, 14
-	\]
-let general_color_set=[
-		\[['Number', 'Comment'], 0], [['String'], 1], [['Macro'], 15]
-	\]
-let vim_color_set=[
-		\[['HiNmbr', 'HiAttrib', 'Option', 'Comment', 'LineComment'], 0],
-		\[['Bracket'], 2], [['Map', 'Command'], 3],
-		\[['Oper', 'ParenSep', 'Notation', 'Continue'], 4]
-	\]
-let make_color_set=[
-			\[['Comment'], 0],
-			\[['NextLine', 'CmdNextLine', 'Include', 'Target', 'Define'], 14],
-			\[['Commands'], 13]
-		\]
-let sh_color_set=[
-		\[['Comment'], 0], [['Statement'], 1],
-		\[['Repeat', 'CaseIn', 'SnglCase', 'Conditional',
-			\'Range', 'Operator'], 8],
-		\[['Variable'], 11],
-		\[['Quote', 'CommandSub', 'Set', 'CmdSubRegion', 'SetList'], 15]
-	\]
-let cpp_color_set=[
-		\[['Included'], 2], [['Include', 'PreCondit', 'Define'], 3],
-		\[['Constant', 'String', 'Boolean', 'Float', 'Character', 'Number',
-			\'Bracket', 'CustomAngleBracketStart', 'CustomAngleBracketEnd',
-			\'Block', 'Paren'], 5],
-		\[['Special'], 6],
-		\[['Type', 'STLexception', 'STLfunctional', 'STLtype',
-			\'STLconstant', 'STLnamespace', 'STLios'], 7],
-		\[['StorageClass', 'Modifier', 'Repeat', 'Statement',
-			\'Label', 'UserLabel', 'Conditional', 'CustomTemplate', 'Structure'], 8],
-		\[['PreProc', 'CustomAngleBracketStart'], 9],
-		\[['Operator'], 10],
-		\[['cCustomClass', 'CustomClass', 'Comment'], 11],
-		\[['CustomTemplateClass'], 12], [['Function', 'CustomFunc'], 13]
-	\]
+set nocompatible   " be iMproved, required
+filetype off       " required
+set shm=a          " shorten load message
+set showcmd
+set undofile udir=$HOME/share/vimundo ul=1000 ur=10000
+set rtp+=~/.vim/bundle/Vundle.vim
 
 
-set ruler
-set cc=80
-highlight ColorColumn ctermbg=0
+" nmap <Leader>k i<C-k><gt>1
+" let tab_major='»'
+let tab_major='⋮' " '¦'
+let tab_minor='\ ' " '‹'
+exec 'set list lcs=tab:' . tab_major . tab_minor
+" set list lcs=tab:'‸'\ "
+" set list lcs=tab:\:^
+set laststatus=2
 
-set noet ci pi sts=0 sw=4 ts=4
+" set noet noai ci pi sts=0 sw=4 ts=4 cinoptions=b0,l0,+0,(0,(s,m1
 set backspace=indent,eol,start
-set cinoptions=l1
 
-set showbreak=...
+set encoding=utf8
+set ttym=xterm2 mouse=a
 
 set t_Co=256
-highlight Visual term=reverse cterm=reverse guibg=Black ctermbg=Black
-highlight Nontext ctermbg=none
-highlight Normal ctermfg=186 ctermbg=none
-highlight Pmenu ctermfg=231 ctermbg=16
 
-highlight confComment ctermfg=225 "146
-highlight Special ctermfg=203
+set nu ru cul cuc cc=80 sbr=...
+set cole=2 cocu=vin
+set cot=menu cot-=preview
+set ph=20
 
-set cursorline
-set ttymouse=xterm2
-highlight CursorLine cterm=none
-highlight LineNr ctermfg=208
-highlight CursorLineNr ctermfg=214
+let buf_nre='au BufNewFile,BufRead,BufEnter'
 
-highlight confString ctermfg=106
-highlight markdownCodeDelimiter ctermfg=159
+let palette={
+	\'lblue': 81, 'blue': 5,
+		\'lteal': 14, 'teal': 6,
+		\'lolive': 186, 'olive': 185,
+		\'lgreen': 155, 'green': 106,
+	\'lyellow': 220, 'yellow': 226,
+		\'lorange': 214, 'orange': 208,
+	\'lred': 216, 'red': 203,
+		\'lpink': 225, 'pink': 217,
+		\'lpurple': 139, 'purple': 247,
+	\'white': 231, 'black': 232,
+		\'lgray': 15, 'gray': 253
+\}
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
+let term_map=[
+	\['*', {
+		\'ctermfg=': {
+			\   palette['lblue']: [
+				\'Statement', 'Operator',
+				\'Conditional', 'Repeat', 'CaseIn', 'SngleCase'
+			\], palette['lgreen']: [
+				\'String', 'SString', 'DString',
+				\'Number', 'Constant', 'Float', 'Character'
+			\], palette['lolive']: ['Identifier', 'Type'],
+			\   palette['green']: ['Modifier', 'Label', 'UserLabel'],
+			\   palette['lyellow']: [],
+			\   palette['lorange']: [
+				\'Typedef', 'Structure', 'StorageClass', 'Variable',
+				\'CursorLineNr', 'LineNr'
+			\], palette['lred']: [
+				\'macro', 'directive', 'PreProc', 'PreCondit'
+			\], palette['lgray']:
+					\['Comment', 'Special'],
+			\   palette['white']:
+					\['Normal', 'Pmenu', 'MatchParen'],
+			\palette['black']: []
+		\}, 'ctermbg=': {
+			\   palette['white']: [
+				\'Visual', 'SignColumn',
+				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
+				\'GitGutterAddDefault', 'GitGutterChangeDefault',
+				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
+			\], palette['black']: ['LineNr', 'CursorLineNr',
+				\'Visual', 'MatchParen',
+				\'PMenu', 'PmenuSel', 'PmenuSbar', 'CursorColumn'
+			\]
+		\}, 'cterm=': {
+			\   'NONE': [
+				\'CursorLineNr', 'LineNr', 'SignColumn',
+				\'PmenuSel', 'MatchParen',
+				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
+				\'GitGutterAddDefault', 'GitGutterChangeDefault',
+				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
+			\], 'NONE,bold': ['CursorLine'],
+			\   'NONE,reverse': ['Visual', 'CursorLineNr', 'MatchParen']
+		\}, 'guifg=': {
+			\'White': [
+				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
+				\'GitGutterAddDefault', 'GitGutterChangeDefault',
+				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
+			\]
+		\}, 'guibg=': {
+			\'Black': [
+				\'LineNr',
+				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
+				\'GitGutterAddDefault', 'GitGutterChangeDefault',
+				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
+			\]
+		\}
+	\}], ['*.cpp,*.hpp,*.tpp', {
+		\'ctermfg=': {
+			\   palette['lteal']: [
+				\'cType', 'cppSTLios', 'cppSTLnamespace', 'cppSTLtype',
+				\'cppSTLexception', 'cppSTLfunctional', 'cppSTLtype'
+			\], palette['lorange']: ['cCustomClass'],
+			\   palette['lred']: [
+				\'cCppBracket', 'cCustomAngleBracketContent',
+				\'cCppBlock'
+			\], palette['white']: [
+				\'cAnsiFunction', 'cCppParen',
+				\'cCustomParen', 'cCustomFunc'
+			\]
+		\}
+	\}], ['Makefile,*.mk', {
+		\'ctermfg=': {
+			\palette['lteal']:
+				\['Target', 'SpecTarget', 'Override', 'Special'],
+			\palette['teal']: ['Commands', 'Command'],
+			\palette['lgreen']: ['SString', 'DString']
+		\}
+	\}], ['*.sh*,*.zsh*', {
+		\'ctermfg=': {
+			\palette['lgreen']:
+				\['Quote', 'Set', 'SetList', 'CmdSubRegion']
+		\}
+	\}], ['*.vim*', {
+		\'ctermfg=': {
+			\palette['lorange']: ['VimVar'],
+			\palette['white']: []
+		\}, 'guifg=': {
+			\'White': [
+				\'VimEcho', 'VimEchoHL', 'VimNormCmds', 'StatusLine',
+				\'StatusLineNC', 'Title', 'Question',
+				\'ModeMsg', 'MoreMsg', 'Text', 'NonText'
+			\]
+		\}
+	\}]
+\]
 call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-" Plugin 'ervandew/supertab'
-let g:SuperTabClosePreviewOnPopupClose=1
-" let g:SuperTabDefaultCompleteType='context'
-let g:SuperTabDefaultCompleteType='<c-x><c-u><c-p><c-n>'
-" let g:SuperTabDefaultCompleteType='<c-p><c-x><c-n>'
-
-Plugin 'myint/clang_complete'
-"Plugin 'Rip-Rip/clang_complete'
+Plugin 'myint/clang_complete' " Rip-Rip/clang_complete python2.x -> python3.x
 let g:clang_auto_select=1
 let g:clang_complete_auto=1
-let g:clang_complete_copen=1
 let g:clang_complete_hl_errors=1
 let g:clang_close_preview=1
 let g:clang_c_options='-std=gnu11'
 let g:clang_cpp_options='-std=c++11 -stdlib=libc++'
-let g:clang_snippets=1
+let g:clang_sort_algo='alpha'
 let g:clang_snippets_engine='clang_complete'
 let g:clang_conceal_snippets=0
 let g:clang_use_library=1
 let g:clang_library_path="/home/john/Downloads/llvm/lib/"
-let g:clang_sort_algo='alpha'
-let g:clang_user_options=' -I/home/john/workspace/boost/boost ||exit 0'
-" imap <F4> <Plug>(BidiComplete)
 
 Plugin 'octol/vim-cpp-enhanced-highlight'
 let g:cpp_class_scope_highlight=1
 let g:cpp_experimental_template_highlight=1
 
-
-" :inoremap <tab> <c-x><c-u>
-:inoremap <c-@> <c-x><c-u>
-:inoremap <NUL> <c-x><c-u>
+let mapleader=","
 :inoremap <Tab> <c-x><c-u>
 :inoremap <S-Tab> <Tab>
-:set dictionary="/usr/dict/words"
+" :set dictionary="/usr/dict/words"
 
-noremap! <F3> <Esc>
+noremap! <F3> <Esc> " Alternate escape; TODO better map
 
 noremap! <n> <NOP>
 noremap! <m> <NOP>
-:inoremap <\<> <NOP>
+imap \> <C-v>>
+imap \< <C-v><
 noremap! <M-'> <NOP>
+noremap! <M-"> <NOP>
 
-set conceallevel=2
-set concealcursor=vin
-set completeopt=menu,longest
-" set completeopt=menuone,menu
-set completeopt-=preview
-set pumheight=20
-
-" set foldmethod=indent
 inoremap <F2> <c-o>:
 
 syntax on
-set mouse=a
-set showcmd
-" # set number
+syn sync fromstart
 
-autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
-autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+au CursorMovedI * if pumvisible() == 0|pclose|endif
+au InsertLeave * if pumvisible() == 0|pclose|endif
 
-au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$")
-			\| exe "normal! g'\"4kzt4j" | endif
+" Resume editing at last position, with last 4 lines in view
+au BufReadPost * if line("'\"") > 1
+			\ && line("'\"") <= line("$")
+			\ | exe "normal! g'\"4kzt4j" | endif
 
-let buf_nre='au BufNewFile,BufRead,BufEnter'
-
-exec buf_nre . ' *.txt set filetype=txt'
+exec buf_nre . ' *.txt,*.warprc set filetype=txt'
+exec buf_nre . ' *.vim,*.vimrc set filetype=vim'
 
 exec buf_nre . ' *.cpp,*.tpp,*.hpp set'
 			\ . ' filetype=cpp omnifunc=omni#cpp#complete#Main'
 			\ . ' completefunc=ClangComplete'
-" exec buf_nre . ' *.cpp,*.tpp,*.hpp set'
-			" \ . ' filetype=cpp omnifunc=ClangComplete'
-			" \ . ' completefunc=ClangComplete'
 exec buf_nre . ' *.mk,Makefile set filetype=make'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
 
-" syntax highlighter active at cursor (hi/transient/low)
-map <F10> :echo "hi<"
-			\ . synIDattr(synID(line("."),col("."),1),"name") . "> trans<"
-			\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-			\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name")
-			\ . ">"<CR>
+" Active highlight (hi/transient/low) plus stack below
+function! Syn_at(...)
+	let stack=[]
+	for id in synstack(line("."),col("."))
+		let stack+=[synIDattr(id,"name")]
+	endfor
+	let syn_0=synID(line("."),col("."),0)
+	let syn_1=synID(line("."),col("."),1)
+	echo 'Hi="' . synIDattr(syn_1,"name")
+				\ . '", Trans="' . synIDattr(syn_0,"name")
+				\ . '", Lo="' . synIDattr(synIDtrans(syn_1),"name") . '",'
+	echo '   Stack: ' . join(stack, ' > ')
+endfunction
+map <F10> :call Syn_at()<CR>
 
 vmap <C-c> :w! ~/.vimbuffer<CR>
 nmap <C-c> :.w! ~/.vimbuffer<CR>
 map <C-p> :r ~/.vimbuffer<CR>
 
 command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-	 	\ | wincmd p | diffthis
-nnoremap <C-W> :DiffOrig<CR>
+		\ | wincmd p | diffthis
 
-" Switch between splits
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+" nnoremap <C-w> :DiffOrig<CR>
 
-set encoding=utf8
+" Splits
+nnoremap <Leader>j <C-W>j     " Focus below
+nnoremap <Leader>J :sp<CR>    " Add and focus below
+nnoremap <Leader>k <C-W>k     " Focus above
+nnoremap <Leader>l <C-W>l     " Focus right
+nnoremap <Leader>L :vsp<CR>   " Add and focus right
+nnoremap <Leader>h <C-W>h     " Focus left
+nnoremap <Leader>s :sp<Space> " Add below with arguments
+noremap <Leader>v :vsp<Space> " Add right with arguments
 
 " Themes, colors, icons
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'ryanoasis/vim-devicons'
+let g:airline_powerline_fonts=1
+let g:airline_theme='base16_eighties'
 
 " Decorations
-Plugin 'airblade/vim-gitgutter'
+" Plugin 'airblade/vim-gitgutter'
 " Whitespace visualization
 Plugin 'Yggdroot/indentLine'
 Plugin 'ntpeters/vim-better-whitespace'
-set list lcs=tab:\|\ "
-let g:indentLine_char = '|'
+Plugin 'nathanaelkane/vim-indent-guides'
 
+hi IndentGuidesOdd ctermfg=216
+hi IndentGuidesEven ctermfg=247
+" let g:indentLine_char = '|'
+let g:indent_guides_auto_colors=0
+let g:indent_guides_enable_on_vim_startup=1
+let g:vim_indent_cont=0
+
+Plugin 'jeetsukumaran/vim-indentwise'
 Plugin 'vim-scripts/DoxygenToolkit.vim'
+let g:DoxygenToolkit_interCommentBlock=""
+let g:DoxygenToolkit_compactOneLineDoc="yes"
+let g:DoxygenToolkit_compactDoc="yes"
 Plugin 'vim-scripts/CompleteHelper'
 
 " RO plugins
 Plugin 'jez/vim-superman'
 
 " Language support
-Plugin 'vim-scripts/bash-support.vim'
+" Plugin 'vim-scripts/bash-support.vim'
+Plugin 'suan/vim-instant-markdown.git'
+let g:instant_markdown_slow=1
 
-set guifont=FuraMono-Medium\ Powerline\ 10
-let g:airline_powerline_fonts=1
-let g:airline_theme='base16_eighties'
-set laststatus=2
+exec buf_nre . ' * set fo= cc=80 wrap lbr tw=0 wm=2'
+" vnoremap <C-#> <Esc>`>A */<Esc>`<I/* <Esc>
 
-for co in general_color_set
-	for pre in ['', 'vim']
-		for var in co[0]
-			execute 'hi ' . pre . var . ' ctermfg=' . color_palette[co[1]]
+exec buf_nre . ' *.cpp,*.hpp,*.tpp '
+			\ . ':map <C-a> :s/^[ \t]*/&// /<CR> | '
+			\ . ':map <C-z> :s/^\([ \t]*\)\/\//\1/<CR>'
+
+map <C-a> :s/^[ \t]*/" &/<CR>          " Line quotes, default style is vim
+map <C-z> :s/^\([ \t]*\)"[ ]*/\1/<CR>  " Line unquote, default style is vim
+map <Leader>a [%V]%<C-a>               " Simple references to the C-a/C-z
+map <Leader>z [%V]%<C-z>               " key bindings so they can change
+
+" E.g. k_ftype='*.cpp', k_var='ctermfg=', k_val='255', k_tag='cBlock'
+for [k_ftype, v_ftype] in term_map
+	for [k_var, v_var] in items(v_ftype)
+		let k_group_au=[]
+		for [k_val, v_val] in items(v_var)
+			for k_tag in v_val
+				let k_group_au += ['hi! ' . k_tag . ' ' . k_var . k_val]
+			endfor
 		endfor
-	endfor
-endfor
-for co in make_color_set
-	for var in co[0]
-		execute 'hi make' . var . ' ctermfg=' . color_palette[co[1]]
-	endfor
-endfor
-for co in sh_color_set
-	for var in co[0]
-		execute 'hi sh' . var . ' ctermfg=' . color_palette[co[1]]
-	endfor
-endfor
-for co in vim_color_set
-	for var in co[0]
-		execute 'hi vim' . var . ' ctermfg=' . color_palette[co[1]]
-	endfor
-endfor
-for co in cpp_color_set
-	for pre in ['c', 'cpp']
-		for var in co[0]
-			execute 'hi ' . var . ' ctermfg=' . color_palette[co[1]]
-		endfor
+		exec buf_nre . ' ' . k_ftype . ' ' . join(k_group_au, ' | :')
 	endfor
 endfor
 
-hi SignColumn cterm=inverse
-hi GitGutterAdd cterm=inverse
-hi GitGutterDelete cterm=inverse
-hi GitGutterChangeDelete cterm=inverse
-
-exec buf_nre . ' * vertical resize 80'
-exec buf_nre . ' * set fo= winwidth=80 co=80 wrap lbr nolist tw=0 wm=2'
-"exec buf_nre . ' * set fo=roq wrap linebreak nolist tw=0 wm=0'
+set noet nosi noai noci nocin nopi sts=0 sw=3 sts=4 ts=4
+" cinoptions=b0,l0,+0,(0,(s,m1
