@@ -7,5 +7,6 @@
 " 	finish
 " endif
 
-syn match directive '^#.*$'
-hi directive term=inverse cterm=inverse
+" syn match directive '^#.*$'
+" hi directive cterm=bold ctermbg=232
+" " hi directive term=inverse cterm=inverse
