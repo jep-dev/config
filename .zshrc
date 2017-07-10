@@ -7,7 +7,10 @@ export TERM='xterm-256color'
 export ZSH=~/.oh-my-zsh
 
 alias -g ~ws=~/workspace
+alias -g ~cfg=~/workspace/config
+alias -g ~bak=~/Backups
 alias -g ~dl=~/Downloads
+alias -g ~mod=~/workspace/modular
 alias -g ~dicts=~/workspace/dicts
 
 alias please='sudo'
@@ -215,7 +218,7 @@ fi
 
 
 COMPLETION_WAITING_DOTS="true"
-plugins=(git gitfast github wd zsh-_url-httplink)
+plugins=(git gitfast github zsh-_url-httplink)
 
 ZSH_THEME="bullet-train/bullet-train"
 
