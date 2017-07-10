@@ -285,6 +285,8 @@ exec buf_nre . ' *.cpp,*.hpp,*.tpp '
 			\ . ':map <C-a> :s/^[ \t]*/&// /<CR> | '
 			\ . ':map <C-z> :s/^\([ \t]*\)\/\//\1/<CR>'
 
+map <leader><Space> :.s/$/\=repeat(' ',79-col('$'))<CR>
+map <leader># :.s/$/\=repeat('#',79-col('$'))<CR>
 map <C-a> :s/^[ \t]*/" &/<CR>          " Line quotes, default style is vim
 map <C-z> :s/^\([ \t]*\)"[ ]*/\1/<CR>  " Line unquote, default style is vim
 map <Leader>a [%V]%<C-a>               " Simple references to the C-a/C-z
