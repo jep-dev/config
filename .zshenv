@@ -131,6 +131,9 @@ gmkd2html(){
 	github-markdown $ifname -f gfm -h >>$ofname
 	echo "</body>" >>$ofname
 }
+# loopcmd(){
+# 	while read; do $*; done
+# }
 # Search inside compiled objects
 nm-filter(){nm -gC $1 | grep ".* $2 .*"}
 # Override used to customize prompt
