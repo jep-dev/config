@@ -6,6 +6,7 @@ export EDITOR='vim'
 export TERM='xterm-256color'
 export ZSH=~/.oh-my-zsh
 
+alias -g ~sdl=/usr/include/SDL2
 alias -g ~ws=~/workspace
 alias -g ~cfg=~/workspace/config
 alias -g ~bak=~/Backups
@@ -45,21 +46,6 @@ alias vi='vim'
 alias vimu='vim +PluginInstall +qall'
 alias vimconfig='$EDITOR ~/.vimrc'
 alias vim="stty stop '' -ixoff ; $EDITOR"
-vim-cmd(){
-	# local infile="$(mktemp --suffix=$1)"
-	# local outfile="$(mktemp)"
-#	shift
-#	vim $1 -c "${*:2}" $infile
-#	cat $outfile
-#	rm $outfile
-}
-#vim-keys(){
-#	# ft="$1"
-#	# [ $# -gt 1 ] && shift
-#	vim-cmd ':set filetype='$1 ' | :map'
-#	# vim-cmd-plaintext 'set filetype='"$ft" | :map' $@
-#}
-
 
 vim-cmd(){
 	outfile="$(mktemp --suffix=$1)"
@@ -70,7 +56,6 @@ vim-cmd(){
 }
 
 vim-hi(){
-	# vim-cmd "$1" "${
 	vim-cmd $1 $2
 	#vim $infile -c 'runtime syntax/hitest.vim | TOhtml | w! | q! | q!'
 	#awk -v 'a=0' -v 'b=0' \
@@ -82,13 +67,14 @@ vim-hi(){
 
 #dev
 devs=('Makefile' 'mk' 'README' 'md' \
-	'c' 'h' 'cpp' 'hpp' 's' 'lst' \
+	'c' 'h' 'cpp' 'hpp' 'tpp' 's' 'lst' \
 	'frag' 'vert' 'lua' 'py')
 alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
 alias win32-g++='x86_64-w64-mingw32-g++-win32'
+# alias loopcmd='(){ do { $* | less }; while read; done'
+alias loopcmd='(){ while read; do $*; done }'
 
 for d ($devs) { alias -s $d='$EDITOR' }
-# for d ($devs) { alias -s $d='$EDITOR' }
 
 # alias Makefile='$EDITOR Makefile'
 alias makefile='(){ (){ $EDITOR ${1:-./Makefile} } ${^:-${1:-.}/{Makefile,*.mk}*(N)} }'
@@ -272,3 +258,4 @@ eval "$(dircolors -b ~/.dircolors)"
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 source ~/.zshenv
+tmux start-server
