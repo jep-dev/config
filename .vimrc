@@ -18,12 +18,9 @@ set rtp+=~/.vim/bundle/Vundle.vim
 
 
 " nmap <Leader>k i<C-k><gt>1
-" let tab_major='»'
-let tab_major='⋮' " '¦'
-let tab_minor='\ ' " '‹'
+let tab_major='ל'
+let tab_minor='¨'
 exec 'set list lcs=tab:' . tab_major . tab_minor
-" set list lcs=tab:'‸'\ "
-" set list lcs=tab:\:^
 set laststatus=2
 
 " set noet noai ci pi sts=0 sw=4 ts=4 cinoptions=b0,l0,+0,(0,(s,m1
@@ -51,7 +48,7 @@ let palette={
 	\'lred': 216, 'red': 203,
 		\'lpink': 225, 'pink': 217,
 		\'lpurple': 139, 'purple': 247,
-	\'white': 231, 'black': 232,
+	\'white': 231, 'black': 16,
 		\'lgray': 15, 'gray': 253
 \}
 
@@ -71,12 +68,24 @@ let term_map=[
 				\'Typedef', 'Structure', 'StorageClass', 'Variable',
 				\'CursorLineNr', 'LineNr'
 			\], palette['lred']: [
-				\'macro', 'directive', 'PreProc', 'PreCondit'
+				\'macro', 'directive', 'PmenuSel', 'PreProc', 'PreCondit'
 			\], palette['lgray']:
 					\['Comment', 'Special'],
 			\   palette['white']:
 					\['Normal', 'Pmenu', 'MatchParen'],
 			\palette['black']: []
+		\}, 'cterm=': {
+			\   'NONE': [
+				\'CursorColumn', 'CursorLine',
+				\'CursorLineNr', 'LineNr', 'SignColumn',
+				\'PmenuSel', 'MatchParen',
+				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
+				\'GitGutterAddDefault', 'GitGutterChangeDefault',
+				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
+			\], 'NONE,bold': [],
+			\   'NONE,reverse': [
+					\'Visual', 'CursorLineNr', 'MatchParen'
+				\]
 		\}, 'ctermbg=': {
 			\   palette['white']: [
 				\'Visual', 'SignColumn',
@@ -85,19 +94,12 @@ let term_map=[
 				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
 			\], palette['black']: ['LineNr', 'CursorLineNr',
 				\'Visual', 'MatchParen',
-				\'PMenu', 'PmenuSel', 'PmenuSbar', 'CursorColumn'
+				\'PMenu', 'PmenuSel', 'PmenuSbar',
+				\'CursorColumn', 'CursorLine'
 			\]
-		\}, 'cterm=': {
-			\   'NONE': [
-				\'CursorLineNr', 'LineNr', 'SignColumn',
-				\'PmenuSel', 'MatchParen',
-				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
-				\'GitGutterAddDefault', 'GitGutterChangeDefault',
-				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
-			\], 'NONE,bold': ['CursorLine'],
-			\   'NONE,reverse': ['Visual', 'CursorLineNr', 'MatchParen']
 		\}, 'guifg=': {
 			\'White': [
+				\'CursorColumn', 'CursorColumn',
 				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
 				\'GitGutterAddDefault', 'GitGutterChangeDefault',
 				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
@@ -256,8 +258,8 @@ Plugin 'Yggdroot/indentLine'
 Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'nathanaelkane/vim-indent-guides'
 
-hi IndentGuidesOdd ctermfg=216
-hi IndentGuidesEven ctermfg=247
+hi IndentGuidesOdd ctermfg=139
+hi IndentGuidesEven ctermfg=139
 " let g:indentLine_char = '|'
 let g:indent_guides_auto_colors=0
 let g:indent_guides_enable_on_vim_startup=1
@@ -305,5 +307,4 @@ for [k_ftype, v_ftype] in term_map
 	endfor
 endfor
 
-set noet nosi noai noci nocin nopi sts=0 sw=3 sts=4 ts=4
-" cinoptions=b0,l0,+0,(0,(s,m1
+set noet nosi noai noci nocin nopi sts=0 sw=4 ts=4
