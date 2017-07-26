@@ -18,8 +18,8 @@ set rtp+=~/.vim/bundle/Vundle.vim
 
 
 " nmap <Leader>k i<C-k><gt>1
-let tab_major='ל'
-let tab_minor='¨'
+let tab_major='∘'
+let tab_minor='۰'
 exec 'set list lcs=tab:' . tab_major . tab_minor
 set laststatus=2
 
@@ -69,20 +69,18 @@ let term_map=[
 				\'CursorLineNr', 'LineNr'
 			\], palette['lred']: [
 				\'macro', 'directive', 'PmenuSel', 'PreProc', 'PreCondit'
-			\], palette['lgray']:
-					\['Comment', 'Special'],
-			\   palette['white']:
-					\['Normal', 'Pmenu', 'MatchParen'],
+			\], palette['lgray']: ['Comment', 'Special'],
+			\   palette['white']: ['Normal', 'Pmenu', 'MatchParen'],
 			\palette['black']: []
 		\}, 'cterm=': {
 			\   'NONE': [
-				\'CursorColumn', 'CursorLine',
+				\'CursorColumn',
 				\'CursorLineNr', 'LineNr', 'SignColumn',
 				\'PmenuSel', 'MatchParen',
 				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
 				\'GitGutterAddDefault', 'GitGutterChangeDefault',
 				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
-			\], 'NONE,bold': [],
+			\], 'NONE,bold': ['CursorLine'],
 			\   'NONE,reverse': [
 					\'Visual', 'CursorLineNr', 'MatchParen'
 				\]
@@ -92,14 +90,14 @@ let term_map=[
 				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
 				\'GitGutterAddDefault', 'GitGutterChangeDefault',
 				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
-			\], palette['black']: ['LineNr', 'CursorLineNr',
+			\], palette['black']: ['LineNr', 'CursorLineNr', 'ColorColumn',
 				\'Visual', 'MatchParen',
 				\'PMenu', 'PmenuSel', 'PmenuSbar',
 				\'CursorColumn', 'CursorLine'
 			\]
 		\}, 'guifg=': {
 			\'White': [
-				\'CursorColumn', 'CursorColumn',
+				\'CursorColumn',
 				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
 				\'GitGutterAddDefault', 'GitGutterChangeDefault',
 				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
@@ -258,7 +256,7 @@ Plugin 'Yggdroot/indentLine'
 Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'nathanaelkane/vim-indent-guides'
 
-hi IndentGuidesOdd ctermfg=139
+hi IndentGuidesOdd ctermfg=221
 hi IndentGuidesEven ctermfg=139
 " let g:indentLine_char = '|'
 let g:indent_guides_auto_colors=0
