@@ -217,7 +217,7 @@ local co_or="38;5;215"
 local co_ye="38;5;221"
 local at=$(printf "\u273b")
 
-BULLETTRAIN_PROMPT_ORDER=(time custom dir git cmd_exec_time status)
+BULLETTRAIN_PROMPT_ORDER=(time dir git cmd_exec_time status)
 BULLETTRAIN_PROMPT_SEPARATE_LINE=false
 BULLETTRAIN_PROMPT_ADD_NEWLINE=false
 BULLETTRAIN_DIR_CONTEXT_SHOW=false
