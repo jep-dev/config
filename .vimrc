@@ -16,14 +16,9 @@ set showcmd
 set undofile udir=$HOME/share/vimundo ul=1000 ur=10000
 set rtp+=~/.vim/bundle/Vundle.vim
 
-
-" nmap <Leader>k i<C-k><gt>1
-let tab_major='∘'
-let tab_minor='۰'
-exec 'set list lcs=tab:' . tab_major . tab_minor
+set list lcs=tab:*⁄
 set laststatus=2
 
-" set noet noai ci pi sts=0 sw=4 ts=4 cinoptions=b0,l0,+0,(0,(s,m1
 set backspace=indent,eol,start
 
 set encoding=utf8
@@ -69,7 +64,8 @@ let term_map=[
 				\'CursorLineNr', 'LineNr'
 			\], palette['lred']: [
 				\'macro', 'directive', 'PmenuSel', 'PreProc', 'PreCondit'
-			\], palette['lgray']: ['Comment', 'Special'],
+			\], palette['lgray']: ['Special'],
+			\   palette['gray']: ['Comment'],
 			\   palette['white']: ['Normal', 'Pmenu', 'MatchParen'],
 			\palette['black']: []
 		\}, 'cterm=': {
@@ -81,6 +77,7 @@ let term_map=[
 				\'GitGutterAddDefault', 'GitGutterChangeDefault',
 				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
 			\], 'NONE,bold': ['CursorLine'],
+			\   'NONE,italic': ['Comment'],
 			\   'NONE,reverse': [
 					\'Visual', 'CursorLineNr', 'MatchParen'
 				\]
@@ -117,12 +114,19 @@ let term_map=[
 				\'cppSTLexception', 'cppSTLfunctional', 'cppSTLtype'
 			\], palette['lorange']: ['cCustomClass'],
 			\   palette['lred']: [
+				\'cTodo',
 				\'cCppBracket', 'cCustomAngleBracketContent',
 				\'cCppBlock'
 			\], palette['white']: [
 				\'cAnsiFunction', 'cCppParen',
 				\'cCustomParen', 'cCustomFunc'
 			\]
+		\},
+		\'cterm=': {
+			\'NONE,bold,italic': ['cTodo']
+		\},
+		\'ctermbg=': {
+			\'NONE': ['cTodo']
 		\}
 	\}], ['Makefile,*.mk', {
 		\'ctermfg=': {
@@ -256,8 +260,8 @@ Plugin 'Yggdroot/indentLine'
 Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'nathanaelkane/vim-indent-guides'
 
-hi IndentGuidesOdd ctermfg=221
-hi IndentGuidesEven ctermfg=139
+hi IndentGuidesOdd ctermfg=221 cterm=bold
+hi IndentGuidesEven ctermfg=139 cterm=bold
 " let g:indentLine_char = '|'
 let g:indent_guides_auto_colors=0
 let g:indent_guides_enable_on_vim_startup=1
