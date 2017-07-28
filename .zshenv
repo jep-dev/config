@@ -1,3 +1,19 @@
+
+# bak(){
+# 	src="$(realpath ${3:-.})"
+# 	name="$(basename $src)"
+# 	cmd="${1:-tar}"
+# 	dest="$(realpath ${2:-~/Backups/bak/})"
+# 	suffix="$(date '+%s')"
+# 	[ -d "$dest" ] || mkdir "$dest"
+# 	if [[ "${cmd:-tar}" =~ "tar.*" ]]; then
+# 		tar $4 cf "$dest/$name-$suffix.tar" "$src"
+# 	else
+# 		cp -R $4 "$src" "$dest/$name-$suffix"
+# 	fi
+# }
+
+
 # Wrap lines and format to $1 columns
 columnate(){
 	local cols="${cols:-${1:-5}}"
@@ -109,9 +125,9 @@ dev-grep(){
 	done
 }
 
-#files2(){
-#	for f ("$1") echo "$2$f" && [ -d $f ] && files2 "$(ls $2$f)" "$2"
-#}
+# files2(){
+# 	for f ("$1") echo "$2$f" && [ -d $f ] && files2 "$(ls $2$f)" "$2"
+# }
 
 # Check brief statuses of git-managed subdirectories
 git-statuses(){
@@ -182,6 +198,47 @@ rand-line(){
 		echo
 	done
 }
+# Work in progress; strips empty lines and known comments before counting lines
+sloc-real(){
+	for arg; do
+		if [ -r $arg ]; then
+			ftype="Generic"
+			lines=$(cat $arg)
+
+			#echo $(printf '%q' $lines)
+			real_lines="$lines"
+			n_lines=$(wc -l $arg)
+			case $arg in
+				*.[ch] | *.[cht]pp )
+					ftype="C"
+					if [[ "$arg" =~ '.*pp' ]]; then
+						ftype="C++"
+						real_lines=$(sed ':n N
+							:s { s/\/\*\(.*\)\*\///; Tn }
+							/\/\*/bs' <<<$lines);
+					fi
+					real_lines=$(sed 's/\/\/.*//' <<<$lines)
+					;;
+				Makefile )
+					ftype="Makefile"
+					real_lines="$(grep -v '^\ *#' $arg)"
+					;;
+				* )
+					real_lines="$lines"
+					#ftype="${arg//*./}"
+					;;
+			esac
+			real_lines=$(echo $real_lines | grep -o '.*[^ ^\t].*')
+			lines=$(echo $lines | grep -o '.*[^ ^\t]+.*')
+			# lines=$(grep -o '.*[^ ^\t]+.*' <<<"$lines")
+			# lines="$(echo -n $lines | grep -o '.*[^ ^\t].*')"
+			echo "$(echo $real_lines | wc -l)/$(wc -l $arg)" \
+				"(as $ftype)"
+			#echo $real_lines
+		fi
+ done
+}
+
 # Filter the output of a (potentially) interactive subprocess
 sfilter(){
 	script --flush -q -c "$1" /dev/null 2>/dev/null | \
@@ -199,6 +256,34 @@ to_hex(){
 		let "i++"
 	done | rev && echo
 }
+
+# Export keys in readable format
+#   (more useful before adopting mnemonic key bindings)
+tmux-keys(){
+	tmux list-keys | grep -v prefix | \
+		sed 's/[ ]\+/ /g;s/root \|\-T \|bind\-key //g' | sort | \
+		sed 's/^[^ ]*\| .\{0,40\}\( \|$\)/&\n\t/g'
+}
+
+# Run Vim command and pipe to stdout via temporary file
+vim-cmd(){
+	outfile="$(mktemp --suffix=$1)"
+	trap 'rm '"$outfile" EXIT; {
+		vim $outfile -c "$2" >/dev/tty
+		cat $outfile
+	}
+}
+
+vim-hi(){
+	vim-cmd $1 $2
+	#vim $infile -c 'runtime syntax/hitest.vim | TOhtml | w! | q! | q!'
+	#awk -v 'a=0' -v 'b=0' \
+	#	'/<style/{a=1}/<!--/{D;if(a) b=1}/-->/{a=0;b=0}a && b' $outfile
+	#rm $infile $outfile
+	# vim-cmd $1 ${*:2}' | runtime syntax/hitest.vim | TOhtml | :w! $outfile'
+	# vim-cmd ':set filetype='$1' | :runtime syntax/hitest.vim'
+}
+
 # Search man pages and view with vim instead of pager
 vman(){
 	man -k $* 2>&1 | grep "^$1\|^$2" && vim -c "SuperMan $*" \

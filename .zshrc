@@ -4,6 +4,7 @@
 export EDITOR='vim'
 #export TERM="screen-256color"
 export TERM='xterm-256color'
+
 export ZSH=~/.oh-my-zsh
 
 alias -g ~sdl=/usr/include/SDL2
@@ -36,7 +37,6 @@ alias set-grep='set|grep -a'
 #alias files='(){find $(cat) | difftree "/" " "} <<<'
 alias files='(){find $(cat) -type f | difftree "/" " "} <<<'
 
-
 compdef vman="man"
 alias irhn='grep -IrHn'
 alias todo='irhn TODO'
@@ -47,86 +47,18 @@ alias vimu='vim +PluginInstall +qall'
 alias vimconfig='$EDITOR ~/.vimrc'
 alias vim="stty stop '' -ixoff ; $EDITOR"
 
-vim-cmd(){
-	outfile="$(mktemp --suffix=$1)"
-	trap 'rm '"$outfile" EXIT; {
-		vim $outfile -c "$2" >/dev/tty
-		cat $outfile
-	}
-}
-
-vim-hi(){
-	vim-cmd $1 $2
-	#vim $infile -c 'runtime syntax/hitest.vim | TOhtml | w! | q! | q!'
-	#awk -v 'a=0' -v 'b=0' \
-	#	'/<style/{a=1}/<!--/{D;if(a) b=1}/-->/{a=0;b=0}a && b' $outfile
-	#rm $infile $outfile
-	# vim-cmd $1 ${*:2}' | runtime syntax/hitest.vim | TOhtml | :w! $outfile'
-	# vim-cmd ':set filetype='$1' | :runtime syntax/hitest.vim'
-}
-
 #dev
+alias loopcmd='(){ while read; do $*; done }'
+
 devs=('Makefile' 'mk' 'README' 'md' \
 	'c' 'h' 'cpp' 'hpp' 'tpp' 's' 'lst' \
 	'frag' 'vert' 'lua' 'py')
-alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
-alias win32-g++='x86_64-w64-mingw32-g++-win32'
-# alias loopcmd='(){ do { $* | less }; while read; done'
-alias loopcmd='(){ while read; do $*; done }'
-
 for d ($devs) { alias -s $d='$EDITOR' }
-
-# alias Makefile='$EDITOR Makefile'
-alias makefile='(){ (){ $EDITOR ${1:-./Makefile} } ${^:-${1:-.}/{Makefile,*.mk}*(N)} }'
-# alias readme='$EDITOR README'
+alias Makefile='(){ (){ $EDITOR ${1:-./Makefile} } ${^:-${1:-.}/{Makefile,*.mk}*(N)} }'
 alias readme='(){ (){ $EDITOR ${1:-./README} } ${^:-${1:-.}/{README,*.md}*(N)} }'
 
-#alias sloc='(){ printf "\r" | wc -l $(dev-grep $*) }'
-#		| awk -v 'a=1' -v 'b=1' \
-#			'/\/\*/{a=0;b=0}/\*\//{a=1}{if(a&&b) print; if(a) b=1}'
-
-sloc-real(){
-	for arg; do
-		if [ -r $arg ]; then
-			ftype="Generic"
-			lines=$(cat $arg)
-
-			#echo $(printf '%q' $lines)
-			real_lines="$lines"
-			n_lines=$(wc -l $arg)
-			case $arg in
-				*.[ch] | *.[cht]pp )
-					ftype="C"
-					if [[ "$arg" =~ '.*pp' ]]; then
-						ftype="C++"
-						real_lines=$(sed ':n N
-							:s { s/\/\*\(.*\)\*\///; Tn }
-							/\/\*/bs' <<<$lines);
-					fi
-					real_lines=$(sed 's/\/\/.*//' <<<$lines)
-					;;
-				Makefile )
-					ftype="Makefile"
-					real_lines="$(grep -v '^\ *#' $arg)"
-					;;
-				* )
-					real_lines="$lines"
-					#ftype="${arg//*./}"
-					;;
-			esac
-			real_lines=$(echo $real_lines | grep -o '.*[^ ^\t].*')
-			lines=$(echo $lines | grep -o '.*[^ ^\t]+.*')
-			# lines=$(grep -o '.*[^ ^\t]+.*' <<<"$lines")
-			# lines="$(echo -n $lines | grep -o '.*[^ ^\t].*')"
-			echo "$(echo $real_lines | wc -l)/$(wc -l $arg)" \
-				"(as $ftype)"
-			#echo $real_lines
-		fi
- done
-}
-
-alias dryad='git add -An'
-alias gaan='dryad'
+alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
+alias win32-g++='x86_64-w64-mingw32-g++-win32'
 
 #media
 alias -s mp3='vlc'
@@ -156,6 +88,10 @@ alias dryer='sleep 2700 && nsc "Dryer"'
 
 alias hrule='sed "s/././g" <(printf "%"$COLUMNS"s" "")'
 
+#git
+alias dryad='git add -An'
+alias gaan='dryad'
+
 #net
 alias firefox='firefox --new-tab'
 alias browser='firefox'
@@ -170,21 +106,6 @@ alias duckduckgo-images='web-search "duckduckgo.com/?ia=images&iax=1&q="'
 alias ddgimgs='duckduckgo-images'
 alias wiki='web-search "en.wikipedia.org/w/index.php?search="'
 alias youtube='web-search "youtube.com/results?q="'
-
-# alias bak_='(){ ${3:-tar cvf} $1 $2 }'
-alias bak='(){
-src="$(realpath ${3:-.})";
-name="$(basename $src)";
-cmd="${1:-tar}"
-dest="$(realpath ${2:-~/Backups/bak/})";
-suffix="$(date +%s)"
-[ -d "$dest" ] || mkdir "$dest";
-if [[ "${cmd:-tar}" =~ "tar.*" ]]; then
-tar $4 cf "$dest/$name-$suffix.tar" "$src";
-else
-cp -R $4 "$src" "$dest/$name-$suffix";
-fi
-}'
 
 if [ "$ZSHRC_SOURCED" -eq 0 ]; then
 	new_path=($HOME'/bin' $HOME'/workspace/markdown/bin'
@@ -256,6 +177,9 @@ export GREP_COLORS='sl='$co_wt';;1:mt='$co_lg':'\
 'cx=2:se='$co_wt';;1:fn='$co_dg':ln='$co_dg
 eval "$(dircolors -b ~/.dircolors)"
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+GPG_TTY=$(tty)
+export GPG_TTY
 
 source ~/.zshenv
 tmux start-server
