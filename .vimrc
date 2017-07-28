@@ -17,7 +17,6 @@ set undofile udir=$HOME/share/vimundo ul=1000 ur=10000
 set rtp+=~/.vim/bundle/Vundle.vim
 
 set list lcs=tab:*⁄
-set laststatus=2
 
 set backspace=indent,eol,start
 
@@ -63,7 +62,7 @@ let term_map=[
 				\'Typedef', 'Structure', 'StorageClass', 'Variable',
 				\'CursorLineNr', 'LineNr'
 			\], palette['lred']: [
-				\'macro', 'directive', 'PmenuSel', 'PreProc', 'PreCondit'
+				\'Todo', 'macro', 'directive', 'PmenuSel', 'PreProc', 'PreCondit'
 			\], palette['lgray']: ['Special'],
 			\   palette['gray']: ['Comment'],
 			\   palette['white']: ['Normal', 'Pmenu', 'MatchParen'],
@@ -78,9 +77,8 @@ let term_map=[
 				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
 			\], 'NONE,bold': ['CursorLine'],
 			\   'NONE,italic': ['Comment'],
-			\   'NONE,reverse': [
-					\'Visual', 'CursorLineNr', 'MatchParen'
-				\]
+			\   'NONE,bold,italic': ['Todo'],
+			\   'NONE,reverse': ['Visual', 'CursorLineNr', 'MatchParen']
 		\}, 'ctermbg=': {
 			\   palette['white']: [
 				\'Visual', 'SignColumn',
@@ -91,7 +89,8 @@ let term_map=[
 				\'Visual', 'MatchParen',
 				\'PMenu', 'PmenuSel', 'PmenuSbar',
 				\'CursorColumn', 'CursorLine'
-			\]
+			\],
+			\'NONE': ['Todo']
 		\}, 'guifg=': {
 			\'White': [
 				\'CursorColumn',
@@ -183,10 +182,12 @@ noremap! <F3> <Esc> " Alternate escape; TODO better map
 
 noremap! <n> <NOP>
 noremap! <m> <NOP>
-imap \> <C-v>>
-imap \< <C-v><
-noremap! <M-'> <NOP>
-noremap! <M-"> <NOP>
+" imap \> <C-v>>
+" imap \< <C-v><
+inoremap \> <C-v>>
+inoremap \< <C-v><
+" noremap! <M-'> <NOP>
+" noremap! <M-"> <NOP>
 
 inoremap <F2> <c-o>:
 
@@ -236,6 +237,9 @@ command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 
 " nnoremap <C-w> :DiffOrig<CR>
 
+" Tabs
+nnoremap <Leader>/ :bnext<CR> " Right tab
+nnoremap <Leader>? :bprev<CR> " Left tab
 " Splits
 nnoremap <Leader>j <C-W>j     " Focus below
 nnoremap <Leader>J :sp<CR>    " Add and focus below
@@ -244,25 +248,51 @@ nnoremap <Leader>l <C-W>l     " Focus right
 nnoremap <Leader>L :vsp<CR>   " Add and focus right
 nnoremap <Leader>h <C-W>h     " Focus left
 nnoremap <Leader>s :sp<Space> " Add below with arguments
-noremap <Leader>v :vsp<Space> " Add right with arguments
+nnoremap <Leader>v :vsp<Space> " Add right with arguments
 
 " Themes, colors, icons
+" hi airline_a term=BOLD cterm=BOLD
+" hi airline_b term=BOLD cterm=BOLD
+" hi airline_c term=BOLD cterm=BOLD
+" hi airline_x term=BOLD cterm=BOLD
+" hi airline_y term=BOLD cterm=BOLD
+" hi airline_z term=BOLD cterm=BOLD
+" hi! StatusLine term=BOLD cterm=NONE,BOLD
+" hi StatusLineNC term=BOLD cterm=NONE,BOLD
+
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
+Plugin 'vim-scripts/buftabs'
 Plugin 'ryanoasis/vim-devicons'
+set ls=2
+set stal=0
+let g:buftabs_only_basename=0
 let g:airline_powerline_fonts=1
-let g:airline_theme='base16_eighties'
+let g:airline_skip_empty_sections=0
+
+" 52=dred, 53=dpurple, 55=dblue
+let g:airline_theme="dark2"
+let g:airline#extensions#tabline#show_buffers=1
+let g:airline#extensions#tabline#tab_nr_type=2
+let g:airline_section_z=""
+
+let g:airline_section_b="(%c,%l) %{WebDevIconsGetFileTypeSymbol()} " .
+	\ "%{WebDevIconsGetFileFormatSymbol()}"
+let g:airline#extensions#default#layout = [
+	\['', 'z', 'a', 'z', 'z', 'c'],
+	\['z', 'b', 'z', 'warning', 'error', 'z', 'z']
+\]
 
 " Decorations
 " Plugin 'airblade/vim-gitgutter'
 " Whitespace visualization
+
 Plugin 'Yggdroot/indentLine'
 Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'nathanaelkane/vim-indent-guides'
 
 hi IndentGuidesOdd ctermfg=221 cterm=bold
 hi IndentGuidesEven ctermfg=139 cterm=bold
-" let g:indentLine_char = '|'
 let g:indent_guides_auto_colors=0
 let g:indent_guides_enable_on_vim_startup=1
 let g:vim_indent_cont=0
