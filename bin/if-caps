@@ -1,0 +1,4 @@
+#!/usr/bin/zsh
+
+state=$(cat /sys/class/leds/input3::capslock/brightness 2>/dev/null)
+if [ "$state" = 1 ]; then echo CAPS; fi
