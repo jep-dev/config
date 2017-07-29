@@ -92,7 +92,7 @@ alias dryad='git add -An'
 alias gaan='dryad'
 
 #net
-alias firefox='firefox --new-tab'
+alias firefox='GTK_THEME="Redmond" firefox --new-tab'
 alias browser='firefox'
 google_base='https://google.com'
 alias -s com='browser' org='browser' net='browser'
