@@ -37,7 +37,7 @@ join_segments(){
 side=${1:-'-l'}
 if [ "$side" = "-l" ]; then
 	{
-		printf '%s\n' "$(battery -g)" "$HOST$vert$USER"
+		printf '%s\n' "$(battery -g)" #"$HOST$vert$USER"
 		ps ho args t $(tmux display -p -F '#{pane_tty}')
 		#echo -n {a..x}'\n'
 	} | join_segments
