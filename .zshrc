@@ -7,13 +7,14 @@ export TERM='xterm-256color'
 
 export ZSH=~/.oh-my-zsh
 
-alias -g ~sdl=/usr/include/SDL2
-alias -g ~ws=~/workspace
-alias -g ~cfg=~/workspace/config
 alias -g ~bak=~/Backups
+alias -g ~cfg=~/workspace/config
+alias -g ~dicts=~/workspace/dicts
 alias -g ~dl=~/Downloads
 alias -g ~mod=~/workspace/modular
-alias -g ~dicts=~/workspace/dicts
+alias -g ~omz=$ZSH
+alias -g ~sdl=/usr/include/SDL2
+alias -g ~ws=~/workspace
 
 alias please='sudo'
 alias fucking='sudo'
@@ -54,8 +55,10 @@ devs=('Makefile' 'mk' 'README' 'md' \
 	'c' 'h' 'cpp' 'hpp' 'tpp' 's' 'lst' \
 	'frag' 'vert' 'lua' 'py')
 for d ($devs) { alias -s $d='$EDITOR' }
-alias Makefile='(){ (){ $EDITOR ${1:-./Makefile} } ${^:-${1:-.}/{Makefile,*.mk}*(N)} }'
-alias readme='(){ (){ $EDITOR ${1:-./README} } ${^:-${1:-.}/{README,*.md}*(N)} }'
+alias Makefile='(){
+(){ $EDITOR ${1:-./Makefile} } ${^:-${1:-.}/{Makefile,*.mk}*(N)} }'
+alias readme='(){
+(){ $EDITOR ${1:-./README} } ${^:-${1:-.}/{README,*.md}*(N)} }'
 
 alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
 alias win32-g++='x86_64-w64-mingw32-g++-win32'
@@ -127,7 +130,8 @@ fi
 COMPLETION_WAITING_DOTS="true"
 plugins=(git gitfast github zsh-_url-httplink)
 
-ZSH_THEME="bullet-train/bullet-train"
+export ZSH_THEME="bullet-train/bullet-train"
+#export ZSH_THEME="powerlevel9k/powerlevel9k"
 
 export co_user="231"
 export co_root="221"
@@ -136,31 +140,23 @@ local co_lg="38;5;155"
 local co_dg="38;5;143"
 local co_or="38;5;215"
 local co_ye="38;5;221"
-local at=$(printf "\u273b")
 
-BULLETTRAIN_PROMPT_ORDER=(time dir git cmd_exec_time status)
-BULLETTRAIN_PROMPT_SEPARATE_LINE=false
-BULLETTRAIN_PROMPT_ADD_NEWLINE=false
-BULLETTRAIN_DIR_CONTEXT_SHOW=false
-BULLETTRAIN_CUSTOM_MSG="\$(printf '%%n %s %%m' $at)"
-BULLETTRAIN_STATUS_EXIT_SHOW=true
+# BULLETTRAIN_PROMPT_CHAR=$at
 BULLETTRAIN_EXEC_TIME_ELAPSED=0
-BULLETTRAIN_PROMPT_CHAR=$at
-
-BG_PALETTE=(202 208 214 220 220 221 222)
-BULLETTRAIN_TIME_BG=${BG_PALETTE[1]}
-BULLETTRAIN_CUSTOM_BG=${BG_PALETTE[2]}
-BULLETTRAIN_DIR_BG=${BG_PALETTE[3]}
-BULLETTRAIN_GIT_BG=${BG_PALETTE[4]}
-BULLETTRAIN_GIT_COLORIZE_DIRTY_BG_COLOR=${BG_PALETTE[4]}
-BULLETTRAIN_STATUS_BG=${BG_PALETTE[6]}
-BULLETTRAIN_STATUS_ERROR_BG=${BG_PALETTE[6]}
-BULLETTRAIN_EXEC_TIME_BG=${BG_PALETTE[5]}
-
-for v ('TIME_FG' 'CUSTOM_FG' 'CONTEXT_FG' 'DIR_FG'
-	'GIT_FG' 'GIT_COLORIZE_DIRTY_FG_COLOR'
-	'STATUS_FG' 'STATUS_ERROR_FG' 'EXEC_TIME_FG') \
-		export "BULLETTRAIN_$v"=16;
+BULLETTRAIN_STATUS_EXIT_SHOW=true
+BULLETTRAIN_DIR_CONTEXT_SHOW=false
+BULLETTRAIN_GIT_COLORIZE_DIRTY=true
+BULLETTRAIN_PROMPT_ADD_NEWLINE=false
+BULLETTRAIN_PROMPT_SEPARATE_LINE=false
+BULLETTRAIN_PROMPT_ORDER=(git dir time cmd_exec_time status)
+typeset -A BT_FG=(DIR 216 TIME 224 EXEC_TIME 159 STATUS_ERROR 196)
+typeset -A BT_BG=(DIR  52 TIME  53 EXEC_TIME  17 STATUS_ERROR  16)
+for k in "${(@k)BT_FG}"; do export "BULLETTRAIN_"$k"_FG="${BT_FG[$k]}; done
+for k in "${(@k)BT_BG}"; do export "BULLETTRAIN_"$k"_BG="${BT_BG[$k]}; done
+BULLETTRAIN_GIT_FG=15
+BULLETTRAIN_GIT_BG=16
+BULLETTRAIN_GIT_COLORIZE_DIRTY_FG_COLOR=215
+BULLETTRAIN_GIT_COLORIZE_DIRTY_BG_COLOR=16
 
 if [ "$ZSHRC_SOURCED" -eq 0 ] || [ "$ZSHRC_FORCE" -eq 1 ]; then
 	source $ZSH/oh-my-zsh.sh
