@@ -152,6 +152,11 @@ gmkd2html(){
 # }
 # Search inside compiled objects
 nm-filter(){nm -gC $1 | grep ".* $2 .*"}
+# Edit best match for Makefile
+Makefile() {
+	files=(${^:-${1:-.}/{Makefile,*.mk}*(N)})
+	$EDITOR ${${files[1]}:-./Makefile}
+}
 # Override used to customize prompt
 prompt_chars() {
 	local bt_prompt_chars="$BULLETTRAIN_PROMPT_CHAR"
@@ -164,6 +169,10 @@ prompt_chars() {
 #		bt_prompt_chars="${bt_prompt_chars}"
 #	fi
 	echo -n $bt_prompt_chars' '
+}
+readme() {
+	files=(${^:-${1:-.}/{README,*.md}*(N)})
+	$EDITOR ${${files[1]}:-./README}
 }
 # Get the first $1 random characters matching the set $2
 rand-chars(){
