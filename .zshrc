@@ -55,10 +55,6 @@ devs=('Makefile' 'mk' 'README' 'md' \
 	'c' 'h' 'cpp' 'hpp' 'tpp' 's' 'lst' \
 	'frag' 'vert' 'lua' 'py')
 for d ($devs) { alias -s $d='$EDITOR' }
-alias Makefile='(){
-(){ $EDITOR ${1:-./Makefile} } ${^:-${1:-.}/{Makefile,*.mk}*(N)} }'
-alias readme='(){
-(){ $EDITOR ${1:-./README} } ${^:-${1:-.}/{README,*.md}*(N)} }'
 
 alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
 alias win32-g++='x86_64-w64-mingw32-g++-win32'
@@ -141,7 +137,7 @@ local co_dg="38;5;143"
 local co_or="38;5;215"
 local co_ye="38;5;221"
 
-# BULLETTRAIN_PROMPT_CHAR=$at
+BULLETTRAIN_PROMPT_CHAR=$(printf '\u203B')
 BULLETTRAIN_EXEC_TIME_ELAPSED=0
 BULLETTRAIN_STATUS_EXIT_SHOW=true
 BULLETTRAIN_DIR_CONTEXT_SHOW=false
