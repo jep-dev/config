@@ -2,8 +2,8 @@
 [ -z "$ZSHRC_FORCE" ] && export ZSHRC_FORCE=0
 
 export EDITOR='vim'
-#export TERM="screen-256color"
-export TERM='xterm-256color'
+# export TERM="xterm-256color"
+export TERM="screen-256color"
 
 export ZSH=~/.oh-my-zsh
 
@@ -11,9 +11,12 @@ alias -g ~bak=~/Backups
 alias -g ~cfg=~/workspace/config
 alias -g ~dicts=~/workspace/dicts
 alias -g ~dl=~/Downloads
+alias -g ~ff=~/.mozilla/firefox
 alias -g ~mod=~/workspace/modular
 alias -g ~omz=$ZSH
-alias -g ~sdl=/usr/include/SDL2
+alias -g ~sb=~/sandbox
+alias -g ~sdl=~/workspace/SDL2
+alias -g ~sdl-doc=~/workspace/sdl2-docs/docs
 alias -g ~ws=~/workspace
 
 alias please='sudo'
@@ -24,6 +27,7 @@ alias zshconfig='$EDITOR ~/.zshrc && zsh-update'
 alias zshenv='$EDITOR ~/.zshenv && zsh-update'
 
 #term
+alias alaconfig='$EDITOR ~/.config/alacritty/alacritty.yml'
 alias zsh-aliases='alias | sed "s/^\([^=]*\).*/\1/"'
 alias tmuxconfig='$EDITOR ~/.tmux.conf && tmux source-file ~/.tmux.conf'
 
@@ -51,19 +55,17 @@ alias vim="stty stop '' -ixoff ; $EDITOR"
 #dev
 alias loopcmd='(){ while read; do $*; done }'
 
-devs=('Makefile' 'mk' 'README' 'md' \
-	'c' 'h' 'cpp' 'hpp' 'tpp' 's' 'lst' \
-	'frag' 'vert' 'lua' 'py')
-for d ($devs) { alias -s $d='$EDITOR' }
-
-alias win32-gcc='x86_64-w64-mingw32-gcc-win32'
-alias win32-g++='x86_64-w64-mingw32-g++-win32'
+ed_sources=('c' 'h' 'cpp' 'hpp' 'tpp' 'cpp')
+ed_scripts=('Makefile' 'mk' 'in' 'lua' 'py')
+ed_confs=('conf' 'rc')
+ed_markups=('README' 'md' 'html' 'css' 'php' 'index')
+ed_files=($ed_sources $ed_scripts $ed_confs $ed_markups $ed_files)
+for d ($ed_files) alias -s $d='$EDITOR'
 
 #media
 alias -s mp3='vlc'
 
 alias lessh='LESSOPEN="| source-highlight %s -o STDOUT" less -M '
-
 
 #apt
 alias autoremove='_ apt-get autoremove'
@@ -110,6 +112,7 @@ if [ "$ZSHRC_SOURCED" -eq 0 ]; then
 	new_path=($HOME'/bin' $HOME'/workspace/markdown/bin'
 		'/opt/shashlik/bin' $PATH)
 	new_ldpath=($HOME'/lib' $HOME'/Downloads/llvm/lib'
+		$HOME'/workspace/glew-2.1.0/lib'
 		'/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu'
 		'/usr/lib/python2.7/config-x86_64-linux-gnu'
 		$LD_LIBRARY_PATH)
@@ -127,7 +130,6 @@ COMPLETION_WAITING_DOTS="true"
 plugins=(git gitfast github zsh-_url-httplink)
 
 export ZSH_THEME="bullet-train/bullet-train"
-#export ZSH_THEME="powerlevel9k/powerlevel9k"
 
 export co_user="231"
 export co_root="221"
@@ -137,30 +139,37 @@ local co_dg="38;5;143"
 local co_or="38;5;215"
 local co_ye="38;5;221"
 
-BULLETTRAIN_PROMPT_CHAR=$(printf '\u203B')
+BULLETTRAIN_PROMPT_CHAR=$'\u232a'
+BULLETTRAIN_CUSTOM_MSG=$'${$(git_prompt_status)// /}'
+BULLETTRAIN_DIR_EXTENDED=false
 BULLETTRAIN_EXEC_TIME_ELAPSED=0
 BULLETTRAIN_STATUS_EXIT_SHOW=true
 BULLETTRAIN_DIR_CONTEXT_SHOW=false
+BULLETTRAIN_GIT_EXTENDED=false
 BULLETTRAIN_GIT_COLORIZE_DIRTY=true
 BULLETTRAIN_PROMPT_ADD_NEWLINE=false
 BULLETTRAIN_PROMPT_SEPARATE_LINE=false
-BULLETTRAIN_PROMPT_ORDER=(git dir time cmd_exec_time status)
-typeset -A BT_FG=(DIR 216 TIME 224 EXEC_TIME 159 STATUS_ERROR 196)
-typeset -A BT_BG=(DIR  52 TIME  53 EXEC_TIME  17 STATUS_ERROR  16)
-for k in "${(@k)BT_FG}"; do export "BULLETTRAIN_"$k"_FG="${BT_FG[$k]}; done
-for k in "${(@k)BT_BG}"; do export "BULLETTRAIN_"$k"_BG="${BT_BG[$k]}; done
+BULLETTRAIN_PROMPT_ORDER=(git custom dir cmd_exec_time status)
+
+typeset -A BT_FG BT_BG
+BT_FG=(DIR 228 TIME  15)
+#BT_FG=(DIR 228 TIME  15 EXEC_TIME  16 STATUS 16 STATUS_ERROR 16 CUSTOM 16)
+BT_BG=(DIR 64 TIME 107 CUSTOM 16)
+for k in "${(@U)BULLETTRAIN_PROMPT_ORDER}"; do
+	export 'BULLETTRAIN_'$k'_FG='"${BT_FG[$k]:-16}"
+	export 'BULLETTRAIN_'$k'_BG='"${BT_BG[$k]:-155}"
+done
+BULLETTRAIN_STATUS_FG=16
+BULLETTRAIN_STATUS_BG=15
+BULLETTRAIN_STATUS_ERROR_FG=16
+BULLETTRAIN_STATUS_ERROR_BG=15
 BULLETTRAIN_GIT_FG=15
 BULLETTRAIN_GIT_BG=16
-BULLETTRAIN_GIT_COLORIZE_DIRTY_FG_COLOR=215
+BULLETTRAIN_GIT_COLORIZE_DIRTY_FG_COLOR=15
 BULLETTRAIN_GIT_COLORIZE_DIRTY_BG_COLOR=16
 
-if [ "$ZSHRC_SOURCED" -eq 0 ] || [ "$ZSHRC_FORCE" -eq 1 ]; then
-	source $ZSH/oh-my-zsh.sh
-fi
-
+source $ZSH/oh-my-zsh.sh
 export ZSHRC_SOURCED=$((ZSHRC_SOURCED+1))
-
-pidof thd >/dev/null || sudo ~/bin/thd.sh
 
 alias grep >&/dev/null && \
 	unalias grep && alias grep='grep --color=auto'
