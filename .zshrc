@@ -1,8 +1,6 @@
 [ -z "$ZSHRC_SOURCED" ] && export ZSHRC_SOURCED=0
-[ -z "$ZSHRC_FORCE" ] && export ZSHRC_FORCE=0
 
 export EDITOR='vim'
-# export TERM="xterm-256color"
 export TERM="screen-256color"
 
 export ZSH=~/.oh-my-zsh
@@ -108,22 +106,20 @@ alias ddgimgs='duckduckgo-images'
 alias wiki='web-search "en.wikipedia.org/w/index.php?search="'
 alias youtube='web-search "youtube.com/results?q="'
 
-if [ "$ZSHRC_SOURCED" -eq 0 ]; then
-	new_path=($HOME'/bin' $HOME'/workspace/markdown/bin'
-		'/opt/shashlik/bin' $PATH)
-	new_ldpath=($HOME'/lib' $HOME'/Downloads/llvm/lib'
-		$HOME'/workspace/glew-2.1.0/lib'
-		'/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu'
-		'/usr/lib/python2.7/config-x86_64-linux-gnu'
-		$LD_LIBRARY_PATH)
-	new_manpath=($HOME'/.man')
-	old_ifs=$IFS
-	export IFS=:
-	export PATH="$new_path"
-	export MANPATH="$new_manpath"":$MANPATH"
-	export LD_LIBRARY_PATH="$new_ldpath"
-	export IFS=$old_ifs
-fi
+new_path=($HOME'/bin' $HOME'/workspace/markdown/bin'
+	'/opt/shashlik/bin' $PATH)
+new_ldpath=($HOME'/lib' $HOME'/Downloads/llvm/lib'
+	$HOME'/workspace/glew-2.1.0/lib'
+	'/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu'
+	'/usr/lib/python2.7/config-x86_64-linux-gnu'
+	$LD_LIBRARY_PATH)
+new_manpath=($HOME'/.man' $HOME'/.local/share/man/cplusplus.com/')
+old_ifs=$IFS
+export IFS=:
+export PATH="$new_path"
+export MANPATH="$new_manpath"':'"$MANPATH"
+export LD_LIBRARY_PATH="$new_ldpath"
+export IFS=$old_ifs
 
 
 COMPLETION_WAITING_DOTS="true"
