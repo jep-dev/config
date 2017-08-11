@@ -14,9 +14,11 @@ rbra=$'\ue0b0' # rhs segment separator
 
 join_segments(){
 	sw=${1:-2}
-	cb=('#ffb265' '#ff6565' '#ffb265' '#feff65' '#b2ff65' '#66ff65' '#65ffb2'
-		'#65feff' '#65b2ff' '#6566ff' '#b265ff' '#ff65fe' '#ff65b2' '#ff6565')
-	ci=(1 0 1 0 0 0 0 0 0 0 0 0 0 -11)
+	cb=('#22b265' '#eeb265' '#ddb265' '#ccb265' '#bbb265' '#aab265' '#99b265'
+		'#88b265' '#77b265' '#66b265' '#55b265' '#44b265' '#33b265' '#22b265')
+	# 	cb=('#ffb265' '#ff6565' '#ffb265' '#feff65' '#b2ff65' '#66ff65' '#65ffb2'
+# 		'#65feff' '#65b2ff' '#6566ff' '#b265ff' '#ff65fe' '#ff65b2' '#ff6565')
+	ci=(1 0 1 1 0 0 0 0 0 0 0 0 0 -11)
 	cf=('colour'${^cf})
 	cn=${#cb}
 
@@ -29,7 +31,7 @@ join_segments(){
 		[ $j -le $sw ] && pre=$bk$fmab$lbra
 		[ $j -lt $sw ] && post=$inv$bk$fmab$lbra$def
 		printf '%s' $pre$fmb$fmf' '$i' '$def$post$def
-		[ ${ci[j]} -ne 0 ] && dj=${ci[j]}
+		[ ${ci[j]} -ne 0 ] && [ ${#i} -ne 0 ] && dj=${ci[j]}
 		j=$((j+dj))
 	done
 }
@@ -37,10 +39,15 @@ join_segments(){
 side=${1:-'-l'}
 if [ "$side" = "-l" ]; then
 	{
-		printf '%s\n' "$(battery -g)" #"$HOST$vert$USER"
-		ps ho args t $(tmux display -p -F '#{pane_tty}')
+		ps fho args t $(tmux display -p -F '#{pane_tty}') | \
+			sed 's/[\\_ -]*\(.*\)/\1/g' | \
+			sed 's/\(\W.\{1,10\}\).\+\(.\{1,10\}\W\)/\1 '$(printf '\u2026')' \2/g'
+			# sed 's/\(.\{12\}\).\+\(.\{12\}\)/\1 ... \2/g'
 		#echo -n {a..x}'\n'
-	} | join_segments
+	} | join_segments 1
 elif [ "$side" = '-r' ]; then
-	time.sh 'wide' | join_segments 1
+	{ battery -g; echo } | join_segments
+	time.sh 'wide'
+	# { time.sh 'wide'} | join_segments
+	#printf '#[fg=colour15]#[reverse] \u200b\n'
 fi
