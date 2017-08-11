@@ -1,22 +1,13 @@
-" Use a file type with no associations to sandbox new ideas.
-
-" TODO from help -> 'insert.txt':
-"    inserting, inserting-ex from 'insert.txt' --
-"      n/v/o modes; <N>g(Ii|Aa|Oo)
-"    Idea -- using line('.'),col('.'), fill/align/etc.
-"      :{range}{a=prepend,i=append}[!]        1+ lines
-"    Exclusions following ftype patterns
-"      let g:omni_syntax_group_exclude_<lang> = '<regex>,...'
-"      So use key bindings with parameters to change visibility
-
 set nocompatible   " be iMproved, required
 filetype off       " required
 set shm=a          " shorten load message
 set showcmd
 set undofile udir=$HOME/share/vimundo ul=1000 ur=10000
 set rtp+=~/.vim/bundle/Vundle.vim
+let &t_ti.="\e[52\e[4 q"
+let &t_te.="\e[0 q"
 
-set list lcs=tab:*⁄
+set list lcs=tab:╍╌
 
 set backspace=indent,eol,start
 
@@ -25,75 +16,93 @@ set ttym=xterm2 mouse=a
 
 set t_Co=256
 
-set nu ru cul cuc cc=80 sbr=...
+set nu ru cuc cul sbr=‾\\_
 set cole=2 cocu=vin
 set cot=menu cot-=preview
 set ph=20
+set diffopt=filler
 
 let buf_nre='au BufNewFile,BufRead,BufEnter'
 
 let palette={
-	\'lblue': 81, 'blue': 5,
-		\'lteal': 14, 'teal': 6,
+	\'lblue': 123, 'blue': 44, 'dblue': 17,
+		\ 'lteal': 87, 'teal': 23,
+	\ 'lgreen': 155, 'green': 106, 'dgreen': 22,
 		\'lolive': 186, 'olive': 185,
-		\'lgreen': 155, 'green': 106,
-	\'lyellow': 220, 'yellow': 226,
+	\'lyellow': 221, 'yellow': 226,
 		\'lorange': 214, 'orange': 208,
-	\'lred': 216, 'red': 203,
+	\'lred': 216, 'red': 203, 'dred': 52,
 		\'lpink': 225, 'pink': 217,
-		\'lpurple': 139, 'purple': 247,
-	\'white': 231, 'black': 16,
-		\'lgray': 15, 'gray': 253
+	\'lpurple': 139, 'purple': 247, 'dpurple': 53,
+	\'white': 231, 'black': 16, 'lgray': 15, 'gray': 253,
+	\'notice_min': 151, 'notice': 220, 'notice_max': 229
 \}
 
 let term_map=[
 	\['*', {
-		\'ctermfg=': {
+		\   'term=': {
+			\'NONE': [
+				\'DiffAdd', 'DiffChange', 'DiffDelete', 'DiffText'
+			\]
+		\}, 'ctermfg=': {
 			\   palette['lblue']: [
-				\'Statement', 'Operator',
-				\'Conditional', 'Repeat', 'CaseIn', 'SngleCase'
-			\], palette['lgreen']: [
+				\'DiffChange',
+				\'Statement', 'Operator', 'Conditional', 'Repeat',
+				\'CaseIn', 'SngleCase'
+			\], palette['notice']: [
 				\'String', 'SString', 'DString',
 				\'Number', 'Constant', 'Float', 'Character'
-			\], palette['lolive']: ['Identifier', 'Type'],
-			\   palette['green']: ['Modifier', 'Label', 'UserLabel'],
-			\   palette['lyellow']: [],
-			\   palette['lorange']: [
-				\'Typedef', 'Structure', 'StorageClass', 'Variable',
-				\'CursorLineNr', 'LineNr'
+			\], palette['notice_max']: [
+				\'Identifier', 'Type',
+				\'LineNr',
+				\'TabLine', 'TabLineSel', 'TabLineFill'
+			\], palette['green']: ['Modifier', 'Label', 'UserLabel'],
+			\   palette['lgreen']: [
+				\'DiffAdd',
+				\'Typedef', 'Structure', 'StorageClass', 'Variable'
 			\], palette['lred']: [
-				\'Todo', 'macro', 'directive', 'PmenuSel', 'PreProc', 'PreCondit'
+				\'DiffDelete', 'PmenuSel',
+				\'Todo', 'macro', 'directive', 'PreProc', 'PreCondit'
 			\], palette['lgray']: ['Special'],
 			\   palette['gray']: ['Comment'],
-			\   palette['white']: ['Normal', 'Pmenu', 'MatchParen'],
+			\   palette['notice_min']: ['Normal', 'Pmenu', 'MatchParen'],
 			\palette['black']: []
 		\}, 'cterm=': {
 			\   'NONE': [
-				\'CursorColumn',
+				\'DiffAdd', 'DiffChange', 'DiffDelete', 'DiffText',
+				\'TabLine', 'TabLineFill',
 				\'CursorLineNr', 'LineNr', 'SignColumn',
-				\'PmenuSel', 'MatchParen',
+				\'PmenuSel',
 				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
 				\'GitGutterAddDefault', 'GitGutterChangeDefault',
 				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
-			\], 'NONE,bold': ['CursorLine'],
-			\   'NONE,italic': ['Comment'],
+			\],
+			\   'NONE,italic': [],
 			\   'NONE,bold,italic': ['Todo'],
-			\   'NONE,reverse': ['Visual', 'CursorLineNr', 'MatchParen']
+			\   'NONE,bold': [
+				\'GitGutterAdd', 'GitGutterChange', 'GitGutterDelete'
+			\], 'NONE,reverse': [
+				\'TabLineSel',
+				\'MatchParen',
+				\'CursorLineNr',
+				\'Visual'
+			\]
 		\}, 'ctermbg=': {
 			\   palette['white']: [
-				\'Visual', 'SignColumn',
 				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
 				\'GitGutterAddDefault', 'GitGutterChangeDefault',
 				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
-			\], palette['black']: ['LineNr', 'CursorLineNr', 'ColorColumn',
-				\'Visual', 'MatchParen',
-				\'PMenu', 'PmenuSel', 'PmenuSbar',
-				\'CursorColumn', 'CursorLine'
+			\], palette['black']: [
+				\'DiffAdd', 'DiffChange', 'DiffDelete', 'DiffText',
+				\'GitGutterAdd', 'GitGutterChange', 'GitGutterDelete',
+				\'LineNr', 'CursorLineNr', 'TabLineSel',
+				\'Visual', 'TabLine',
+				\'MatchParen',
+				\'PMenu', 'PmenuSel', 'PmenuSbar', 'SignColumn'
 			\],
-			\'NONE': ['Todo']
+			\   'NONE': ['Todo', 'Comment']
 		\}, 'guifg=': {
 			\'White': [
-				\'CursorColumn',
 				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
 				\'GitGutterAddDefault', 'GitGutterChangeDefault',
 				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
@@ -127,7 +136,7 @@ let term_map=[
 		\'ctermbg=': {
 			\'NONE': ['cTodo']
 		\}
-	\}], ['Makefile,*.mk', {
+	\}], ['Makefile,Makefile.*,*.mk', {
 		\'ctermfg=': {
 			\palette['lteal']:
 				\['Target', 'SpecTarget', 'Override', 'Special'],
@@ -152,13 +161,34 @@ let term_map=[
 		\}
 	\}]
 \]
+
 call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-Plugin 'myint/clang_complete' " Rip-Rip/clang_complete python2.x -> python3.x
+Plugin 'scrooloose/nerdtree'
+Plugin 'terryma/vim-multiple-cursors'
+
+" Use Clang Complete with Python3.x (fork of Rip-Rip/clang_complete)
+" Check your version of Vim to see if Python3 or Python2 is enabled
+" Myint is two years behind on commits but Rip-Rip breaks others
+" May be fixed with NeoVim, testing soon
+
+Plugin 'kana/vim-operator-user'
+Plugin 'rhysd/vim-clang-format'
+let g:clang_format#style_options = {
+	\"AllowShortIfStatementsOnASingleLine": 'true',
+	\"AllowShortLoopsOnASingleLine": 'true',
+	\"AllowShortBlocksOnASingleLine": 'true',
+	\"AllowShortCaseLabelsOnASingleLine": 'true',
+	\"ColumnLimit": 78, "ContinuationIndentWidth": 8,
+	\"AlignAfterOpenBracket": "DontAlign",
+	\"IndentWidth": 4, "TabWidth": 4, "UseTab": "Always"
+\}
+
+Plugin 'myint/clang_complete'
 let g:clang_auto_select=1
-let g:clang_complete_auto=1
+let g:clang_complete_auto=0
 let g:clang_complete_hl_errors=1
 let g:clang_close_preview=1
 let g:clang_c_options='-std=gnu11'
@@ -168,28 +198,21 @@ let g:clang_snippets_engine='clang_complete'
 let g:clang_conceal_snippets=0
 let g:clang_use_library=1
 let g:clang_library_path="/home/john/Downloads/llvm/lib/"
+let g:clang_user_options='|| exit 0'
 
 Plugin 'octol/vim-cpp-enhanced-highlight'
 let g:cpp_class_scope_highlight=1
 let g:cpp_experimental_template_highlight=1
 
 let mapleader=","
-:inoremap <Tab> <c-x><c-u>
-:inoremap <S-Tab> <Tab>
+:inoremap <S-Tab> <c-x><c-u>
+" :inoremap <S-Tab> <Tab>
 " :set dictionary="/usr/dict/words"
-
-noremap! <F3> <Esc> " Alternate escape; TODO better map
 
 noremap! <n> <NOP>
 noremap! <m> <NOP>
-" imap \> <C-v>>
-" imap \< <C-v><
 inoremap \> <C-v>>
 inoremap \< <C-v><
-" noremap! <M-'> <NOP>
-" noremap! <M-"> <NOP>
-
-inoremap <F2> <c-o>:
 
 syntax on
 syn sync fromstart
@@ -234,12 +257,24 @@ map <C-p> :r ~/.vimbuffer<CR>
 
 command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 		\ | wincmd p | diffthis
+nmap <Leader>d :DiffOrig<CR>
 
-" nnoremap <C-w> :DiffOrig<CR>
+" Open new file
+map <C-n> :tabe<CR>
+map <Leader>n :badd<CR>
+" Open new tab
+map <C-o> :tabe<space>
+map <Leader>o :badd<space>
+" Left tab
+nmap <Leader>. :tabn<CR>
+nmap <Leader>\> :bn<CR>
+" Right tab
+nmap <Leader>, :tabp<CR>
+nmap <Leader>\< :bp<CR>
 
-" Tabs
-nnoremap <Leader>/ :bnext<CR> " Right tab
-nnoremap <Leader>? :bprev<CR> " Left tab
+" Open tab tree
+map <Leader>d :NERDTree<CR>
+
 " Splits
 nnoremap <Leader>j <C-W>j     " Focus below
 nnoremap <Leader>J :sp<CR>    " Add and focus below
@@ -251,68 +286,63 @@ nnoremap <Leader>s :sp<Space> " Add below with arguments
 nnoremap <Leader>v :vsp<Space> " Add right with arguments
 
 " Themes, colors, icons
-" hi airline_a term=BOLD cterm=BOLD
-" hi airline_b term=BOLD cterm=BOLD
-" hi airline_c term=BOLD cterm=BOLD
-" hi airline_x term=BOLD cterm=BOLD
-" hi airline_y term=BOLD cterm=BOLD
-" hi airline_z term=BOLD cterm=BOLD
-" hi! StatusLine term=BOLD cterm=NONE,BOLD
-" hi StatusLineNC term=BOLD cterm=NONE,BOLD
 
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'vim-scripts/buftabs'
+" Plugin 'vim-airline/vim-airline'
+" Plugin 'vim-airline/vim-airline-themes'
 Plugin 'ryanoasis/vim-devicons'
-set ls=2
-set stal=0
-let g:buftabs_only_basename=0
-let g:airline_powerline_fonts=1
-let g:airline_skip_empty_sections=0
+" set ls=2
+set ls=0
+set stal=2
+" set statusline=""
+" let g:buftabs_only_basename=0
+" let g:airline_powerline_fonts=1
+" let g:airline_skip_empty_sections=1
+" 
+" let g:airline#extensions#disable_rtp_load=1
+" let g:airline#extensions#bufferline#enabled=1
+" let g:airline#extensions#tabline#enabled=1
+" let g:airline#extensions#tabline#show_tab_type=0
+" let g:airline#extensions#tabline#show_buffers=1
+" let g:airline#extensions#tabline#tab_nr_type=0
+" let g:airline_section_b=" "
 
-" 52=dred, 53=dpurple, 55=dblue
-let g:airline_theme="dark2"
-let g:airline#extensions#tabline#show_buffers=1
-let g:airline#extensions#tabline#tab_nr_type=2
-let g:airline_section_z=""
+" let g:airline#extensions#default#section_truncate_width={}
+" let g:airline#extensions#default#layout = [[],[]]
+" "[['a', 'c'], ['warning', 'error']]
 
-let g:airline_section_b="(%c,%l) %{WebDevIconsGetFileTypeSymbol()} " .
-	\ "%{WebDevIconsGetFileFormatSymbol()}"
-let g:airline#extensions#default#layout = [
-	\['', 'z', 'a', 'z', 'z', 'c'],
-	\['z', 'b', 'z', 'warning', 'error', 'z', 'z']
-\]
+" let g:airline#extensions#whitespace#symbol = ''
+" let g:airline#extensions#whitespace#trailing_format='t%s '
+" let g:airline#extensions#whitespace#mixed_indent_file_format='i%.0s '
 
 " Decorations
-" Plugin 'airblade/vim-gitgutter'
+Plugin 'airblade/vim-gitgutter'
 " Whitespace visualization
 
+" TODO restore whitespace highlighting
 Plugin 'Yggdroot/indentLine'
 Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'nathanaelkane/vim-indent-guides'
 
-hi IndentGuidesOdd ctermfg=221 cterm=bold
-hi IndentGuidesEven ctermfg=139 cterm=bold
+hi IndentGuidesOdd ctermfg=245 cterm=bold
+hi IndentGuidesEven ctermfg=250 cterm=bold
 let g:indent_guides_auto_colors=0
 let g:indent_guides_enable_on_vim_startup=1
 let g:vim_indent_cont=0
 
 Plugin 'jeetsukumaran/vim-indentwise'
-Plugin 'vim-scripts/DoxygenToolkit.vim'
+Plugin 'DoxygenToolkit.vim'
 let g:DoxygenToolkit_interCommentBlock=""
 let g:DoxygenToolkit_compactOneLineDoc="yes"
 let g:DoxygenToolkit_compactDoc="yes"
-Plugin 'vim-scripts/CompleteHelper'
+Plugin 'CompleteHelper'
 
 " RO plugins
 Plugin 'jez/vim-superman'
 
 " Language support
-" Plugin 'vim-scripts/bash-support.vim'
-Plugin 'suan/vim-instant-markdown.git'
-let g:instant_markdown_slow=1
+" Plugin 'bash-support.vim'
 
-exec buf_nre . ' * set fo= cc=80 wrap lbr tw=0 wm=2'
+" exec buf_nre . ' * set fo= cc=80 wrap lbr wm=2'
 " vnoremap <C-#> <Esc>`>A */<Esc>`<I/* <Esc>
 
 exec buf_nre . ' *.cpp,*.hpp,*.tpp '
@@ -325,7 +355,9 @@ map <C-a> :s/^[ \t]*/" &/<CR>          " Line quotes, default style is vim
 map <C-z> :s/^\([ \t]*\)"[ ]*/\1/<CR>  " Line unquote, default style is vim
 map <Leader>a [%V]%<C-a>               " Simple references to the C-a/C-z
 map <Leader>z [%V]%<C-z>               " key bindings so they can change
+map <C-v> <C-V>                        " Unicode entry (c-V is xclip paste)
 
+exec buf_nre . ' * :set tw=78 cc=+1'
 " E.g. k_ftype='*.cpp', k_var='ctermfg=', k_val='255', k_tag='cBlock'
 for [k_ftype, v_ftype] in term_map
 	for [k_var, v_var] in items(v_ftype)
@@ -339,4 +371,58 @@ for [k_ftype, v_ftype] in term_map
 	endfor
 endfor
 
-set noet nosi noai noci nocin nopi sts=0 sw=4 ts=4
+
+
+
+" Vim-airline/vim-airline-themes can't resolve my files?
+" let g:airline#themes#dark#palette = {}
+" let g:airline#themes#dark#palette.normal =
+" 	\airline#themes#generate_color_map(
+" 		\[ '', '', 15, palette['teal'] ],
+" 		\[ '', '', 15, palette['black'] ],
+" 		\[ '', '', 15, palette['black'] ])
+" let g:airline#themes#dark#palette.insert =
+" 	\airline#themes#generate_color_map(
+" 		\[ '', '', 15, palette['dgreen'] ],
+" 		\[ '', '', 15, palette['black'] ],
+" 		\[ '', '', 15, palette['black'] ])
+" let g:airline#themes#dark#palette.replace =
+" 	\airline#themes#generate_color_map(
+" 		\[ '', '', 15, palette['dpurple'] ],
+" 		\[ '', '', 15, palette['black'] ],
+" 		\[ '', '', 15, palette['black'] ])
+" let g:airline#themes#dark#palette.visual =
+" 	\copy(g:airline#themes#dark#palette.replace)
+" let g:airline#themes#dark#palette.inactive =
+" 	\airline#themes#generate_color_map(
+" 		\[ '', '', 15, palette['gray'] ],
+" 		\[ '', '', 15, palette['black'] ],
+" 		\[ '', '', 15, palette['black'] ])
+" if get(g:, 'loaded_ctrlp', 0)
+" 	let g:airline#themes#dark#palette.ctrlp = \
+" 		airline#extensions#ctrlp#generate_color_map(
+" 	\ [ '' , '' , 189 , 55 , '' ],
+" 	\ [ '' , '' , 231 , 98 , '' ],
+" 	\ [ '' , '' , 55 , 231 , 'bold' ])
+" endif
+
+" Accents / highlights
+" let g:airline#themes#dark#palette.accents =
+" 	\{ 'red': [ '' , '' , 160 , '' ]}
+
+" All modified variants
+" let modified =
+" 	\{'airline_c': [ '' , '' , palette['orange'], '', 'bold' ] }
+" let g:airline#themes#dark#palette.normal_modified = modified
+" let g:airline#themes#dark#palette.insert_modified = modified
+" let g:airline#themes#dark#palette.insert_modified = modified
+" let g:airline#themes#dark#palette.replace_modified = modified
+" let g:airline#themes#dark#palette.visual_modified = modified
+" let g:airline#themes#dark#palette.inactive_modified = modified
+
+
+
+set tw=78 cc=+1 noet nosi noai noci nocin nopi sts=0 sw=4 ts=4
+hi CursorColumn ctermbg=232 cterm=none,bold
+hi CursorLine cterm=none,bold ctermbg=232
+hi ColorColumn cterm=underline ctermbg=none
