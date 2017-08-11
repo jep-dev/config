@@ -205,9 +205,8 @@ let g:cpp_class_scope_highlight=1
 let g:cpp_experimental_template_highlight=1
 
 let mapleader=","
-:inoremap <S-Tab> <c-x><c-u>
-" :inoremap <S-Tab> <Tab>
-" :set dictionary="/usr/dict/words"
+inoremap <Tab> <c-x><c-u>
+inoremap <S-Tab> <Tab>
 
 noremap! <n> <NOP>
 noremap! <m> <NOP>
@@ -287,32 +286,9 @@ nnoremap <Leader>v :vsp<Space> " Add right with arguments
 
 " Themes, colors, icons
 
-" Plugin 'vim-airline/vim-airline'
-" Plugin 'vim-airline/vim-airline-themes'
 Plugin 'ryanoasis/vim-devicons'
-" set ls=2
 set ls=0
 set stal=2
-" set statusline=""
-" let g:buftabs_only_basename=0
-" let g:airline_powerline_fonts=1
-" let g:airline_skip_empty_sections=1
-" 
-" let g:airline#extensions#disable_rtp_load=1
-" let g:airline#extensions#bufferline#enabled=1
-" let g:airline#extensions#tabline#enabled=1
-" let g:airline#extensions#tabline#show_tab_type=0
-" let g:airline#extensions#tabline#show_buffers=1
-" let g:airline#extensions#tabline#tab_nr_type=0
-" let g:airline_section_b=" "
-
-" let g:airline#extensions#default#section_truncate_width={}
-" let g:airline#extensions#default#layout = [[],[]]
-" "[['a', 'c'], ['warning', 'error']]
-
-" let g:airline#extensions#whitespace#symbol = ''
-" let g:airline#extensions#whitespace#trailing_format='t%s '
-" let g:airline#extensions#whitespace#mixed_indent_file_format='i%.0s '
 
 " Decorations
 Plugin 'airblade/vim-gitgutter'
@@ -342,7 +318,6 @@ Plugin 'jez/vim-superman'
 " Language support
 " Plugin 'bash-support.vim'
 
-" exec buf_nre . ' * set fo= cc=80 wrap lbr wm=2'
 " vnoremap <C-#> <Esc>`>A */<Esc>`<I/* <Esc>
 
 exec buf_nre . ' *.cpp,*.hpp,*.tpp '
@@ -370,56 +345,6 @@ for [k_ftype, v_ftype] in term_map
 		exec buf_nre . ' ' . k_ftype . ' ' . join(k_group_au, ' | :')
 	endfor
 endfor
-
-
-
-
-" Vim-airline/vim-airline-themes can't resolve my files?
-" let g:airline#themes#dark#palette = {}
-" let g:airline#themes#dark#palette.normal =
-" 	\airline#themes#generate_color_map(
-" 		\[ '', '', 15, palette['teal'] ],
-" 		\[ '', '', 15, palette['black'] ],
-" 		\[ '', '', 15, palette['black'] ])
-" let g:airline#themes#dark#palette.insert =
-" 	\airline#themes#generate_color_map(
-" 		\[ '', '', 15, palette['dgreen'] ],
-" 		\[ '', '', 15, palette['black'] ],
-" 		\[ '', '', 15, palette['black'] ])
-" let g:airline#themes#dark#palette.replace =
-" 	\airline#themes#generate_color_map(
-" 		\[ '', '', 15, palette['dpurple'] ],
-" 		\[ '', '', 15, palette['black'] ],
-" 		\[ '', '', 15, palette['black'] ])
-" let g:airline#themes#dark#palette.visual =
-" 	\copy(g:airline#themes#dark#palette.replace)
-" let g:airline#themes#dark#palette.inactive =
-" 	\airline#themes#generate_color_map(
-" 		\[ '', '', 15, palette['gray'] ],
-" 		\[ '', '', 15, palette['black'] ],
-" 		\[ '', '', 15, palette['black'] ])
-" if get(g:, 'loaded_ctrlp', 0)
-" 	let g:airline#themes#dark#palette.ctrlp = \
-" 		airline#extensions#ctrlp#generate_color_map(
-" 	\ [ '' , '' , 189 , 55 , '' ],
-" 	\ [ '' , '' , 231 , 98 , '' ],
-" 	\ [ '' , '' , 55 , 231 , 'bold' ])
-" endif
-
-" Accents / highlights
-" let g:airline#themes#dark#palette.accents =
-" 	\{ 'red': [ '' , '' , 160 , '' ]}
-
-" All modified variants
-" let modified =
-" 	\{'airline_c': [ '' , '' , palette['orange'], '', 'bold' ] }
-" let g:airline#themes#dark#palette.normal_modified = modified
-" let g:airline#themes#dark#palette.insert_modified = modified
-" let g:airline#themes#dark#palette.insert_modified = modified
-" let g:airline#themes#dark#palette.replace_modified = modified
-" let g:airline#themes#dark#palette.visual_modified = modified
-" let g:airline#themes#dark#palette.inactive_modified = modified
-
 
 
 set tw=78 cc=+1 noet nosi noai noci nocin nopi sts=0 sw=4 ts=4
