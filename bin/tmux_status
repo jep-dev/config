@@ -1,50 +1,67 @@
-#!/usr/bin/zsh
+#!/bin/bash
 
-dim='#[dim]'
-bold='#[bold]'
-def='#[default]'
-none='#[none]'
-inv='#[reverse]'
-bk='#[fg=0]'
+#    /usr/bin/zsh -- the issue?
+
+# im='#[dim]'
+# old='#[bold]'
+# ef='#[default]'
+# one='#[none]'
+# nv='#[reverse]'
+# k='#[fg=0]'
 
 # Config
-vert=' '$'\u2731'' ' # host/user separator
-lbra=$'\ue0b2' # lhs segment separator
-rbra=$'\ue0b0' # rhs segment separator
+# ert=' '$'\u2731'' ' # host/user separator
+# bra=$'\ue0b2' # lhs segment separator
+# bra=$'\ue0b0' # rhs segment separator
 
-join_segments(){
-	sw=${1:-2}
-	cb=('#67328A' '#000000' '#67328A' '#5D3E71' '#524757' '#434E3E' '#395131'
-		'#2E5423' '#1F5613' '#2e5423' '#395131' '#434e3e' '#524757' '#5d3e71')
-	ci=(1 0 0 1 0 0 0 0 0 0 0 0 0 -11)
-	cn=${#cb}
+# Shortened color sequence; usually fewer but longer commands are in use
+# f=('#FFAA55' '#FFAA55' '#FFAA55' '#FFAA55' '#FFAA55' '#FFAA55' '#FFAA55'
+# '#FFAA55' '#FFAA55' '#FFAA55' '#FFAA55' '#FFAA55' '#FFAA55' '#FFAA55')
+# b=('#670c1d' '#000000' '#670c1d' '#7e143c' '#3e165b' '#22366f' '#4c969c'
+# '#22366f' '#3e165b' '#7e143c' '#670c1d' '#390509' '#020000' '#390509')
+# n=${#cb}
+# i=({1..$cn})
+#
+# oin_segments(){
+# sw=${1:-2}
+# j=1
+# # Can't seem to get foregrounds working properly... white for now
+# while read i; do
+# 	k=${ci[j]}
+# 	fmb='#[bg='${cb[ci[j]]}']'; fmab=${fmb//bg/fg}
+# 	#fmf='#[fg=colour231]'; fmaf=${fmf//fg/bg}
+# 	fmf='#[fg='${cf[ci[j]]}']'; fmaf=${fmf//fg/bg}
+# 	[ $j -ge $sw ] && post=$fmab$rbra && pre=$inv$bk$fmab$rbra
+# 	[ $j -le $sw ] && pre=$bk$fmab$lbra
+# 	[ $j -lt $sw ] && post=$inv$bk$fmab$lbra
+# 	printf '%s' $pre$fmb' '$def$fmb$bold$i' '$def$post$def
+# 	# [ ${ci[j]} -ne 0 ] && [ ${#i} -ne 0 ] && dj=${ci[j]}
+# 	# j=$((j+dj))
+# 	let "j++"
+# 	[ "$j" -ge $cn ] && j=1
+# 	# cf=$cf1
+# done
+#
 
-	j=1
-	while read i; do
-		fmb='#[bg='${cb[j]}']'; fmab=${fmb//bg/fg}
-		fmf='#[fg=colour231]'; fmaf=${fmf//fg/bg}
-		[ $j -ge $sw ] && post=$fmab$rbra && pre=$inv$bk$fmab$rbra$def
-		[ $j -le $sw ] && pre=$bk$fmab$lbra
-		[ $j -lt $sw ] && post=$inv$bk$fmab$lbra$def
-		printf '%s' $pre$fmb$fmf' '$i' '$def$post$def
-		[ ${ci[j]} -ne 0 ] && [ ${#i} -ne 0 ] && dj=${ci[j]}
-		j=$((j+dj))
-		cf=$cf1
-	done
-}
-
-side=${1:-'-l'}
-if [ "$side" = "-l" ]; then
-	{
-		printf '%s\n%s\n' "$HOST" "$(battery)"
-		ps fho args t $(tmux display -p -F '#{pane_tty}') | \
-			sed 's/[\\_ -]*\(.*\)/\1/g' | \
-			sed 's/\(\W.\{1,10\}\).\+\(.\{1,10\}\W\)/\1 '$(printf '\u2026')' \2/g'
-			# sed 's/\(.\{12\}\).\+\(.\{12\}\)/\1 ... \2/g'
-		#echo -n {a..x}'\n'
-	} | join_segments
-elif [ "$side" = '-r' ]; then
-	time.sh 'wide'
-	# { time.sh 'wide'} | join_segments
-	#printf '#[fg=colour15]#[reverse] \u200b\n'
+# side=${1:-'-l'}
+if [ -z "$1" ] || [ "$1" = "-l" ]; then
+# if [ "$side" = "-l" ]; then
+	echo "left"
+else
+	echo "right"
 fi
+
+# side=${1:-'-l'}
+# if [ "$side" = "-l" ]; then
+# 	{
+# 		printf '%s\n%s\n' "$(battery)" "#[fg=${cf[2]}]$HOST"
+# 		ps fho args t $(tmux display -p -F '#{pane_tty}') | \
+# 			sed 's/[\\_ -]*\(.*\)/\1/g' | \
+# 			sed 's/'"${HOME//\//\\/}"'/~/g' | \
+# 			sed 's/\([^ ^\/]\{1,2\}\)[^\/^ ]*\//\1\//g'
+# 	} | join_segments
+# elif [ "$side" = '-r' ]; then
+# 	{ time.sh 'wide' } | join_segments 6
+# 	# { time.sh 'wide'} | join_segments
+# 	#printf '#[fg=colour15]#[reverse] \u200b\n'
+# fi
