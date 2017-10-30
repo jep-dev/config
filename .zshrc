@@ -212,7 +212,6 @@ if [ -z "$ZSHRC_SOURCED" ]; then
 	zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 	source ~/.zshenv
-	# tmux start-server
 fi
 export ZSHRC_SOURCED=$((ZSHRC_SOURCED+1))
 
