@@ -7,7 +7,8 @@ if [ -z "$ZSHRC_SOURCED" ]; then
 	export DISABLE_UPDATE_PROMPT=true
 
 	export EDITOR='vim'
-	export TERM="screen-256color"
+	export TERM="xterm-256color"
+	# export TERM="screen-256color"
 
 	export ZSH=~/.oh-my-zsh
 
