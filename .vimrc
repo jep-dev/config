@@ -50,7 +50,7 @@ let term_map=[
 			\]
 		\}, 'ctermfg=': {
 			\   palette['lblue']: [
-				\'DiffChange', 'LineNR',
+				\'DiffChange', 'Comment',
 				\'CaseIn', 'SngleCase'
 			\], palette['lgreen']: [
 				\'String', 'SString', 'DString',
@@ -68,7 +68,7 @@ let term_map=[
 				\'DiffDelete', 'PmenuSel',
 				\'Todo', 'macro', 'directive', 'PreProc', 'PreCondit'
 			\], palette['lgray']: ['Special'],
-			\   palette['gray']: ['Comment'],
+			\   palette['gray']: ['LineNR'],
 			\   palette['notice_min']: [
 				\'Normal', 'Pmenu', 'MatchParen'
 			\],
