@@ -38,4 +38,11 @@ runtime! syntax/gtkglext.vim
 "runtime! syntax/vte.vim
 "runtime! syntax/xlib.vim
 
+if exists("b:current_syntax")
+	finish
+endif
+
+syn match sdlPrefix 'SDL_[A-Za-z0-9]*'
+hi def link sdlPrefix PreProc
+
 " vim: set ft=vim :
