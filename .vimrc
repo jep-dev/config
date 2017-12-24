@@ -7,12 +7,8 @@ set shm=a
 set showcmd
 set undofile udir=$HOME/share/vimundo ul=1000 ur=10000
 set rtp+=~/.vim/bundle/Vundle.vim
-" let &t_ti.="\e[52\e[4 q"
-" let &t_te.="\e[0 q"
 
-" set list lcs=tab:╍╌
 set list lcs=tab:▒░
-" set list lcs=tab:▒ "
 set backspace=indent,eol,start
 
 set encoding=utf8
@@ -28,6 +24,7 @@ set diffopt=filler
 
 let buf_nre='au BufNewFile,BufRead,BufEnter'
 
+
 let palette={
 	\'lblue': 123, 'blue': 44, 'dblue': 17,
 		\ 'lteal': 87, 'teal': 23,
@@ -42,140 +39,13 @@ let palette={
 	\'notice_min': 151, 'notice': 220, 'notice_max': 229
 \}
 
-let term_map=[
-	\['*', {
-		\   'term=': {
-			\'NONE': [
-				\'DiffAdd', 'DiffChange', 'DiffDelete', 'DiffText'
-			\]
-		\}, 'ctermfg=': {
-			\   palette['lblue']: [
-				\'DiffChange', 'Comment',
-				\'CaseIn', 'SngleCase'
-			\], palette['lgreen']: [
-				\'String', 'SString', 'DString',
-				\'Number', 'Constant', 'Float', 'Character'
-			\], palette['purple']: [
-				\'Statement', 'Operator', 'Conditional', 'Repeat',
-				\'Structure', 'LineNr'
-			\], palette['lred']: [
-				\'StorageClass', 'Identifier', 'Type',
-				\'TabLine', 'TabLineSel', 'TabLineFill'
-			\], palette['green']: ['Modifier', 'Label', 'UserLabel'],
-			\   palette['notice']: [
-				\'DiffAdd',
-				\'Typedef', 'Variable',
-				\'DiffDelete', 'PmenuSel',
-				\'Todo', 'macro', 'directive', 'PreProc', 'PreCondit'
-			\], palette['lgray']: ['Special'],
-			\   palette['gray']: ['LineNR'],
-			\   palette['notice_min']: [
-				\'Normal', 'Pmenu', 'MatchParen'
-			\],
-			\palette['black']: []
-		\}, 'cterm=': {
-			\   'NONE': [
-				\'TabLine', 'TabLineFill',
-				\'CursorLineNr', 'LineNr', 'SignColumn',
-				\'PmenuSel',
-				\'DiffAdd', 'DiffChange', 'DiffDelete', 'DiffText',
-				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
-				\'GitGutterAddDefault', 'GitGutterChangeDefault',
-				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
-			\], 'NONE,bold': [
-				\'GitGutterAdd', 'GitGutterChange', 'GitGutterDelete'
-			\], 'NONE,reverse': [
-				\'TabLineSel',
-				\'MatchParen',
-				\'CursorLineNr',
-				\'Visual'
-			\]
-		\}, 'ctermbg=': {
-			\   palette['white']: [
-				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
-				\'GitGutterAddDefault', 'GitGutterChangeDefault',
-				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
-			\], palette['black']: [
-				\'DiffAdd', 'DiffChange', 'DiffDelete', 'DiffText',
-				\'GitGutterAdd', 'GitGutterChange', 'GitGutterDelete',
-				\'LineNr', 'CursorLineNr', 'TabLineSel',
-				\'Visual', 'TabLine',
-				\'MatchParen',
-				\'PMenu', 'PmenuSel', 'PmenuSbar', 'SignColumn'
-			\]
-		\}, 'guifg=': {
-			\'White': [
-				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
-				\'GitGutterAddDefault', 'GitGutterChangeDefault',
-				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
-			\]
-		\}, 'guibg=': {
-			\'Black': [
-				\'LineNr',
-				\'GitGutterAdd', 'GitGutterDelete', 'GitGutterChangeDelete',
-				\'GitGutterAddDefault', 'GitGutterChangeDefault',
-				\'GitGutterDeleteDefault', 'GitGutterChangeDeleteDefault'
-			\]
-		\}
-	\}], ['*.cpp,*.hpp,*.tpp', {
-		\'ctermfg=': {
-			\   palette['purple']: [
-				\'cppAccess'
-			\], palette['lred']: [
-				\'cType', 'cppType',
-				\'cppSTLios', 'cppSTLnamespace',
-				\'cppSTLexception', 'cppSTLfunctional', 'cppSTLtype'
-			\], palette['lorange']: ['cCustomClass'],
-			\   palette['notice']: [
-				\'glConstant'
-			\], palette['yellow']: [
-				\'glType', 'glFunction',
-				\'cCppBracket', 'cCustomAngleBracketContent',
-				\'cCppBlock', 'cBlock'
-			\], palette['white']: [
-				\'cTodo',
-				\'cAnsiFunction', 'cCppParen',
-				\'cCustomParen', 'cCustomFunc'
-			\]
-		\},
-		\'cterm=': {
-			\'NONE,bold,italic': ['cTodo']
-		\},
-		\'ctermbg=': {
-			\palette['black']: ['cTodo']
-		\}
-	\}], ['Makefile,Makefile.*,*.mk', {
-		\'ctermfg=': {
-			\palette['lteal']:
-				\['Target', 'SpecTarget', 'Override', 'Special'],
-			\palette['teal']: ['Commands', 'Command'],
-			\palette['lgreen']: ['SString', 'DString']
-		\}
-	\}], ['*.sh*,*.zsh*', {
-		\'ctermfg=': {
-			\palette['lgreen']:
-				\['Quote', 'Set', 'SetList', 'CmdSubRegion']
-		\}
-	\}], ['*.vim*', {
-		\'ctermfg=': {
-			\palette['lorange']: ['VimVar'],
-			\palette['white']: []
-		\}, 'guifg=': {
-			\'White': [
-				\'VimEcho', 'VimEchoHL', 'VimNormCmds', 'StatusLine',
-				\'StatusLineNC', 'Title', 'Question',
-				\'ModeMsg', 'MoreMsg', 'Text', 'NonText'
-			\]
-		\}
-	\}]
-\]
 
 call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-Plugin 'scrooloose/nerdtree'
-Plugin 'terryma/vim-multiple-cursors'
+" Plugin 'scrooloose/nerdtree'
+" Plugin 'terryma/vim-multiple-cursors'
 
 " Use Clang Complete with Python3.x (fork of Rip-Rip/clang_complete)
 " Check your version of Vim to see if Python3 or Python2 is enabled
@@ -185,16 +55,15 @@ Plugin 'terryma/vim-multiple-cursors'
 Plugin 'beyondmarc/opengl.vim'
 Plugin 'vim-scripts/gtk-vim-syntax'
 Plugin 'kana/vim-operator-user'
-" Plugin 'xaizek/vim-inccomplete'
 Plugin 'rhysd/vim-clang-format'
 let g:clang_format#style_options = {
-	\"AllowShortIfStatementsOnASingleLine": 'true',
-	\"AllowShortLoopsOnASingleLine": 'true',
-	\"AllowShortBlocksOnASingleLine": 'true',
-	\"AllowShortCaseLabelsOnASingleLine": 'true',
-	\"ColumnLimit": 78, "ContinuationIndentWidth": 8,
-	\"AlignAfterOpenBracket": "DontAlign",
-	\"IndentWidth": 4, "TabWidth": 4, "UseTab": "Always"
+	\'AllowShortIfStatementsOnASingleLine': 'true',
+	\'AllowShortLoopsOnASingleLine': 'true',
+	\'AllowShortBlocksOnASingleLine': 'true',
+	\'AllowShortCaseLabelsOnASingleLine': 'true',
+	\'ColumnLimit': 78, 'ContinuationIndentWidth': 8,
+	\'AlignAfterOpenBracket': 'DontAlign',
+	\'IndentWidth': 4, 'TabWidth': 4, 'UseTab': 'Always'
 \}
 let g:clang_format#command = "clang-format-4.0"
 " let g:clang_format#detect_style_file = 0
@@ -236,7 +105,7 @@ map <F10> :call Syn_at()<CR>
 noremap! <n> <NOP>
 noremap! <m> <NOP>
 
-syntax on
+syntax enable
 syn sync fromstart
 
 au CursorMovedI * if pumvisible() == 0|pclose|endif
@@ -280,9 +149,9 @@ vmap <C-c> :w! ~/.vimbuffer<CR>
 nmap <C-c> :.w! ~/.vimbuffer<CR>
 map <C-p> :r ~/.vimbuffer<CR>
 
-command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-		\ | wincmd p | diffthis
-nmap <Leader>d :DiffOrig<CR>
+" command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+" 		\ | wincmd p | diffthis
+" nmap <Leader>d :DiffOrig<CR>
 
 " Open new file
 map <C-n> :tabe<CR>
@@ -326,28 +195,28 @@ nnoremap <Leader>v :vsp<Space>
 
 " Themes, colors, icons
 
-Plugin 'ryanoasis/vim-devicons'
+" Plugin 'ryanoasis/vim-devicons'
 set ls=0
 set stal=2
 
 " Decorations
-Plugin 'airblade/vim-gitgutter'
+" Plugin 'airblade/vim-gitgutter'
 " Whitespace visualization
 
 " TODO restore whitespace highlighting
 Plugin 'Yggdroot/indentLine'
 Plugin 'ntpeters/vim-better-whitespace'
-Plugin 'nathanaelkane/vim-indent-guides'
+" Plugin 'nathanaelkane/vim-indent-guides'
 
-" hi IndentGuidesOdd ctermfg=59 cterm=bold
-" hi IndentGuidesEven ctermfg=29 cterm=bold
+hi IndentGuidesOdd ctermfg=59 cterm=bold
+hi IndentGuidesEven ctermfg=29 cterm=bold
 hi IndentGuidesOdd ctermfg=147
 hi IndentGuidesEven ctermfg=179
 let g:indent_guides_auto_colors=0
 let g:indent_guides_enable_on_vim_startup=1
 let g:vim_indent_cont=0
 
-Plugin 'jeetsukumaran/vim-indentwise'
+" Plugin 'jeetsukumaran/vim-indentwise'
 Plugin 'DoxygenToolkit.vim'
 let g:DoxygenToolkit_interCommentBlock=""
 let g:DoxygenToolkit_compactOneLineDoc="yes"
@@ -355,7 +224,7 @@ let g:DoxygenToolkit_compactDoc="yes"
 Plugin 'CompleteHelper'
 
 " RO plugins
-Plugin 'jez/vim-superman'
+" Plugin 'jez/vim-superman'
 
 " Language support
 " Plugin 'bash-support.vim'
@@ -363,7 +232,6 @@ Plugin 'jez/vim-superman'
 " vnoremap <C-#> <Esc>`>A */<Esc>`<I/* <Esc>
 
 exec buf_nre . ' *.cpp,*.hpp,*.tpp '
-			\ . ':syntax reset<CR>|'
 			\ . ':map <C-a> :s/^[ \t]*/&// /<CR>|'
 			\ . ':map <C-z> :s/^\([ \t]*\)\/\//\1/<CR>'
 
@@ -382,22 +250,41 @@ map <C-v> <C-V>
 
 exec buf_nre . ' * :set tw=78 cc=+1'
 " E.g. k_ftype='*.cpp', k_var='ctermfg=', k_val='255', k_tag='cBlock'
-for [k_ftype, v_ftype] in term_map
-	for [k_var, v_var] in items(v_ftype)
-		let k_group_au=[]
-		for [k_val, v_val] in items(v_var)
-			for k_tag in v_val
-				let k_group_au += ['hi! ' . k_tag . ' ' . k_var . k_val]
-			endfor
-		endfor
-		exec buf_nre . ' ' . k_ftype . ' ' . join(k_group_au, ' | :')
-	endfor
-endfor
+" for [k_ftype, v_ftype] in term_map
+" 	for [k_var, v_var] in items(v_ftype)
+" 		let k_group_au=[]
+" 		for [k_val, v_val] in items(v_var)
+" 			for k_tag in v_val
+" 				let k_group_au += ['hi! ' . k_tag . ' ' . k_var . k_val]
+" 			endfor
+" 		endfor
+" 		exec buf_nre . ' ' . k_ftype . ' ' . join(k_group_au, ' | :')
+" 	endfor
+" endfor
 
 
 set tw=78 cc=+1 noet nosi noai noci nocin nopi sts=0 sw=4 ts=4
+hi ColorColumn cterm=underline ctermbg=none
 hi CursorColumn ctermbg=232 cterm=none,bold
 hi CursorLine cterm=none,bold ctermbg=232
-hi CursorLineNr ctermfg=123
-hi ColorColumn cterm=underline ctermbg=none
-" hi Cursor cterm=bold,inverse
+hi CursorLineNr ctermfg=231 ctermbg=167
+hi LineNr ctermfg=167 ctermbg=232
+
+hi Underlined ctermfg=106
+hi Ignore ctermfg=106
+hi Error ctermfg=106
+hi Todo ctermfg=217
+
+hi PreProc ctermfg=110 " 213
+hi Identifier ctermfg=145
+" hi PreProc ctermfg=184
+hi Statement ctermfg=219
+
+hi Constant ctermfg=179
+hi Special ctermfg=140
+hi SpecialComment ctermfg=123
+hi Comment ctermfg=105 " 229 " 189
+hi Type ctermfg=66 " 149
+" 167 burgs
+
+hi Todo ctermbg=None
