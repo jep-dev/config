@@ -1,4 +1,5 @@
-if [[ "$ZSHRC_SOURCED" -eq 0 ]]; then
+if [ -n "$ZSHRC_SOURCED" ]; then
+# if [[ "$ZSHRC_SOURCED" -eq 0 ]]; then
 	# bak(){
 	# 	src="$(realpath ${3:-.})"
 	# 	name="$(basename $src)"
@@ -57,6 +58,20 @@ if [[ "$ZSHRC_SOURCED" -eq 0 ]]; then
 				# 	{$i..$((i+cols-1))}
 				echo
 			}
+		elif [ "$1" = "-b" ]; then
+		for i0 ({0..1}) {
+			for i1 ({0..2}) {
+				i=$((i0*3+i1))
+				for j ({0..2}) {
+					printf '%03i|' $((i*36+$j*12+16))
+					for k ({0..11}) {
+						printf $'\e[48;5;'$((16+$k+$j*12+$i*3*12))$'m \e[m'
+					}
+					printf '|'
+				}
+				printf '\n'
+			}
+		}
 		else
 			while [ $# -gt 1 ]; do
 				j=1
@@ -397,7 +412,8 @@ if [[ "$ZSHRC_SOURCED" -eq 0 ]]; then
 	}
 	# Re-source zsh unless (conservatively, unless forcing with $1=-f)
 	zsh-update(){
-		[ "$1" = "-f" ] && export ZSHRC_FORCE=1
+		[ "$1" = "-f" ] && export ZSHRC_SOURCED=""
+			# export ZSHRC_FORCE=1
 		source ~/.zshrc
 	}
 fi
