@@ -1,5 +1,4 @@
-#!/bin/bash
-
+# /bin/bash
 ##   /usr/bin/zsh -- the issue?
 
 dim='#[dim]'
@@ -38,16 +37,16 @@ join_segments(){
 	done;
 }
 
-side=${1:-'-l'}
+side=${*:-'-l'}
 if [ "$side" = "-l" ]; then
 	{
-		~/bin/battery
-		echo $HOSTNAME
-		ps fho args t $(tmux display -p -F '#{pane_tty}') | \
-			sed 's/[\\_ -]*\(.*\)/\1/g' | \
-			sed 's/'"${HOME//\//\\/}"'/~/g' | \
-			sed 's/\([^ ^\/]\{1,2\}\)[^\/^ ]*\//\1\//g';
+		~/bin/battery;
+		echo $HOSTNAME;
+		#ps fho args t $(tmux display -p -F '#{pane_tty}') | \
+		#	sed 's/[\\_ -]*\(.*\)/\1/g' | \
+		#	sed 's/'"${HOME//\//\\/}"'/~/g' | \
+		#	sed 's/\([^ ^\/]\{1,2\}\)[^\/^ ]*\//\1\//g';
 	} | join_segments 2;
 else
-	time.sh 'wide' | join_segments 6;
+	~/bin/time.sh 'wide' | join_segments 6;
 fi

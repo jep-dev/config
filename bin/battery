@@ -1,5 +1,6 @@
-#!/bin/bash
+#!/usr/bin/zsh
 
+## /bin/bash
 ## /usr/bin/zsh
 
 scale="${scale:-1}"
@@ -41,19 +42,17 @@ if [ "$1" = "-g" ]; then
 		"scale=0; maj=a/1; min=a%1*$min; maj\nmin/1" | bc))
 	out=''
 	for ((i=0;i<$maj;i++)); do
-		if [ "$i" -lt "${split[1]}" ]; then out+=${blocks[last]}$space
-		elif [ "$i" -eq "${split[1]}" ]; then out+=${blocks[${split[2]}+1]}$space
+		if [ "$i" -lt "${split[1]}" ]; then
+			out+=${blocks[last]}$space;
+		elif [ "$i" -eq "${split[1]}" ]; then
+			out+=${blocks[${split[2]}+1]}$space;
 		else out+=$empty$space; fi
 	done
 	echo -n "$out $charging"
 else
 	pc=$(echo "scale=$scale; $cur * 100 / $max" | bc)
-	# prefix="${1:-}"
-	# suffixes=($(printf '\u26A1\n-'))
-	# on_ac_power
-	# suffix=" ${suffixes[$?+1]}${2:-}"
-	printf "$pc%%"
-	on_ac_power && echo '+' || echo
+	printf "$pc%%%%"
+	on_ac_power && echo '+' || echo '-'
 	# printf "$prefix$pc%%$suffix"
 fi
 
