@@ -1,17 +1,4 @@
-if [ -n "$ZSHRC_SOURCED" ]; then
-# if [[ "$ZSHRC_SOURCED" -eq 0 ]]; then
-	# bak(){
-	# 	src="$(realpath ${3:-.})"
-	# 	name="$(basename $src)"
-	# 	cmd="${1:-tar}"
-	# 	dest="$(realpath ${2:-~/Backups/bak/})"
-	# 	[ -d "$dest" ] || mkdir "$dest"
-	# 	if [[ "${cmd:-tar}" =~ "tar.*" ]]; then
-	# 		tar $4 cf "$dest/$name-$suffix.tar" "$src"
-	# 	else
-	# 		cp -R $4 "$src" "$dest/$name-$suffix"
-	# 	fi
-	# }
+#if [ -n "$ZSHRC_SOURCED" ]; then
 
 	# Wrap lines and format to $1 columns
 	columnate(){
@@ -42,53 +29,32 @@ if [ -n "$ZSHRC_SOURCED" ]; then
 	}
 	# Show ranges of xterm-256 colors, or the entire table with -a
 	color-range(){
-		if [ "$1" = "-a" ]; then
-			sp=$'\u2502'
-			cols=${2:-12}
-			title="\e[7m%-5d\e[0m\ue0b0$sp"
-			printf "  %${#sp}s" ""
-			printf "$sp\e[7m%2d \e[0m" {0..$((cols-1))}
-			echo
-			for i ({0..255..$cols}) {
-				printf "%3i" $i
-				max=$((i+cols-1))
-				[ "$max" -ge 255 ] && max=255
-				printf "\e[48;5;232m$sp\e[48;5;%dm   \e[0m" {$i..$max}
-				# printf "\e[48;5;232m$sp\e[48;5;%dm | \e[0m" \
-				# 	{$i..$((i+cols-1))}
-				echo
-			}
-		elif [ "$1" = "-b" ]; then
-		for i0 ({0..1}) {
-			for i1 ({0..2}) {
-				i=$((i0*3+i1))
-				for j ({0..2}) {
-					printf '%03i|' $((i*36+$j*12+16))
-					for k ({0..11}) {
-						printf $'\e[48;5;'$((16+$k+$j*12+$i*3*12))$'m \e[m'
-					}
-					printf '|'
+		buf='\n'
+		for line ({0..5}) {
+			for block ({0..5}) {
+				[ $((block%2)) -eq 1 ] \
+					&& buf=$buf' ' \
+					|| buf=$buf$(printf ' %3i ' $((16+6*(block+6*line))))
+				for cell ({0..5}) {
+					index=$((16+cell+6*(block+6*line)))
+					buf=$buf$(printf $'\e[48;5;'$index$'m')
+					[ $(((line^block^cell)%2)) -eq 0 ] \
+						&& buf=$buf$(printf $'\e[38;5;231m\\\e[m') \
+						|| buf=$buf$(printf $'\e[38;5;232m/\e[m')
+					#buf=$buf$'+\e[m'
 				}
-				printf '\n'
+				#buf=$buf' '
 			}
+			buf=$buf'\n'
 		}
-		else
-			while [ $# -gt 1 ]; do
-				j=1
-				for ((i=$1;i<$2;i++)); do
-					# if [ "$j" -eq 1 ]; then
-						# printf " $i"
-					# fi
-					if [[ $j -eq 10 ]]; then
-						j=0
-					fi
-					printf "\e[38;5;"$i"m\u2588\e[0m"
-					let "j++"
-				done
-			shift 2
-			echo
-			done
-		fi
+		buf=$buf'\n4-bit '
+		for block ({0..7}) {
+			inner=$(printf $'\e[38;5;231m\\\e[38;5;232m/\e[39m')
+			buf=$buf$(printf $' \e[4'$block$'m'$inner$'\e[49m')
+			buf=$buf$(printf $' \e[10'$block$'m'$inner$'\e[49m')
+		}
+		buf=$buf$'\e[m\n'
+		echo $buf
 	}
 
 
@@ -416,4 +382,4 @@ if [ -n "$ZSHRC_SOURCED" ]; then
 			# export ZSHRC_FORCE=1
 		source ~/.zshrc
 	}
-fi
+# fi
