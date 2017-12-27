@@ -133,17 +133,14 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 
 	BULLETTRAIN_PROMPT_CHAR=$' \U03BB. '
 
-	#BULLETTRAIN_CUSTOM_BG=17
-	#BULLETTRAIN_DIR_BG=53
-	#BULLETTRAIN_GIT_BG=125
-	BULLETTRAIN_CUSTOM_BG=88
-	BULLETTRAIN_DIR_BG=54
-	BULLETTRAIN_GIT_BG=20
+	BULLETTRAIN_PROMPT_ORDER=(custom dir git)
+	BULLETTRAIN_CUSTOM_BG=161
+	BULLETTRAIN_DIR_BG=91
+	BULLETTRAIN_GIT_BG=57
 
 	BULLETTRAIN_CUSTOM_FG=231
 	BULLETTRAIN_DIR_FG=231
 	BULLETTRAIN_GIT_FG=231
-	BULLETTRAIN_PROMPT_ORDER=(custom dir git)
 
 
 	BULLETTRAIN_CUSTOM_MSG="%m"
@@ -170,10 +167,6 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 # 		suffix:none isearch:none paste:none underline:none)
 	# source $ZSH/oh-my-zsh.sh
 
-	## Potential fix for Git delay, currently not helping
-	##   No delay from key presses; only hitting 'enter' (no command),
-	##   ctrl+l (refresh), and on command exit. Clearly due to prompt.
-	##   Removing VCS element fixes delay as a workaround.
 	## Credit to github.com/msabramo anyway
 	function git_prompt_info() {
 		ref=$(git symbolic-ref HEAD 2> /dev/null) || return
