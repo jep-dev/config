@@ -27,9 +27,15 @@
 		done
 		echo -n $bsep
 	}
-	# Show ranges of xterm-256 colors, or the entire table with -a
+	# Show ranges of xterm-256 colors
 	color-range(){
-		buf='\n'
+		buf='\n   0 '
+		z=$(printf $'\e[38;5;231m\\\e[38;5;232m/')
+		for block ({0..15}) {
+			buf=$buf$(printf $'\e[48;5;'$block$'m'$z$'\e[m ')
+			[ $block -eq 7 ] && buf=$buf'8 '
+		}
+		buf=$buf'\n\n'
 		for line ({0..5}) {
 			for block ({0..5}) {
 				[ $((block%2)) -eq 1 ] \
@@ -41,20 +47,18 @@
 					[ $(((line^block^cell)%2)) -eq 0 ] \
 						&& buf=$buf$(printf $'\e[38;5;231m\\\e[m') \
 						|| buf=$buf$(printf $'\e[38;5;232m/\e[m')
-					#buf=$buf$'+\e[m'
 				}
-				#buf=$buf' '
 			}
 			buf=$buf'\n'
 		}
-		buf=$buf'\n4-bit '
-		for block ({0..7}) {
-			inner=$(printf $'\e[38;5;231m\\\e[38;5;232m/\e[39m')
-			buf=$buf$(printf $' \e[4'$block$'m'$inner$'\e[49m')
-			buf=$buf$(printf $' \e[10'$block$'m'$inner$'\e[49m')
+		buf=$buf$'\e[m\n 232 '
+		for i ({0..1}) {
+			for j ({0..11}) {
+				buf=$buf$(printf $'\e[48;5;'$((232+i*12+j))'m'$z$'\e[m')
+			}
+			buf=$buf' '
 		}
-		buf=$buf$'\e[m\n'
-		echo $buf
+		echo $buf'\n'
 	}
 
 
