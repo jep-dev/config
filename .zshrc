@@ -102,17 +102,7 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 	#net
 	alias firefox='GTK_THEME="Redmond" firefox --new-tab'
 	alias browser='firefox'
-	google_base='https://google.com'
 	alias -s com='browser' org='browser' net='browser'
-	alias google='web-search "google.com/search?q="'
-	alias google-images='web-search "google.com/search?tbm=isch&q="'
-	alias gimgs='google-images'
-	alias duckduckgo='web-search "duckduckgo.com/?q="'
-	alias ddg='duckduckgo'
-	alias duckduckgo-images='web-search "duckduckgo.com/?ia=images&iax=1&q="'
-	alias ddgimgs='duckduckgo-images'
-	alias wiki='web-search "en.wikipedia.org/w/index.php?search="'
-	alias youtube='web-search "youtube.com/results?q="'
 
 	new_path=($HOME'/bin' $PATH)
 	new_ldpath=($HOME'/lib' $HOME'/Downloads/llvm/lib'
@@ -134,19 +124,27 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 	BULLETTRAIN_PROMPT_CHAR=$' \U03BB. '
 
 	BULLETTRAIN_PROMPT_ORDER=(custom dir git)
+
+	# Discovered a batch assignment technique while experimenting.
+	# 'Set'/'env' would allow detection aot. enumerating names exhaustively,
+	# but with major caveats.
+	for bt_target ('AWS' 'CONTEXT' 'CUSTOM' 'DIR' 'ELIXIR' 'TIME' \
+			'GIT' 'GIT_COLORIZE_DIRTY' 'GO' 'NVM' 'PERL' 'RUBY' \
+			'SCREEN' 'STATUS' 'VIRTUALENV') {
+		let "BULLETTRAIN_"$bt_target"_FG=223"
+		let "BULLETTRAIN_"$bt_target"_BG=232"
+	}
 	BULLETTRAIN_CUSTOM_BG=161
 	BULLETTRAIN_DIR_BG=91
 	BULLETTRAIN_GIT_BG=57
-
-	BULLETTRAIN_CUSTOM_FG=231
-	BULLETTRAIN_DIR_FG=231
-	BULLETTRAIN_GIT_FG=231
 
 
 	BULLETTRAIN_CUSTOM_MSG="%m"
 	BULLETTRAIN_PROMPT_SEPARATE_LINE=false
 	BULLETTRAIN_PROMPT_ADD_NEWLINE=false
 	BULLETTRAIN_CONTEXT_HOSTNAME='%m'
+
+	#RPROMPT=(date)
 
 
 	# export ZSH=~/.oh-my-zsh
