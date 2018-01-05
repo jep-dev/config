@@ -1,7 +1,11 @@
 
 let mapleader=","
 
-inoremap <Tab> <c-x><c-u>
+exe 'set t_kB=' . nr2char(27) . '[Z'
+
+nmap <Tab> >>
+nmap <S-Tab> <<
+imap <Tab> <c-x><c-u>
 
 noremap <Leader><h> :s/^[\t]\(.*\)$/\1/
 " noremap <Leader><l> :s/^\(.*\)$/\t\1/
@@ -59,16 +63,18 @@ nnoremap <Leader>h <C-W>h
 nnoremap <Leader>s :sp<Space>
 
 " Binding to C-a/e overrides Home/End!
-nmap <C-a> 0
-imap <C-a> <Esc>I
-nmap <C-e> $
-imap <C-e> <Esc>A
+" nmap <Home> 0w
+" nmap <C-a> 0w
+" imap <C-a> <Esc>I
+" nmap <C-e> $
+" imap <C-e> <Esc>A
 " Add right with arguments
 nnoremap <Leader>v :vsp<Space>
 
 
 map <leader><Space> :.s/$/\=repeat(' ',79-col('$'))<CR>
 map <leader># :.s/$/\=repeat('#',79-col('$'))<CR>
+	\ asdf
 " Line unquote, default style is vim
 " map <C-z> :s/^\([ \t]*\)"[ ]*/\1/<CR>
 " key bindings so they can change
