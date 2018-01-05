@@ -29,8 +29,11 @@
 	}
 	# Show ranges of xterm-256 colors
 	color-range(){
+		ltex='\\'
+		rtex='/'
+		[ -z $1 ] && { ltex=' '; rtex=' '; }
 		buf='\n   0 '
-		z=$(printf $'\e[38;5;231m\\\e[38;5;232m/')
+		z=$(printf $'\e[38;5;231m'$ltex$'\e[38;5;232m'$rtex)
 		for block ({0..15}) {
 			buf=$buf$(printf $'\e[48;5;'$block$'m'$z$'\e[m ')
 			[ $block -eq 7 ] && buf=$buf'8 '
@@ -45,8 +48,10 @@
 					index=$((16+cell+6*(block+6*line)))
 					buf=$buf$(printf $'\e[48;5;'$index$'m')
 					[ $(((line^block^cell)%2)) -eq 0 ] \
-						&& buf=$buf$(printf $'\e[38;5;231m\\\e[m') \
-						|| buf=$buf$(printf $'\e[38;5;232m/\e[m')
+						&& buf=$buf$(printf \
+						$'\e[38;5;231m'$rtex$'\e[m') \
+						|| buf=$buf$(printf \
+						$'\e[38;5;232m'$ltex$'\e[m')
 				}
 			}
 			buf=$buf'\n'

@@ -49,6 +49,9 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 
 	#vim
 	alias vi='vim'
+	#alias ivim="(){ \vim -es '+:hi Normal ctermfg=155' /dev/stdin }"
+	alias iovim="(){ \vim -es $@ '+:wq! /dev/stdout' /dev/stdin }"
+	alias ivim='fname=$(mktemp /tmp/XXXXXXXX) && cat >> $fname && \vim $fname'
 	alias vimu='vim +PluginInstall +qall'
 	alias vimconfig='$EDITOR ~/.vimrc'
 	alias vim="stty stop '' -ixoff ; TERM=screen-256color $EDITOR"
@@ -59,7 +62,7 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 
 	ed_sources=('c' 'h' 'cpp' 'hpp' 'tpp' 'cpp')
 	ed_scripts=('Makefile' 'mk' 'in' 'lua')
-	ed_confs=('conf' 'rc')
+	ed_confs=('conf' 'rc' 'vim')
 	ed_markups=('README' 'md' 'html' 'css' 'php' 'index')
 	ed_files=($ed_sources $ed_scripts $ed_confs $ed_markups $ed_files)
 	for d ($ed_files) alias -s $d='$EDITOR'
@@ -107,6 +110,7 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 	new_path=($HOME'/bin' $PATH)
 	new_ldpath=($HOME'/lib' $HOME'/Downloads/llvm/lib'
 		$HOME'/workspace/glew-2.1.0/lib'
+		$HOME'/.local/lib/python2.7/site-packages'
 		'/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu'
 		'/usr/lib/python2.7/config-x86_64-linux-gnu'
 		'/usr/lib/' $LD_LIBRARY_PATH)
@@ -121,30 +125,18 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 
 	export ZSH_THEME="bullet-train/bullet-train"
 
-	BULLETTRAIN_PROMPT_CHAR=$' \U03BB. '
 
-	BULLETTRAIN_PROMPT_ORDER=(custom dir git)
-
-	# Discovered a batch assignment technique while experimenting.
-	# 'Set'/'env' would allow detection aot. enumerating names exhaustively,
-	# but with major caveats.
+	# Discovered batch assignment techniques:
+	# 1. Iterate over a name group sharing expansions/values
 	for bt_target ('AWS' 'CONTEXT' 'CUSTOM' 'DIR' 'ELIXIR' 'TIME' \
 			'GIT' 'GIT_COLORIZE_DIRTY' 'GO' 'NVM' 'PERL' 'RUBY' \
-			'SCREEN' 'STATUS' 'VIRTUALENV') {
-		let "BULLETTRAIN_"$bt_target"_FG=223"
-		let "BULLETTRAIN_"$bt_target"_BG=232"
-	}
-	BULLETTRAIN_CUSTOM_BG=161
-	BULLETTRAIN_DIR_BG=91
-	BULLETTRAIN_GIT_BG=57
-
-
-	BULLETTRAIN_CUSTOM_MSG="%m"
-	BULLETTRAIN_PROMPT_SEPARATE_LINE=false
-	BULLETTRAIN_PROMPT_ADD_NEWLINE=false
-	BULLETTRAIN_CONTEXT_HOSTNAME='%m'
-
-	#RPROMPT=(date)
+			'SCREEN' 'STATUS' 'VIRTUALENV') \
+		let "BULLETTRAIN_"$bt_target{"_FG=231","_BG=232"}
+	# 2. Iterate over an expansion/value group sharing names
+	for bt_config (CONTEXT_BG=232 CUSTOM_BG=53 DIR_BG=53 GIT_BG=232 \
+		DIR_CONTEXT_SHOW=true \
+		PROMPT_SEPARATE_LINE=false PROMPT_ADD_NEWLINE=false) \
+		let "BULLETTRAIN_$bt_config"
 
 
 	# export ZSH=~/.oh-my-zsh
@@ -156,21 +148,45 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 	#antigen bundle bhilburn/powerlevel9k
 	antigen apply
 	antigen theme bullet-train
-
-	ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=214,italic
-	ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=155,italic
-	ZSH_HIGHLIGHT_STYLES[path]=none
-	ZSH_HIGHLIGHT_STYLES[globbing]=none
-# 	zle_highlight=(region:none special:none region_highlight:none \
-# 		suffix:none isearch:none paste:none underline:none)
-	# source $ZSH/oh-my-zsh.sh
-
 	## Credit to github.com/msabramo anyway
+	setopt prompt_subst
 	function git_prompt_info() {
 		ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-		echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}"\
-			"$ZSH_THEME_GIT_PROMPT_SUFFIX"
+		res="${ref#refs/heads/}"
+		if [ -z "$res" ]; then echo; return; fi
+
+		cf=231 fcf='%F{'$cf'}' bcf='%K{'$cf'}'
+		cm=232 fcm='%F{'$cm'}' bcm='%K{'$cm'}'
+		cb=53 fcb='%F{'$cb'}' bcb='%K{'$cb'}'
+
+		#lhs=$fcm$'\Ue0b2'$bcm$fcb$'\Ue0b2'
+		lhs=$bcm$fcb$'\Ue0b2'$bcb$fcm$' \Ue0b2'
+		lhs=$lhs$bcm$fcb$'\Ue0b2'$bcb$fcf'  '
+		rhs=' '
+		prefix=$ZSH_THEME_GIT_PROMPT_PREFIX
+		suffix=$ZSH_THEME_GIT_PROMPT_SUFFIX
+		echo "$lhs$prefix$res$suffix$rhs"
 	}
+	RPROMPT='$(git_prompt_info)'
+	BULLETTRAIN_PROMPT_ORDER=(dir) #git custom)
+	BULLETTRAIN_CUSTOM_MSG=$'\U03BB'
+	BULLETTRAIN_CONTEXT_HOSTNAME='%D'
+	BULLETTRAIN_PROMPT_CHAR=$' \U03BB. '
+
+
+	typeset -A ZSH_HIGHLIGHT_STYLES zle_highlight
+	zle_highlight=()
+	ZSH_HIGHLIGHT_STYLES=(\
+		alias 'fg=155,bold' \
+		command 'fg=155,bold' \
+		function 'fg=155,bold' \
+	)
+		# alias 'fg=231,bold' command 'fg=87' \
+		# comment 'fg=111' default 'fg=153' \
+		# globbing 'fg=22,bold' path 'fg=48' \
+		# reserved-words 'fg=219' \
+		# unknown-token 'fg=220,bold')
+
 
 	alias grep >&/dev/null && \
 		unalias grep && alias grep='grep --color=auto'
@@ -184,6 +200,9 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 	'cx=2:se='$co_wt
 	eval "$(dircolors -b ~/.dircolors)"
 	zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+	export GCC_COLORS='error=01;31:warning=01;35:'\
+		'note=01;36:caret=01;32:locus=01:quote=01'
 
 	source ~/.zshenv
 else
