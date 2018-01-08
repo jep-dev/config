@@ -2,6 +2,11 @@
 syn match sdlPrefix 'SDL_[A-Za-z0-9]*'
 hi def link sdlPrefix PreProc
 
+hi cppSTLtype       ctermfg=219
+hi cppStructure     ctermfg=144 "138
+hi cCustomParen     ctermfg=231
+hi cParen           ctermfg=231
+
 " Start region found on SO, end is incorrect
 " syn region Angles start='\v%(<operator\_s*)@<!%(
 " 	\%(\_i|template\_s*)
