@@ -103,7 +103,7 @@ LuciusBlack
 
 " Plugin 'ryanoasis/vim-devicons'
 set ls=0
-set stal=2
+set stal=1
 
 " Decorations
 " Plugin 'airblade/vim-gitgutter'
