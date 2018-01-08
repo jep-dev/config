@@ -51,14 +51,14 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 	alias vi='vim'
 	#alias ivim="(){ \vim -es '+:hi Normal ctermfg=155' /dev/stdin }"
 	alias iovim="(){ \vim -es $@ '+:wq! /dev/stdout' /dev/stdin }"
-	alias ivim='fname=$(mktemp /tmp/XXXXXXXX) && cat >> $fname && \vim $fname'
+	alias ivim='(){ vim =(zsh -c "$*") }'
 	alias vimu='vim +PluginInstall +qall'
 	alias vimconfig='$EDITOR ~/.vimrc'
 	alias vim="stty stop '' -ixoff ; TERM=screen-256color $EDITOR"
 
 	#dev
 	alias loopcmd='(){ while read; do $*; done }'
-	alias lmake='(){ { make $* } 2>&1 | less }'
+	alias lmake='(){ make $* 2>&1 | less }'
 
 	ed_sources=('c' 'h' 'cpp' 'hpp' 'tpp' 'cpp')
 	ed_scripts=('Makefile' 'mk' 'in' 'lua')
@@ -90,12 +90,6 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 	alias dpkg-grep='dpkg -l | cut -d " " -f 3 | grep'
 
 	#misc
-	alias ns='notify-send'
-	alias nsc='notify-send -u critical'
-
-	alias washer='sleep 1800 && nsc "Washer"'
-	alias dryer='sleep 2700 && nsc "Dryer"'
-
 	alias hrule='sed "s/././g" <(printf "%"$COLUMNS"s" "")'
 
 	#git
@@ -133,7 +127,7 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 			'SCREEN' 'STATUS' 'VIRTUALENV') \
 		let "BULLETTRAIN_"$bt_target{"_FG=231","_BG=232"}
 	# 2. Iterate over an expansion/value group sharing names
-	for bt_config (CONTEXT_BG=232 CUSTOM_BG=53 DIR_BG=53 GIT_BG=232 \
+	for bt_config (CONTEXT_BG=232 CUSTOM_BG=22 DIR_BG=22 GIT_BG=232 \
 		DIR_CONTEXT_SHOW=true \
 		PROMPT_SEPARATE_LINE=false PROMPT_ADD_NEWLINE=false) \
 		let "BULLETTRAIN_$bt_config"
@@ -153,51 +147,26 @@ if [ "x$ZSHRC_SOURCED" = "x" ]; then
 	function git_prompt_info() {
 		ref=$(git symbolic-ref HEAD 2> /dev/null) || return
 		res="${ref#refs/heads/}"
-		if [ -z "$res" ]; then echo; return; fi
-
-		cf=231 fcf='%F{'$cf'}' bcf='%K{'$cf'}'
-		cm=232 fcm='%F{'$cm'}' bcm='%K{'$cm'}'
-		cb=53 fcb='%F{'$cb'}' bcb='%K{'$cb'}'
-
-		#lhs=$fcm$'\Ue0b2'$bcm$fcb$'\Ue0b2'
-		lhs=$bcm$fcb$'\Ue0b2'$bcb$fcm$' \Ue0b2'
-		lhs=$lhs$bcm$fcb$'\Ue0b2'$bcb$fcf'  '
-		rhs=' '
-		prefix=$ZSH_THEME_GIT_PROMPT_PREFIX
-		suffix=$ZSH_THEME_GIT_PROMPT_SUFFIX
-		echo "$lhs$prefix$res$suffix$rhs"
+		[[ -n "$res" ]] && echo -n $'%F{22}\ue0b2%K{22}%F{221} '\
+			"$ZSH_THEME_GIT_PROMPT_PREFIX$res"\
+				"$ZSH_THEME_GIT_PROMPT_SUFFIX%f%k"
 	}
 	RPROMPT='$(git_prompt_info)'
 	BULLETTRAIN_PROMPT_ORDER=(dir) #git custom)
-	BULLETTRAIN_CUSTOM_MSG=$'\U03BB'
-	BULLETTRAIN_CONTEXT_HOSTNAME='%D'
-	BULLETTRAIN_PROMPT_CHAR=$' \U03BB. '
+	#BULLETTRAIN_CUSTOM_MSG=$'\u03BB'
+	#BULLETTRAIN_CONTEXT_HOSTNAME='%D'
+	BULLETTRAIN_PROMPT_CHAR=$' \u03BB. '
 
 
-	typeset -A ZSH_HIGHLIGHT_STYLES zle_highlight
-	zle_highlight=()
-	ZSH_HIGHLIGHT_STYLES=(\
-		alias 'fg=155,bold' \
-		command 'fg=155,bold' \
-		function 'fg=155,bold' \
-	)
-		# alias 'fg=231,bold' command 'fg=87' \
-		# comment 'fg=111' default 'fg=153' \
-		# globbing 'fg=22,bold' path 'fg=48' \
-		# reserved-words 'fg=219' \
-		# unknown-token 'fg=220,bold')
+	#typeset -A ZSH_HIGHLIGHT_STYLES zle_highlight
+	#zle_highlight=()
+	ZSH_HIGHLIGHT_STYLES=(alias 'fg=51' command 'fg=51' function 'fg=51')
 
 
 	alias grep >&/dev/null && \
 		unalias grep && alias grep='grep --color=auto'
 
-	local co_wt="38;5;255"
-	local co_lg="38;5;155"
-	local co_dg="38;5;143"
-	local co_or="38;5;215"
-	local co_ye="38;5;221"
-	export GREP_COLORS='fn='$co_wt':ln='$co_wt':sl='$co_wt';;1:mt='$co_lg':'\
-	'cx=2:se='$co_wt
+	export GREP_COLORS='fn=231:ln=231:sl=231;;1:mt=155:cx=2:se=51'
 	eval "$(dircolors -b ~/.dircolors)"
 	zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
