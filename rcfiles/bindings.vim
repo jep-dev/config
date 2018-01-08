@@ -20,6 +20,7 @@ noremap! <m> <NOP>
 
 map <F10> :call Syn_at()<CR>
 
+noremap U <C-R>
 vmap <C-c> :w! ~/.vimbuffer<CR>
 nmap <C-c> :.w! ~/.vimbuffer<CR>
 map <C-p> :r ~/.vimbuffer<CR>
