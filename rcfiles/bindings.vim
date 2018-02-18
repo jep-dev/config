@@ -3,9 +3,12 @@ let mapleader=","
 
 exe 'set t_kB=' . nr2char(27) . '[Z'
 
-nmap <Tab> >>
-nmap <S-Tab> <<
+map <Tab> >>
+map <S-Tab> <<
 imap <Tab> <c-x><c-u>
+
+vmap * :s/\/\* *\\| *\*\///g<CR>
+nmap * :s/\([ \t]*\)\(.*\)/\1\/* \2 *\//g<CR>
 
 noremap <Leader><h> :s/^[\t]\(.*\)$/\1/
 " noremap <Leader><l> :s/^\(.*\)$/\t\1/
@@ -15,8 +18,13 @@ noremap <C-l> <\t>
 
 map <F10> :call Syn_at()<CR>
 
-noremap! <n> <NOP>
-noremap! <m> <NOP>
+noremap! <n> <Nop>
+noremap! <m> <Nop>
+" Mappings necessary to make 'noesckeys' work - unsuccessful
+" noremap! 0A <Up>
+" noremap! 0B <Down>
+" noremap! 0C <Right>
+" noremap! 0D <Left>
 
 map <F10> :call Syn_at()<CR>
 
@@ -63,7 +71,6 @@ nnoremap <Leader>h <C-W>h
 " Add below with arguments
 nnoremap <Leader>s :sp<Space>
 
-" Binding to C-a/e overrides Home/End!
 " nmap <Home> 0w
 " nmap <C-a> 0w
 " imap <C-a> <Esc>I
@@ -71,14 +78,10 @@ nnoremap <Leader>s :sp<Space>
 " imap <C-e> <Esc>A
 " Add right with arguments
 nnoremap <Leader>v :vsp<Space>
-
+exec 'au BufNewFile,BufEnter *.php inoremap <Tab> <c-x><c-o>'
 
 map <leader><Space> :.s/$/\=repeat(' ',79-col('$'))<CR>
 map <leader># :.s/$/\=repeat('#',79-col('$'))<CR>
 	\ asdf
-" Line unquote, default style is vim
-" map <C-z> :s/^\([ \t]*\)"[ ]*/\1/<CR>
-" key bindings so they can change
-" map <Leader>z [%V]%<C-z>
 " Unicode entry (c-V is xclip paste)
 map <C-v> <C-V>
