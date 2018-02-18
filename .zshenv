@@ -1,4 +1,7 @@
+#!/usr/bin/zsh
 #if [ -n "$ZSHRC_SOURCED" ]; then
+
+	alias pegrep='(){ ps auxf | grep -v grep | egrep $* } '
 
 	# Wrap lines and format to $1 columns
 	columnate(){
