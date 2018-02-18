@@ -47,6 +47,7 @@ Plugin 'VundleVim/Vundle.vim'
 " Plugin 'terryma/vim-multiple-cursors'
 
 
+Plugin 'tmux-plugins/vim-tmux'
 Plugin 'jonathanfilip/vim-lucius'
 " runtime ~/.vim/bundle/vim-lucius/colors/lucius.vim
 " source $VIMRUNTIME'/bundle/vim-lucius/colors/lucius.vim'
@@ -75,6 +76,7 @@ au BufReadPost * if line("'\"") > 1
 			\ | exe "normal! g'\"ztzz"
 " | exe 'normal! zz' | endif
 
+exec onNewRead . ' {.,}tmux*.conf set filetype=tmux | compiler tmux'
 exec onNewRead . ' *.txt,*.warprc set filetype=txt'
 exec onNewRead . ' *.vim,*.vimrc set filetype=vim'
 
