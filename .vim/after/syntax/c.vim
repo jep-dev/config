@@ -1,30 +1,10 @@
-" Highlighting for libraries with simple naming conventions
-syn match sdlPrefix 'SDL_[A-Za-z0-9_]*'
-hi def link sdlPrefix PreProc
-
-"hi cppSTLtype       ctermfg=216 219
-"hi cppStructure     ctermfg=216 117 144 138
-
-hi cCustomParen     ctermfg=231
-hi cParen           ctermfg=231
-
-hi cppStructure       ctermfg=167
-hi cppSTLtype         ctermfg=39
-hi cppSTLnamespace    ctermfg=39
-
-" Start region found on SO, end is incorrect
-" syn region Angles start='\v%(<operator\_s*)@<!%(
-" 	\%(\_i|template\_s*)
-" 	\@<=\<[<=]@!|\<@<!\<[[:space:]<=]@!)'
-" 	\ end='>'
-" hi Angles ctermfg=39
-
+" Vim syntax file example
+" Put it in ~/.vim/after/syntax/ and tailor to your needs.
 
 let cairo_deprecated_errors = 1
 let gdkpixbuf_deprecated_errors = 1
 let glib_deprecated_errors = 1
 let gtk3_deprecated_errors = 1
-
 
 runtime! syntax/cairo.vim
 runtime! syntax/gdkpixbuf.vim
@@ -58,9 +38,5 @@ runtime! syntax/gtkglext.vim
 "runtime! syntax/poppler.vim
 "runtime! syntax/vte.vim
 "runtime! syntax/xlib.vim
-
-if exists("b:current_syntax")
-	finish
-endif
 
 " vim: set ft=vim :
