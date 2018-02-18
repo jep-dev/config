@@ -8,6 +8,9 @@ set showcmd
 set undofile udir=$HOME/share/vimundo ul=1000 ur=10000
 set rtp+=~/.vim/bundle/Vundle.vim
 
+let onNewRead='au BufNewFile,BufRead'
+let onNewReadEnter=onNewRead . ',BufEnter'
+
 " Location of configuration scripts by category
 " Participates in file discovery for relative paths
 rviminfo! ~/.vim/plugin/rcfiles/
@@ -20,8 +23,7 @@ runtime! bindings.vim
 " Testing symlink
 runtime! linked.vim
 
-
-set list lcs=tab:▒░
+set list lcs=tab:▒\ "
 set backspace=indent,eol,start
 
 set encoding=utf8
@@ -29,14 +31,12 @@ set ttym=xterm2 mouse=a
 
 set t_Co=256
 
-set nu ru cuc cul sbr=‾\\_
+set nu ru cuc cul sbr=‾\_
 set cole=2 cocu=vin
 set cot=menu cot-=preview
 set ph=20
 set diffopt=filler
 
-let onNewRead='au BufNewFile,BufRead'
-let onNewReadEnter=onNewRead . ',BufEnter'
 
 
 call vundle#begin()
@@ -46,10 +46,6 @@ Plugin 'VundleVim/Vundle.vim'
 " Plugin 'scrooloose/nerdtree'
 " Plugin 'terryma/vim-multiple-cursors'
 
-" Use Clang Complete with Python3.x (fork of Rip-Rip/clang_complete)
-" Check your version of Vim to see if Python3 or Python2 is enabled
-" Myint is two years behind on commits but Rip-Rip breaks others
-" May be fixed with NeoVim, testing soon
 
 Plugin 'jonathanfilip/vim-lucius'
 " runtime ~/.vim/bundle/vim-lucius/colors/lucius.vim
@@ -57,6 +53,8 @@ Plugin 'jonathanfilip/vim-lucius'
 
 " Plugin 'luochen1990/rainbow'
 " let g:rainbow_active = 1
+
+Plugin 'shawncplus/phpcomplete.vim'
 
 Plugin 'beyondmarc/opengl.vim'
 Plugin 'vim-scripts/gtk-vim-syntax'
@@ -101,15 +99,13 @@ LuciusBlack
 
 " Themes, colors, icons
 
-" Plugin 'ryanoasis/vim-devicons'
 set ls=0
 set stal=1
 
 " Decorations
 " Plugin 'airblade/vim-gitgutter'
-" Whitespace visualization
 
-" TODO restore whitespace highlighting
+" Whitespace visualization
 
 hi IndentGuidesOdd ctermfg=51 ctermbg=155 cterm=bold
 hi IndentGuidesEven ctermfg=51 ctermbg=155 cterm=bold
@@ -134,4 +130,3 @@ Plugin 'CompleteHelper'
 exec onNewRead . ' * :set tw=78 cc=+1'
 
 set tw=78 cc=+1 noet nosi noai noci nocin nopi sts=0 sw=4 ts=4
-
