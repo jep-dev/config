@@ -1,8 +1,5 @@
 #!/usr/bin/zsh
 
-## /bin/bash
-## /usr/bin/zsh
-
 scale="${scale:-1}"
 bat1='/sys/class/power_supply/BAT1'
 cur=$(cat $bat1/charge_now)
@@ -51,8 +48,10 @@ if [ "$1" = "-g" ]; then
 	echo -n "$out $charging"
 else
 	pc=$(echo "scale=$scale; $cur * 100 / $max" | bc)
-	printf "$pc%%%%"
-	on_ac_power && echo '+' || echo '-'
+	printf "$pc%%"
+	on_ac_power && echo -n '+' || echo -n '-'
+	[ "$1" = "-s" ] && echo -n ' '
+	echo
 	# printf "$prefix$pc%%$suffix"
 fi
 
