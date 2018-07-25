@@ -116,3 +116,6 @@ if ! shopt -oq posix; then
   fi
 fi
 [ -r /home/john/.byobu/prompt ] && . /home/john/.byobu/prompt   #byobu-prompt#
+
+export MANPATH=$(manpath):/home/john/.local/share/man
+export PATH=$PATH:/home/john/bin
