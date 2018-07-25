@@ -1,8 +1,5 @@
 #!/usr/bin/zsh
 #if [ -n "$ZSHRC_SOURCED" ]; then
-
-	alias pegrep='(){ ps auxf | grep -v grep | egrep $* } '
-
 	# Wrap lines and format to $1 columns
 	columnate(){
 		local cols="${cols:-${1:-5}}"
@@ -142,6 +139,18 @@
 		echo "<body class=markdown-body>" >$ofname
 		github-markdown $ifname -f gfm -h >>$ofname
 		echo "</body>" >>$ofname
+	}
+
+	recent(){
+		full=false
+		format='%T@ %h %-16f'
+		if [ "$1" = "-l" ] || [ "$1" = "--list" ]; then
+			format="$format %12TA, %Tb %Td  %TH:%TM"
+			shift
+		fi
+		find ${@:-{include,src,app}/*} -type f -printf "$format\n" \
+			| sort -r | while read i j k; do printf "%16s %s\n" "$j" "$k"; done
+
 	}
 	# loopcmd(){
 	# 	while read; do $*; done
@@ -283,6 +292,39 @@
 		msg=${1-'\u1d34\u1d35'}
 		printf $'\e[1m'$msg$'\U1f40c__'
 	}
+	countdown(){
+		t0=$(date +%s)
+		t1=$(date -d "$1" +%s)
+		secs=$((t1-t0))
+		fmt="%s is %s away.\n"
+		if [[ "$t0" -ge "$t1" ]]; then
+			secs=$((-1*$secs))
+			fmt="%s was %s ago.\n"
+		fi
+		t1=$(date -d "$1" '+%R %m/%d')
+		t1="${2+'$2' (}$t1${2+)}"
+		#t1="${2+'$2' (}"$(date -d "$1" "+%R %m/%d")"${2+)}"
+		mins=$((secs/60%60))
+		hours=$((secs/3600%24))
+		days=$((secs/86400))
+
+		any=""
+		out=""
+		if [[ "$days" -gt 0 ]]; then
+			out="$days"d
+			any=1
+		fi
+		if [[ "$hours" -gt 0 ]]; then
+			[[ -n "$any" ]] && out="$out, "
+			out="$out""$hours"h
+			any=1
+		fi
+		if [[ "$mins" -gt 0 ]]; then
+			[[ -n "$any" ]] && out="$out, "
+			out="$out""$mins"m
+		fi
+		printf "$fmt" "$t1" "$out"
+	}
 	# Convert a decimal $1 to a hexadecimal; zero-pad to length $2
 	to_hex(){
 		val=${1:-0}; len=${2:-8}
@@ -324,10 +366,10 @@
 	}
 
 	# Search man pages and view with vim instead of pager
-	vman(){
-		man -k $* 2>&1 | grep "^$1\|^$2" && vim -c "SuperMan $*" \
-			-c "%y z | bd | set buftype=nofile | 0put=@z | %!sed 's/    / /g'"
-	}
+#	vman(){
+#		man -k $* 2>&1 | grep "^$1\|^$2" && vim -c "SuperMan $*" \
+#			-c "%y z | bd | set buftype=nofile | 0put=@z | %!sed 's/    / /g'"
+#	}
 
 	# web-select(){
 	# 	local callback="${1:-$browser}"; shift
