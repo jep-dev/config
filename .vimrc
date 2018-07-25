@@ -22,8 +22,7 @@ runtime! params.vim
 runtime! bindings.vim
 " Testing symlink
 runtime! linked.vim
-
-set list lcs=tab:▒\ "
+set list lcs=tab:░\ "
 set backspace=indent,eol,start
 
 set encoding=utf8
@@ -31,13 +30,13 @@ set ttym=xterm2 mouse=a
 
 set t_Co=256
 
-set nu ru cuc cul sbr=‾\_
+set nu ru cuc cul sbr=`-
 set cole=2 cocu=vin
 set cot=menu cot-=preview
 set ph=20
 set diffopt=filler
 
-
+set nofixendofline
 
 call vundle#begin()
 " let Vundle manage Vundle, required
@@ -48,9 +47,24 @@ Plugin 'VundleVim/Vundle.vim'
 
 
 Plugin 'tmux-plugins/vim-tmux'
+Plugin 'bling/vim-bufferline'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'edkolev/tmuxline.vim'
+
+"let g:airline#extensions#tmuxline#enabled=0
+let g:tmuxline_theme = {
+    \   'a'    : [  28, 231 ],
+    \   'b'    : [  65, 231 ],
+    \   'c'    : [ 102, 231 ],
+    \   'x'    : [ 139, 232 ],
+    \   'y'    : [ 176, 232 ],
+    \   'z'    : [ 213, 232 ],
+    \   'win'  : [ 103, 236 ],
+    \   'cwin' : [ 236, 103 ],
+    \   'bg'   : [ 244, 236 ],
+    \ }
 Plugin 'jonathanfilip/vim-lucius'
-" runtime ~/.vim/bundle/vim-lucius/colors/lucius.vim
-" source $VIMRUNTIME'/bundle/vim-lucius/colors/lucius.vim'
 
 " Plugin 'luochen1990/rainbow'
 " let g:rainbow_active = 1
@@ -62,7 +76,8 @@ Plugin 'vim-scripts/gtk-vim-syntax'
 Plugin 'kana/vim-operator-user'
 Plugin 'rhysd/vim-clang-format'
 Plugin 'Rip-Rip/clang_complete'
-Plugin 'octol/vim-cpp-enhanced-highlight'
+"Plugin 'octol/vim-cpp-enhanced-highlight'
+Plugin 'bfrg/vim-cpp-modern'
 
 syntax enable
 syn sync fromstart
@@ -85,14 +100,11 @@ exec onNewRead . ' *.cpp,*.tpp,*.hpp set'
 			\ . ' filetype=cpp omnifunc=omni#cpp#complete#Main'
 			\ . ' completefunc=ClangComplete'
 exec onNewRead . ' *.mk,Makefile set filetype=make'
+au BufAdd,BufNew,BufCreate,BufEnter,BufRead *.tpp set filetype=cpp
 
 " required
 call vundle#end()
 filetype plugin indent on
-
-colorscheme lucius
-LuciusBlack
-
 
 " command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 " 		\ | wincmd p | diffthis
@@ -109,26 +121,24 @@ set stal=1
 
 " Whitespace visualization
 
-hi IndentGuidesOdd ctermfg=51 ctermbg=155 cterm=bold
-hi IndentGuidesEven ctermfg=51 ctermbg=155 cterm=bold
 Plugin 'Yggdroot/indentLine'
-hi IndentGuidesOdd ctermfg=51 ctermbg=155 cterm=bold
-hi IndentGuidesEven ctermfg=51 ctermbg=155 cterm=bold
 Plugin 'ntpeters/vim-better-whitespace'
 " Plugin 'nathanaelkane/vim-indent-guides'
-
 " Plugin 'jeetsukumaran/vim-indentwise'
+
 Plugin 'DoxygenToolkit.vim'
-let g:DoxygenToolkit_interCommentBlock=""
-let g:DoxygenToolkit_compactOneLineDoc="yes"
-let g:DoxygenToolkit_compactDoc="yes"
 Plugin 'CompleteHelper'
+colorscheme lucius
+LuciusBlack
 
 " RO plugins
 " Plugin 'jez/vim-superman'
 " Language support
 " Plugin 'bash-support.vim'
 
-exec onNewRead . ' * :set tw=78 cc=+1'
+exec onNewRead . ' * :set tw=100 cc=+1'
+" tm/ttm control serial keypress reaction time (interruption vs. latency)
+"   - Escape timeout is for a special case of this more general tradeoff
 
-set tw=78 cc=+1 noet nosi noai noci nocin nopi sts=0 sw=4 ts=4
+"  set tm=500 ttm=5 cc=+1 noet nosi noai noci nocin nopi sts=0 sw=4 ts=4
+set tm=500 ttm=5 cc=+1 noet noai si noci nocin nopi sts=0 sw=4 ts=4
