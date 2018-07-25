@@ -5,6 +5,8 @@ exe 'set t_kB=' . nr2char(27) . '[Z'
 
 map <Tab> >>
 map <S-Tab> <<
+vmap <Tab> >
+vmap <S-Tab> <
 imap <Tab> <c-x><c-u>
 
 vmap * :s/\/\* *\\| *\*\///g<CR>
@@ -37,14 +39,14 @@ map <C-p> :r ~/.vimbuffer<CR>
 map <C-n> :tabe<CR>
 map <Leader>n :badd<CR>
 " Open new tab
-map <C-o> :tabe<space>
-map <Leader>o :badd<space>
+map <Leader>o :tabe<space>
+map <C-o> :badd<space>
 " Left tab
 nmap <Leader>. :tabn<CR>
 nmap <Leader>\> :bn<CR>
 " Right tab
-nmap <Leader>, :tabp<CR>
-nmap <Leader>\< :bp<CR>
+nmap <Leader>\< :tabp<CR>
+nmap <Leader>, :bp<CR>
 
 " Open tab tree
 " map <Leader>d :NERDTree<CR>
