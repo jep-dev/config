@@ -33,6 +33,7 @@ alias -g ~omz=$ZSH
 alias -g ~sdl=~/workspace/SDL2
 alias -g ~sdl-doc=~/workspace/sdl2-docs/docs
 alias -g ~ws=~/workspace
+export FLAME=~/workspace/FlameGraph
 
 #goodcop-badcop
 alias please='sudo'
@@ -60,8 +61,8 @@ if [ "$ZSHRC_SOURCED" = "0" ]; then
 	#new_ldpath=($HOME'/lib' $HOME'/Downloads/llvm/lib'
 	#	$HOME'/.local/lib/python2.7/site-packages'
 
-	new_manpath=($MANPATH /usr/local/share/man/man3 ~/.local/share/man/cplusplus.com ~/.local/share/man
-		~/.local/share/man/man3 ~/.local/share/man/man3)
+	#new_manpath=($MANPATH /usr/local/share/man/man3 ~/.local/share/man/cplusplus.com ~/.local/share/man
+		#~/.local/share/man/man3 ~/.local/share/man/man3)
 	new_ldpath=(
 		$HOME{{,/Downloads/llvm}/lib,/.local/lib/python2.7/site-packages}
 		/usr/local/lib/
@@ -70,9 +71,10 @@ if [ "$ZSHRC_SOURCED" = "0" ]; then
 	{
 		old_ifs=$IFS
 		IFS=:
-		MANPATH=$manpath:/usr/local/share/man/man3:~/.local/share/man/cplusplus.com:~/.local/share/man:~/.local/share/man/man3:~/.local/share/man/cplusplus.com:~/.local/share/man:~/.local/share/man/man3
-		export MANPATH=$new_manpath
-		export PATH="$PATH:~/bin"
+		old_manpath=$(manpath 2>/dev/null)
+		export MANPATH=$HOME/.local/share/man:$old_manpath
+		export path=(~/bin $path)
+		#export PATH="$PATH:~/bin"
 		#echo "PATH -> '$PATH'"
 		export LD_LIBRARY_PATH="$new_ldpath:$LD_LIBRARY_PATH"
 		IFS=$old_ifs
@@ -128,7 +130,12 @@ alias iovim="(){ \vim -es $@ '+:wq! /dev/stdout' /dev/stdin }"
 alias ivim='(){ vim =($*) }'
 export VMAN_FLAGS='+"set bt=nofile bh=wipe nobl noswf ro" +"set nonu"'
 alias catvim='(){ vim =($@) $VMAN_FLAGS +"set ft=man nonu" }'
-alias vman='catvim man'
+vman(){ vim =(man $@) $VMAN_FLAGS +"set ft=man nonu" }
+#alias vman='catvim man'
+
+# Testing completions for vman as if for man
+fpath=(~/bin/vman $fpath)
+setopt complete_aliases
 
 alias vimu='vim +PluginInstall +qall'
 alias vimconfig='$EDITOR ~/.vimrc'
