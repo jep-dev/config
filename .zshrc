@@ -92,7 +92,7 @@ for bt_target ('AWS' 'CONTEXT' 'CUSTOM' 'DIR' 'ELIXIR' 'TIME' \
 		'SCREEN' 'STATUS' 'VIRTUALENV') \
 	let "BULLETTRAIN_"$bt_target{"_FG=231","_BG=232"}
 # 2. Iterate over an expansion/value group sharing names
-for bt_config (CONTEXT_BG=232 CUSTOM_BG=22 DIR_BG=22 GIT_BG=232 \
+for bt_config (TIME_BG=53 CONTEXT_BG=232 CUSTOM_BG=22 DIR_BG=232 GIT_BG=232 \
 	DIR_CONTEXT_SHOW=true \
 	PROMPT_SEPARATE_LINE=false PROMPT_ADD_NEWLINE=false) \
 	let "BULLETTRAIN_$bt_config"
