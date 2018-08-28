@@ -115,7 +115,6 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-[ -r /home/john/.byobu/prompt ] && . /home/john/.byobu/prompt   #byobu-prompt#
+#[ -r /home/john/.byobu/prompt ] && . /home/john/.byobu/prompt   #byobu-prompt#
 
-export MANPATH=$(manpath):/home/john/.local/share/man
-export PATH=$PATH:/home/john/bin
+export PATH=$HOME/bin:$PATH
