@@ -142,14 +142,31 @@
 	}
 
 	recent(){
-		full=false
-		format='%T@ %h %-16f'
+		format='%T@ %h %f'
 		if [ "$1" = "-l" ] || [ "$1" = "--list" ]; then
-			format="$format %12TA, %Tb %Td  %TH:%TM"
+			format="$format %TA, %Tb %Td %TH:%TM"
 			shift
 		fi
-		find ${@:-{include,src,app}/*} -type f -printf "$format\n" \
-			| sort -r | while read i j k; do printf "%16s %s\n" "$j" "$k"; done
+		find ${@:-{include,src,app}/*} -type f -printf "$format\n" | uniq | sort -r | {
+			nj=0
+			nk=0
+			nwd=0
+			nm=0
+			nt=0
+			while read i j k w m d t; do
+				aj=($aj "$j"); mj=${#j}; [[ $mj -gt $nj ]] && nj=$mj
+				ak=($ak "$k"); mk=${#k}; [[ $mk -gt $nk ]] && nk=$mk
+				aw=($aw "$w"); mw=${#w}; [[ $mw -gt $nw ]] && nw=$mw
+				am=($am "$m"); mm=${#m}; [[ $mm -gt $nm ]] && nm=$mm
+				ad=($ad "$d"); md=${#d}; [[ $md -gt $nd ]] && nd=$md
+				at=($at "$t"); mt=${#t}; [[ $mt -gt $nt ]] && nt=$mt
+			done
+			for it ({1..${#aj}}) {
+				printf "%${nj}s %-${nk}s  %${nw}s %${nm}s %2s  %${nt}s"'\n' \
+					"${aj[it]}" "${ak[it]}" "${aw[it]}" "${am[it]}" "${ad[it]}" "${at[it]}"
+			}
+		# TODO - Why are entries doubled without another call to uniq?
+		} | uniq
 
 	}
 	# loopcmd(){
