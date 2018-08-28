@@ -40,6 +40,8 @@ alias please='sudo'
 alias fucking='sudo'
 
 #term
+alias resource='source $ZSH/oh-my-zsh.sh'
+alias restyle='(){ export ZSH_THEME="$@" && resource }'
 alias zshconfig='$EDITOR ~/.zshrc'
 alias zshenv='$EDITOR ~/.zshenv'
 alias zsh-aliases='alias | sed "s/^\([^=]*\).*/\1/"'
