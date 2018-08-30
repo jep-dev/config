@@ -263,20 +263,32 @@
 	}
 	# Work in progress; strips empty lines and known comments before counting lines
 	sloc-real(){
+		n=0
+		m=0
 		for arg; do
 			if [ -r $arg ]; then
 				ftype="Generic"
 				lines=$(cat $arg)
-				real_lines="$lines"
-				n_lines=$(wc -l $arg)
 				case $arg in
 					*.[ch] | *.[cht]pp )
 						ftype="C"
 						if [[ "$arg" =~ '.*pp' ]]; then
 							ftype="C++"
-							real_lines=$(sed ':n N
-								:s { s/\/\*\(.*\)\*\///; Tn }
-								/\/\*/bs' <<<$lines);
+							# Overlapping comments are handled as though C++ comments take
+							# precedence
+							real_lines=$(tr '\n' '\r' <<<$lines \
+								| sed 's/\/[*]\+[^*]*[*]\+\///g' | tr '\r' '\n' \
+								| sed 's/\/\/.*//g;/^[ \t]*$/d')
+							mi=$(wc -l <<<$real_lines)
+							ni=$(wc -l <$arg)
+							let "m=m+mi"
+							let "n=n+ni"
+							echo "$mi\t$ni\t$ftype\t$arg"
+							# TODO fix later statements instead of repeating the above
+							continue
+							#real_lines=$(sed ':n N
+								#:s { s/\/\*\(.*\)\*\///; Tn }
+								#/\/\*/bs' <<<$lines);
 						fi
 						real_lines=$(sed 's/\/\/.*//' <<<$lines)
 						;;
@@ -290,14 +302,14 @@
 						;;
 				esac
 				real_lines=$(echo $real_lines | grep -o '.*[^ ^\t].*')
-				lines=$(echo $lines | grep -o '.*[^ ^\t]+.*')
-				# lines=$(grep -o '.*[^ ^\t]+.*' <<<"$lines")
-				# lines="$(echo -n $lines | grep -o '.*[^ ^\t].*')"
-				echo "$(echo $real_lines | wc -l)/$(wc -l $arg)" \
-					"(as $ftype)"
-				#echo $real_lines
+				mi=$(wc -l <<<$real_lines)
+				ni=$(wc -l <$arg)
+				let "m=m+mi"
+				let "n=n+ni"
+				echo "$mi\t$ni\t$ftype\t$arg"
 			fi
 		done
+		echo "Total: $m real lines out of $n"
 	}
 
 	# Filter the output of a (potentially) interactive subprocess
