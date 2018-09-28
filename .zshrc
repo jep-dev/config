@@ -97,6 +97,9 @@ for bt_config (TIME_BG=53 CONTEXT_BG=232 CUSTOM_BG=22 DIR_BG=232 GIT_BG=232 \
 	PROMPT_SEPARATE_LINE=false PROMPT_ADD_NEWLINE=false) \
 	let "BULLETTRAIN_$bt_config"
 
+# A few backup themes in case Bullet Train gets old:
+#   Evan, Kardan, Kolo, Mgutz, Minimal, MortalScumbag, MrTazz, Nicoulaj, Re5et, Sorin, Strug
+
 if [[ "$ZSHRC_SOURCED" -eq 0 ]]; then
 	export ZSH_THEME="bullet-train/bullet-train"
 	source ~/workspace/antigen/antigen.zsh
