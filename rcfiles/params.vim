@@ -1,3 +1,7 @@
+
+set makeprg=make\ -j
+map <F5> :make<CR>
+
 "Yggdroot/indentLine
 hi IndentGuidesOdd ctermfg=51 ctermbg=155 cterm=bold
 hi IndentGuidesEven ctermfg=51 ctermbg=155 cterm=bold
@@ -6,7 +10,8 @@ hi IndentGuidesEven ctermfg=51 ctermbg=155 cterm=bold
 
 "vim-airline/vim-airline-themes
 let g:airline#extensions#tabline#formatter='unique_tail_improved'
-let g:airline_theme='violet'
+let g:airline_theme='badcat'
+
 "let g:airline#extensions#tmuxline#enabled=0
 "let g:tmuxline_theme = {
 "    \   'a'    : [  28, 231 ],
