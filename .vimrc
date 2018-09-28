@@ -73,6 +73,7 @@ Plugin 'shawncplus/phpcomplete.vim'
 
 Plugin 'beyondmarc/opengl.vim'
 Plugin 'vim-scripts/gtk-vim-syntax'
+Plugin 'tikhomirov/vim-glsl'
 Plugin 'kana/vim-operator-user'
 Plugin 'rhysd/vim-clang-format'
 Plugin 'Rip-Rip/clang_complete'
@@ -101,7 +102,7 @@ exec onNewRead . ' *.cpp,*.tpp,*.hpp set'
 			\ . ' completefunc=ClangComplete'
 exec onNewRead . ' *.mk,Makefile set filetype=make'
 au BufAdd,BufNew,BufCreate,BufEnter,BufRead *.tpp set filetype=cpp
-au BufAdd,BufNew,BufCreate,BufEnter,BufRead *.glsl set filetype=cpp
+au BufAdd,BufNew,BufCreate,BufEnter,BufRead *.glsl set ft=glsl
 
 " required
 call vundle#end()
