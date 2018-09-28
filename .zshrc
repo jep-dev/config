@@ -132,7 +132,7 @@ alias iovim="(){ \vim -es $@ '+:wq! /dev/stdout' /dev/stdin }"
 alias ivim='(){ vim =($*) }'
 export VMAN_FLAGS='+"set bt=nofile bh=wipe nobl noswf ro" +"set nonu"'
 alias catvim='(){ vim =($@) $VMAN_FLAGS +"set ft=man nonu" }'
-vman(){ vim =(man $@) $VMAN_FLAGS +"set ft=man nonu" }
+vman(){ vim =(MANWIDTH=112 man $@) $VMAN_FLAGS +"set ft=man nonu" }
 #alias vman='catvim man'
 
 # Testing completions for vman as if for man
@@ -147,7 +147,7 @@ alias loopcmd='(){ while read; do $*; done }'
 alias lmake='(){ make $* 2>&1 | less }'
 
 ed_sources=('c' 'h' 'cpp' 'hpp' 'tpp' 'cpp')
-ed_scripts=('Makefile' 'mk' 'in' 'lua')
+ed_scripts=('Makefile' 'mk' 'in' 'lua' 'glsl')
 ed_confs=('conf' 'rc' 'vim' 'vimrc')
 ed_markups=('README' 'md' 'html' 'css' 'php' 'index')
 ed_files=($ed_sources $ed_scripts $ed_confs $ed_markups $ed_files)
