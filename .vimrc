@@ -42,7 +42,7 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-" Plugin 'scrooloose/nerdtree'
+Plugin 'scrooloose/nerdtree'
 " Plugin 'terryma/vim-multiple-cursors'
 
 
@@ -101,6 +101,7 @@ exec onNewRead . ' *.cpp,*.tpp,*.hpp set'
 			\ . ' completefunc=ClangComplete'
 exec onNewRead . ' *.mk,Makefile set filetype=make'
 au BufAdd,BufNew,BufCreate,BufEnter,BufRead *.tpp set filetype=cpp
+au BufAdd,BufNew,BufCreate,BufEnter,BufRead *.glsl set filetype=cpp
 
 " required
 call vundle#end()
