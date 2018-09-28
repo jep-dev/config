@@ -1,4 +1,3 @@
-
 let mapleader=","
 
 exe 'set t_kB=' . nr2char(27) . '[Z'
@@ -35,54 +34,64 @@ vmap <C-c> :w! ~/.vimbuffer<CR>
 nmap <C-c> :.w! ~/.vimbuffer<CR>
 map <C-p> :r ~/.vimbuffer<CR>
 
+set hidden
+map q :bd<CR>
+
 " Open new file
-map <C-n> :tabe<CR>
-map <Leader>n :badd<CR>
-" Open new tab
-map <Leader>o :tabe<space>
+map <C-n> :enew<CR>
+" Open new buffer
 map <C-o> :badd<space>
-" Left tab
-nmap <Leader>. :tabn<CR>
-nmap <Leader>\> :bn<CR>
-" Right tab
-nmap <Leader>\< :tabp<CR>
-nmap <Leader>, :bp<CR>
+" Previous buffer
+map <Leader>, :bp<CR>
+" Next buffer
+map <Leader>. :bn<CR>
+" Remove (unmodified) buffer
+map <Leader>d :bd<CR>
 
 " Open tab tree
-" map <Leader>d :NERDTree<CR>
+map <F2> :NERDTree<CR>
 
 " Splits
 " Focus below (alt.)
 nnoremap <Leader>A <C-W>j
 " Focus below
 nnoremap <Leader>j <C-W>j
-" Add and focus below
-nnoremap <Leader>J :sp<CR>
+
+" Alternate vertical split
+"nnoremap \| :vsp<CR>
 " Alternative horizontal split
-nnoremap _ :sp<CR>
+"nnoremap _ :sp<CR>
+" Split vertically on return
+nnoremap \| :vsp<Space>
+" Split horizontally on return
+nnoremap _ :sp<Space>
+" Split left on return
+"nnoremap <Leader>L :topleft vsp<Space>
+" Split right on return
+"nnoremap <Leader>R :botright vsp<Space>
+" Add and focus below
+"nnoremap <Leader>J :sp<CR>
+" Add below with arguments
+"nnoremap <Leader>s :sp<Space>
+
+
 " Focus above
 nnoremap <Leader>k <C-W>k
 " Focus right
 nnoremap <Leader>l <C-W>l
-" Add and focus right
-nnoremap <Leader>L :vsp<CR>
-" Alternate vertical split
-nnoremap \| :vsp<CR>
 " Focus left
 nnoremap <Leader>h <C-W>h
-" Add below with arguments
-nnoremap <Leader>s :sp<Space>
 
 " nmap <Home> 0w
 " nmap <C-a> 0w
 " imap <C-a> <Esc>I
 " nmap <C-e> $
 " imap <C-e> <Esc>A
-" Add right with arguments
-nnoremap <Leader>v :vsp<Space>
+
 exec 'au BufNewFile,BufEnter *.php inoremap <Tab> <c-x><c-o>'
 
 map <leader><Space> :.s/$/\=repeat(' ',79-col('$'))<CR>
+" map <leader><Space> :.s/$/\=repeat(' ',&columns-&numberwidth-1-col('$'))<CR>
 map <leader># :.s/$/\=repeat('#',79-col('$'))<CR>
 	\ asdf
 " Unicode entry (c-V is xclip paste)
