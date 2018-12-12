@@ -108,6 +108,23 @@ au BufAdd,BufNew,BufCreate,BufEnter,BufRead *.glsl set ft=glsl
 call vundle#end()
 filetype plugin indent on
 
+function! BufferCount()
+	return len(getbufinfo({'buflisted':1}))
+endfunction
+
+function! CloseOrQuit()
+	try
+		if BufferCount() > 1
+			silent bdelete
+		else
+			silent quit
+		endif
+	catch
+		echo "Could not close or quit."
+
+	endtry
+endfunction
+
 " command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 " 		\ | wincmd p | diffthis
 " nmap <Leader>d :DiffOrig<CR>
