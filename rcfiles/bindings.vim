@@ -35,7 +35,7 @@ nmap <C-c> :.w! ~/.vimbuffer<CR>
 map <C-p> :r ~/.vimbuffer<CR>
 
 set hidden
-map q :bd<CR>
+map q :call CloseOrQuit()<CR>
 
 " Open new file
 map <C-n> :enew<CR>
@@ -49,7 +49,7 @@ map <Leader>. :bn<CR>
 map <Leader>d :bd<CR>
 
 " Open tab tree
-map <F2> :NERDTree<CR>
+map <F2> :NERDTreeToggle<CR>
 
 " Splits
 " Focus below (alt.)
@@ -82,6 +82,14 @@ nnoremap <Leader>l <C-W>l
 " Focus left
 nnoremap <Leader>h <C-W>h
 
+" Turn off normal K: man <word under cursor>
+" ('word' will exclude std::, etc., even if that page exists)
+" Most presses are accidental (k), and most intentional presses fail to find a page.
+nmap K k
+" Leave visual K on: man <selection>
+" ('selection' must exactly match the page name)
+" vmap K k
+
 " nmap <Home> 0w
 " nmap <C-a> 0w
 " imap <C-a> <Esc>I
@@ -90,9 +98,9 @@ nnoremap <Leader>h <C-W>h
 
 exec 'au BufNewFile,BufEnter *.php inoremap <Tab> <c-x><c-o>'
 
-map <leader><Space> :.s/$/\=repeat(' ',79-col('$'))<CR>
-" map <leader><Space> :.s/$/\=repeat(' ',&columns-&numberwidth-1-col('$'))<CR>
-map <leader># :.s/$/\=repeat('#',79-col('$'))<CR>
-	\ asdf
+"map <leader><Space> :.s/$/\=repeat(' ',79-col('$'))<CR>
+"" map <leader><Space> :.s/$/\=repeat(' ',&columns-&numberwidth-1-col('$'))<CR>
+"map <leader># :.s/$/\=repeat('#',79-col('$'))<CR>
+"	\ asdf
 " Unicode entry (c-V is xclip paste)
 map <C-v> <C-V>
