@@ -118,6 +118,32 @@
 		done
 	}
 
+	search-new(){
+		out=''
+		k=1
+		installed=($(dpkg-grep $@ | grep -o '^[[:alnum:]-]*'))
+		n=${#installed}
+		search "$1" | {
+			while read i dash j; do
+				found=false
+				for ((l=k;l<=n;l++)); do
+					pkg=${installed[l]}
+					if [ "$i" = "$pkg" ]; then
+						found=true
+						let k=l+1
+						break
+					fi
+				done
+				if ! $found; then
+					out="$out$i - $j\n"
+				#else
+					#out="$out$i - $j\n"
+				fi
+			done
+		}
+		echo -n "$out"
+	}
+
 	# files2(){
 	# 	for f ("$1") echo "$2$f" && [ -d $f ] && files2 "$(ls $2$f)" "$2"
 	# }
