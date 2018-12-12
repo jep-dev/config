@@ -98,7 +98,7 @@ for bt_config (TIME_BG=53 CONTEXT_BG=232 CUSTOM_BG=22 DIR_BG=232 GIT_BG=232 \
 	let "BULLETTRAIN_$bt_config"
 
 # A few backup themes in case Bullet Train gets old:
-#   Evan, Kardan, Kolo, Mgutz, Minimal, MortalScumbag, MrTazz, Nicoulaj, Re5et, Sorin, Strug
+#   Evan, Kardan, Kolo, Mgutz, Minimal, MrTazz, Nicoulaj, Sorin
 
 if [[ "$ZSHRC_SOURCED" -eq 0 ]]; then
 	export ZSH_THEME="bullet-train/bullet-train"
@@ -124,7 +124,7 @@ alias files='(){find $(cat) -type f | difftree "/" " "} <<<'
 
 #search
 #alias pegrep='ps auxf | grep -v grep | egrep'
-alias pegrep='ps Tho pid,args | grep -v grep | egrep' #'| grep -v grep | egrep'
+alias pegrep='ps -A Tho pid,args | grep -v grep | egrep'
 alias irhn='grep -IirHn'
 alias rhn='grep -irHn'
 alias todo='irhn TODO'
@@ -135,7 +135,8 @@ alias iovim="(){ \vim -es $@ '+:wq! /dev/stdout' /dev/stdin }"
 alias ivim='(){ vim =($*) }'
 export VMAN_FLAGS='+"set bt=nofile bh=wipe nobl noswf ro" +"set nonu"'
 alias catvim='(){ vim =($@) $VMAN_FLAGS +"set ft=man nonu" }'
-vman(){ vim =(MANWIDTH=112 man $@) $VMAN_FLAGS +"set ft=man nonu" }
+# vman(){ vim =(MANWIDTH=112 man $@) $VMAN_FLAGS +"set ft=man nonu" }
+vman(){ vim =(man $@) $VMAN_FLAGS +"set ft=man nonu" }
 #alias vman='catvim man'
 
 # Testing completions for vman as if for man
