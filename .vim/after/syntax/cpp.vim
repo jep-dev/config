@@ -8,7 +8,7 @@ hi def link sdlPrefix PreProc
 hi cCustomParen     ctermfg=231
 hi cParen           ctermfg=231
 
-hi cppStructure       ctermfg=167
+hi cppStructure       ctermfg=155
 hi cppSTLtype         ctermfg=39
 hi cppSTLnamespace    ctermfg=39
 
