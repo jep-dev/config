@@ -1,0 +1,177 @@
+#!/usr/bin/zsh
+
+function unchanged(){
+	out=""
+	sub0="$1"
+	sub0=$(sed 's/[a-z]/& /g' <<<$sub0)
+	sub1="${2:-$sub0}"
+	for ((i=0; i<${#sub0}; i++)); do
+		if [[ "${sub0[i]}" -eq "${sub1[i]}" ]]; then
+			out="${out}${sub0[i]}"
+		fi
+	done
+	echo $out
+}
+
+function minimax(){
+	least=0
+	most=0
+	for i ($@) { if [[ "$most" -lt "$i" ]]; then most=$i; fi }
+	least=$most
+	for i ($@) { if [[ "$i" -lt "$least" ]]; then least=$i; fi }
+	echo $least $most
+}
+# usage: minimax i... | read min max
+
+function frequency(){
+	key="$1"
+	line="${2:-}"
+	if [ "x$line" = "x" ]; then
+		read line
+	fi
+	if ! [ "x$line" = "x" ]; then
+		ct=0;
+		for ((k=0;k<${#line};k++)) {
+			c=${line[k]}
+			[ "x$c" = "x$key" ] && let 'ct++'
+		}
+		#echo -n "$key $ct"
+		echo -n "$ct "
+	fi
+	echo
+}
+# usage: frequency a <<<$line | if read f; then ...; fi
+# usage: frequency a "$line" | if read f; then ...; fi
+
+function frequencies(){
+	read line && for arg ($@) frequency $arg "$line"
+}
+# frequencies a... <<<$line |
+
+function exclude(){
+	read line && {
+		excluded=false
+		for k ($line) {
+			for arg ($@) [ "$k" = "$arg" ] && { excluded=true; break; }
+			if ! $excluded; then echo -n "$k"; fi
+		}
+		echo
+	}
+}
+function include(){
+	read line && {
+		included=false
+		for k ($line) {
+			for arg ($@) [ "$k" = "$arg" ] && { included=true; break; }
+			if $included; then echo -n "$k"; fi
+		}
+		echo
+	}
+}
+
+function static(){
+	out=()
+	#while read i j; do
+	for i j ($@) {
+		if [[ "$i" -eq "$j" ]]; then
+			out+=($i)
+		fi
+	}
+	echo $out
+}
+function rotate(){
+	a="${1:-}"
+	[[ $# -gt 0 ]] && shift
+	b="${@:-}"
+	echo "$b" "$a"
+}
+
+# Using cat to allow a filename or input
+cat ${1:-} | \
+while read quote && read attr; do
+	quote=$(tr -d '\r' <<<$quote)
+	attr=$(tr -d '\r' <<<$attr)
+
+	lc1=({a..z}); uc1=${(U)lc1};
+	#lc1=(a e i o u y); uc1=${(U)lc2};
+
+	i1=({1..${#lc1}})
+	i2=($(shuf -e $i1))
+
+	lc2=()
+	for i ($i2) lc2+=(${lc1[i]})
+	uc2="${(U)lc2}"
+
+	i12=(${i1:^i2})
+	s12=($(static $i12))
+
+	s13=()
+	lc3=($lc2)
+	i3=($i2)
+	if [[ ${#s12} -eq 0 ]]; then
+	elif [[ ${#s12} -eq 1 ]]; then
+		i=${s12[1]}; j=$((i-1))
+		if [[ $i -eq 1 ]]; then j=2; fi
+		bi=${lc2[i]}; bj=${lc2[j]}
+		lc3[i]=bj; lc3[j]=bi
+		i3[i]=$j; i3[j]=$i
+	elif [[ ${#s12} -eq 2 ]]; then
+		i=${s12[1]}; j=${s12[2]};
+		bi=${lc2[i]}; bj=${lc2[j]};
+		lc3[i]=$bj; lc3[j]=$bi
+		i3[i]=$j; i3[j]=$i
+	else
+		i3=($(rotate "$i12")); s13=($(rotate "$s12")) # = ({b..z} a)
+		i2_str="${(j:,:)i2}"; i3_str="${(j:,:)i3}"
+		s12_str="${(j:,:)s12}"; s13_str="${(j:,:)s13}"
+		i23_eq=false; s23_eq=false
+		[ "$i2_str" = "$i3_str" ] && i23_eq=true
+		[ "$s12_str" = "$s13_str" ] && s23_eq=true
+		is23_eq=$((i23_eq ^ s23_eq))
+		if [[ $is23_eq -eq 1 ]]; then
+			echo " i2 = {$i2_str}\n i3 = {$i3_str}"
+			echo "s12 = {$s12_str}\ns13 = {$s13_str}"
+		fi
+		for i j (${s1:^s3}) {
+			i3[i]=$j; lc3[i]=${lc2[j]}
+			i3[j]=$i; lc3[j]=${lc2[i]}
+		}
+		i13=(${i1:^i3})
+		s13=($(static $i13))
+	fi
+	i13=(${i1:^i3})
+	uc3="${(U)lc3}"
+
+	s13=($(static $i13))
+	# if [[ ${#s13} -gt 0 ]]; then
+		# n12=${#s12}; n13=${#s13}
+		# d23=$((n13-n12))
+		# if [[ $d23 -lt 0 ]]; then
+			# echo "$d23"
+		# elif [[ $d23 -gt 0 ]]; then
+			# echo "+${d23}!"
+		# else
+			# echo "+0"
+		# fi
+	# fi
+
+	c1="$uc1$lc1"
+	c2="$uc2$lc2"
+	c3="$uc3$lc3"
+
+	quote12=$(tr "$c1" "$c2" <<<"$quote");   attr12=$(tr "$c1" "$c2" <<<"$attr");
+	quote21=$(tr "$c2" "$c1" <<<"$quote12"); attr21=$(tr "$c2" "$c1" <<<"$attr12");
+	quote13=$(tr "$c1" "$c3" <<<"$quote");   attr13=$(tr "$c1" "$c3" <<<"$attr");
+	quote31=$(tr "$c3" "$c1" <<<"$quote13"); attr31=$(tr "$c3" "$c1" <<<"$attr13");
+
+	echo "$uc1"
+	# echo "$uc2" # "(|static|=${#s12})"
+	echo "$uc3" # "(|static|=${#s13})"
+	echo "$quote\n$quote13\n$quote31"
+	# # if ! [ "$quote21" = "$quote31" ]; then
+		# # echo "$uc3 (|static|=${#s13})"
+	# # fi
+	# echo "$quote"
+	# echo "$quote13"
+	# echo
+done
