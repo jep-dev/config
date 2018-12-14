@@ -13,6 +13,7 @@ function unchanged(){
 	echo $out
 }
 
+# usage: minimax i... | read min max
 function minimax(){
 	least=0
 	most=0
@@ -21,7 +22,6 @@ function minimax(){
 	for i ($@) { if [[ "$i" -lt "$least" ]]; then least=$i; fi }
 	echo $least $most
 }
-# usage: minimax i... | read min max
 
 function frequency(){
 	key="$1"
@@ -35,18 +35,14 @@ function frequency(){
 			c=${line[k]}
 			[ "x$c" = "x$key" ] && let 'ct++'
 		}
-		#echo -n "$key $ct"
 		echo -n "$ct "
 	fi
 	echo
 }
-# usage: frequency a <<<$line | if read f; then ...; fi
-# usage: frequency a "$line" | if read f; then ...; fi
 
 function frequencies(){
 	read line && for arg ($@) frequency $arg "$line"
 }
-# frequencies a... <<<$line |
 
 function exclude(){
 	read line && {
@@ -74,86 +70,107 @@ function static(){
 	#while read i j; do
 	for i j ($@) {
 		if [[ "$i" -eq "$j" ]]; then
-			out+=($i)
+			out+=("$i")
 		fi
 	}
 	echo $out
 }
+
+# Pops the (optional) head, then appends it to the (optional) tail.
+# (a...)' = (a...); (a, b...)' = (b..., a)
 function rotate(){
 	a="${1:-}"
 	[[ $# -gt 0 ]] && shift
 	b="${@:-}"
 	echo "$b" "$a"
 }
+# Given N and M (optional) args, rotates the args forward N' times ( 0 <= N' < M ).
+function rotate_n(){
+	N="$1"
+	if [[ $# -ge 2 ]]; then
+		shift
+		M=$#
+		# N % 0 is undefined
+		if [[ $N -lt 0 ]]; then
+			N=$((((N%M)+M)%M))
+		fi
+		case $N in
+			0) echo "$@"; ;;
+			1) rotate $@; ;;
+			*) rotate_n $((N-1)) $(rotate $@); ;;
+		esac
+	else
+		echo "$@"
+	fi
+}
 
-# Using cat to allow a filename or input
-cat ${1:-} | \
-while read quote && read attr; do
+showQuestion=true
+showAnswer=false
+showKey=false
+
+while [[ $# -ge 1 ]]; do
+	met=false
+	case "$1" in
+		--question|-q) showQuestion=true; ;;
+		--noquestion|-nq) showQuestion=false; ;;
+		--key|-k) showKey=true; ;;
+		--nokey|-nk) showKey=false; ;;
+		--answer|-a) showAnswer=true; ;;
+		--noanswer|-na) showAnswer=false; ;;
+		*) met=true; ;;
+	esac
+	if $met; then break; fi
+	shift
+done
+
+# Not a superfluous cat, look carefully
+cat ${@:-} | while read quote && read attr; do
+	# Formatting
 	quote=$(tr -d '\r' <<<$quote)
 	attr=$(tr -d '\r' <<<$attr)
 
-	lc1=({a..z}); uc1=${(U)lc1};
-	#lc1=(a e i o u y); uc1=${(U)lc2};
-
+	# Original values A=(Ai...) and I=sequence (i...)
+	lc1=({a..z})
+	uc1=${(U)lc1};
 	i1=({1..${#lc1}})
-	i2=($(shuf -e $i1))
 
+	# Displaced values B=(Aj...) and sequence J={j...}
 	lc2=()
+	i2=($(shuf -e $i1))
 	for i ($i2) lc2+=(${lc1[i]})
 	uc2="${(U)lc2}"
 
+	# Interleaved sequence IJ={i, j, ...} and unchanged subsequence DIJ of IJ
 	i12=(${i1:^i2})
 	s12=($(static $i12))
 
 	s13=()
-	lc3=($lc2)
 	i3=($i2)
+	lc3=($lc2)
 	if [[ ${#s12} -eq 0 ]]; then
 	elif [[ ${#s12} -eq 1 ]]; then
 		i=${s12[1]}; j=$((i-1))
 		if [[ $i -eq 1 ]]; then j=2; fi
-		bi=${lc2[i]}; bj=${lc2[j]}
-		lc3[i]=bj; lc3[j]=bi
+		ci=${lc2[i]}; cj=${lc2[j]}
+		lc3[i]=$cj; lc3[j]=$ci
 		i3[i]=$j; i3[j]=$i
 	elif [[ ${#s12} -eq 2 ]]; then
 		i=${s12[1]}; j=${s12[2]};
-		bi=${lc2[i]}; bj=${lc2[j]};
-		lc3[i]=$bj; lc3[j]=$bi
+		ci=${lc2[i]}; cj=${lc2[j]};
+		lc3[i]="$cj"; lc3[j]="$ci"
 		i3[i]=$j; i3[j]=$i
 	else
-		i3=($(rotate "$i12")); s13=($(rotate "$s12")) # = ({b..z} a)
-		i2_str="${(j:,:)i2}"; i3_str="${(j:,:)i3}"
-		s12_str="${(j:,:)s12}"; s13_str="${(j:,:)s13}"
-		i23_eq=false; s23_eq=false
-		[ "$i2_str" = "$i3_str" ] && i23_eq=true
-		[ "$s12_str" = "$s13_str" ] && s23_eq=true
-		is23_eq=$((i23_eq ^ s23_eq))
-		if [[ $is23_eq -eq 1 ]]; then
-			echo " i2 = {$i2_str}\n i3 = {$i3_str}"
-			echo "s12 = {$s12_str}\ns13 = {$s13_str}"
-		fi
+		i3=($(rotate "$i12"))
+		s13=($(rotate "$s12")) # = ({b..z} a)
 		for i j (${s1:^s3}) {
-			i3[i]=$j; lc3[i]=${lc2[j]}
-			i3[j]=$i; lc3[j]=${lc2[i]}
+			i3[i]="$j"; lc3[i]=${lc2[j]}
+			i3[j]="$i"; lc3[j]=${lc2[i]}
 		}
 		i13=(${i1:^i3})
 		s13=($(static $i13))
 	fi
-	i13=(${i1:^i3})
-	uc3="${(U)lc3}"
-
+	i13=(${i1:^i3}); uc3="${(U)lc3}"
 	s13=($(static $i13))
-	# if [[ ${#s13} -gt 0 ]]; then
-		# n12=${#s12}; n13=${#s13}
-		# d23=$((n13-n12))
-		# if [[ $d23 -lt 0 ]]; then
-			# echo "$d23"
-		# elif [[ $d23 -gt 0 ]]; then
-			# echo "+${d23}!"
-		# else
-			# echo "+0"
-		# fi
-	# fi
 
 	c1="$uc1$lc1"
 	c2="$uc2$lc2"
@@ -164,14 +181,8 @@ while read quote && read attr; do
 	quote13=$(tr "$c1" "$c3" <<<"$quote");   attr13=$(tr "$c1" "$c3" <<<"$attr");
 	quote31=$(tr "$c3" "$c1" <<<"$quote13"); attr31=$(tr "$c3" "$c1" <<<"$attr13");
 
-	echo "$uc1"
-	# echo "$uc2" # "(|static|=${#s12})"
-	echo "$uc3" # "(|static|=${#s13})"
-	echo "$quote\n$quote13\n$quote31"
-	# # if ! [ "$quote21" = "$quote31" ]; then
-		# # echo "$uc3 (|static|=${#s13})"
-	# # fi
-	# echo "$quote"
-	# echo "$quote13"
-	# echo
+	if $showQuestion; then echo "$quote13\n$attr13"; fi
+	if $showAnswer; then echo "# $quote31\n# $attr31"; fi
+	if $showKey; then echo "# $uc1\n# $uc3"; fi
+
 done
