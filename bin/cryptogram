@@ -104,73 +104,144 @@ function rotate_n(){
 	fi
 }
 
-showQuestion=true
-showAnswer=false
 showKey=false
+showHtml=false
+showNumber=false
+showAnswer=false
+showQuestion=true
+
+before=""
+mid=""
+after=""
 
 while [[ $# -ge 1 ]]; do
 	met=false
 	case "$1" in
 		--question|-q) showQuestion=true; ;;
 		--noquestion|-nq) showQuestion=false; ;;
+
 		--key|-k) showKey=true; ;;
 		--nokey|-nk) showKey=false; ;;
+
 		--answer|-a) showAnswer=true; ;;
 		--noanswer|-na) showAnswer=false; ;;
+
+		--html|-h) showHtml=true; ;;
+		--nohtml|-nh) showHtml=false; ;;
+		--number|-n) showNumber=true; ;;
+		--nonumber|-nn) showNumber=false; ;;
+
+		--prefix=*) prefix="${(@)1[10,${#1}]}"; ;;
 		*) met=true; ;;
 	esac
 	if $met; then break; fi
 	shift
 done
 
+num=0
 # Not a superfluous cat, look carefully
 cat ${@:-} | while read quote && read attr; do
+	let 'num++'
 	# Formatting
-	quote=$(tr -d '\r' <<<$quote)
-	attr=$(tr -d '\r' <<<$attr)
+	quote=$(sed 's/\r//g;s/[ \t]\+/ /g;s/^ //' <<<"$quote")
+	attr=$(sed 's/\r//g;s/[ \t]\+/ /g;s/^ //;s/^-[^ ]/- /' <<<"$attr")
 
 	# Original values A=(Ai...) and I=sequence (i...)
 	lc1=({a..z})
+	# lc1=(a e i o u y)
+	N=${#lc1}
 	uc1=${(U)lc1};
-	i1=({1..${#lc1}})
+	i1=({1..$N})
 
 	# Displaced values B=(Aj...) and sequence J={j...}
-	lc2=()
-	i2=($(shuf -e $i1))
+	lc2=(); lc3=()
+	uc2="${(U)lc2}"; uc3="$uc2"
+	i2=($(shuf -e $i1)); i3=($i2)
+	i12=(${i1:^i2}); i13=($i12)
 	for i ($i2) lc2+=(${lc1[i]})
-	uc2="${(U)lc2}"
-
-	# Interleaved sequence IJ={i, j, ...} and unchanged subsequence DIJ of IJ
-	i12=(${i1:^i2})
 	s12=($(static $i12))
-
-	s13=()
-	i3=($i2)
-	lc3=($lc2)
-	if [[ ${#s12} -eq 0 ]]; then
-	elif [[ ${#s12} -eq 1 ]]; then
-		i=${s12[1]}; j=$((i-1))
-		if [[ $i -eq 1 ]]; then j=2; fi
-		ci=${lc2[i]}; cj=${lc2[j]}
-		lc3[i]=$cj; lc3[j]=$ci
-		i3[i]=$j; i3[j]=$i
-	elif [[ ${#s12} -eq 2 ]]; then
-		i=${s12[1]}; j=${s12[2]};
-		ci=${lc2[i]}; cj=${lc2[j]};
-		lc3[i]="$cj"; lc3[j]="$ci"
-		i3[i]=$j; i3[j]=$i
-	else
-		i3=($(rotate "$i12"))
-		s13=($(rotate "$s12")) # = ({b..z} a)
-		for i j (${s1:^s3}) {
-			i3[i]="$j"; lc3[i]=${lc2[j]}
-			i3[j]="$i"; lc3[j]=${lc2[i]}
-		}
+	s13=($s12)
+	while [[ "${#s13}" -gt 0 ]]; do
+		i3=($(shuf -e $i2))
 		i13=(${i1:^i3})
 		s13=($(static $i13))
-	fi
-	i13=(${i1:^i3}); uc3="${(U)lc3}"
-	s13=($(static $i13))
+	done
+	for i ($i3) lc3+=(${lc1[i]})
+	uc3="${(U)lc3}"
+
+#	i13=(${i1:^i3}); uc3="${(U)lc3}"
+#	# Interleaved sequence IJ={i, j, ...} and unchanged subsequence DIJ of IJ
+#	i12=(${i1:^i2})
+#	s12=($(static $i12))
+#
+#	s13=()
+#	i3=($i2)
+#	lc3=($lc2)
+#
+#	if [[ "${#s12}" -gt 0 ]]; then
+#		s13=($s12)
+#		if [[ "${#s12}" -eq 1 ]]; then
+#			k=$(((${s12[1]}-1+N)%N))
+#
+#			#k=${s12[1]}
+#			# N repeats is 1 in 26^N, but it happens
+#			while [[ k -eq ${s12[1]} ]]; do
+#				let k=RANDOM%N
+#			done
+#			s13+=($k)
+#		fi
+#		# Large s12 takes more attempts, but each attempt is cheaper
+#		while [ "$s12" = "$s13" ]; do
+#			s13=($(shuf -e $s12))
+#		done
+#		for i j (${s12:^s13}) {
+#			i3[i]=$j; i3[j]=$i
+#			lc3[i]="${lc1[j]}"; lc3[j]="${lc1[i]}"
+#		}
+#	fi
+
+#	if [[ ${#s12} -eq 0 ]]; then
+#		# OK, done
+#	elif [[ ${#s12} -eq 1 ]]; then
+#		# Given (i,i), there exists (j,k) where i != j and i != k
+#		#   j != k is implied by that and |static|=1
+#		# (i,k) is valid by (i != k)
+#		# (j,i) is valid by (i != j)
+#		# So, ... (h,i) (i,i) (j,k) (k,l) ...
+#		#  -> ... (h,i) (i,k) (j,i) (k,l) ...
+#		i=${s12[1]}; j=$((i-1))
+#		[[ j -eq 0 ]] && j=$((i+1))
+#		bi=${i2[i]}; bj=${i2[j]}
+#		i3[i]=$bj; i3[j]=$bi
+#		lc3[i]="${lc2[j]}"; lc3[j]="${lc2[i]}"
+#	elif [[ ${#s12} -eq 2 ]]; then
+#		i=${s12[1]}; j=${s12[2]}
+#		ci=${lc2[i]}; cj=${lc2[j]}
+#		lc3[i]="$cj"; lc3[j]="$ci"
+#		i3[i]=$j; i3[j]=$i
+#	else
+#		# s13=($s12)
+#		# while [ "$s13" = "$s12" ]; do
+#			# s13=($(shuf -e $s12))
+#		# done
+#		# for i j (${s12:^s13}) {
+#			# i3[i]=$j; i3[j]=$i
+#			# lc3[i]="${lc2[i]}"; lc3[j]="${lc2[j]}"
+#		# }
+#		i3=($(rotate "$i12"))
+#		s13=($(rotate "$s12")) = ({b..z} a)
+#		for i j (${s1:^s3}) {
+#			i3[i]="$j"; lc3[i]=${lc2[j]}
+#			i3[j]="$i"; lc3[j]=${lc2[i]}
+#		}
+#		i13=(${i1:^i3})
+#		s13=($(static $i13))
+#		echo "# ${#s12}"
+#		showAnswer=true
+#		showKey=true
+#	fi
+#	i13=(${i1:^i3}); uc3="${(U)lc3}"
+#	s13=($(static $i13))
 
 	c1="$uc1$lc1"
 	c2="$uc2$lc2"
@@ -181,8 +252,61 @@ cat ${@:-} | while read quote && read attr; do
 	quote13=$(tr "$c1" "$c3" <<<"$quote");   attr13=$(tr "$c1" "$c3" <<<"$attr");
 	quote31=$(tr "$c3" "$c1" <<<"$quote13"); attr31=$(tr "$c3" "$c1" <<<"$attr13");
 
-	if $showQuestion; then echo "$quote13\n$attr13"; fi
-	if $showAnswer; then echo "# $quote31\n# $attr31"; fi
-	if $showKey; then echo "# $uc1\n# $uc3"; fi
-
+	ul1=(${(s: :)uc1})
+	ul2=(${uc1//[^ ]/_})
+	ul3=(${(s: :)uc3})
+	if $showQuestion; then
+		if $showHtml; then
+			echo "$prefix<div class=show>"
+			if $showNumber; then
+				echo "$prefix<div class=number>$num</div>"
+			fi
+			if $showKey; then
+				echo "$prefix\t<div class=key>$ul1</div>"
+				echo "$prefix\t<div class=key>$ul2</div>"
+			fi
+			echo "$prefix\t<div class=quote>$quote13</div>"
+			echo "$prefix\t<div class=quote>${quote13//[A-Za-z]/_}</div>"
+			echo "$prefix\t<div class=attr>$attr13</div>"
+			echo "$prefix\t<div class=attr>${attr13//[A-Za-z]/_}</div>"
+			echo "$prefix</div>"
+		else
+			if $showNumber; then
+				echo "$prefix$num. $quote13"
+			else
+				echo "$prefix$quote13"
+			fi
+			echo "$prefix$attr13"
+			if $showKey; then
+				echo "$prefix$ul1"
+				echo "$prefix$ul2"
+			fi
+		fi
+	fi
+	if $showAnswer; then
+		if $showHtml; then
+			echo "$prefix<div class=hide>"
+			if $showNumber && $showHtml; then
+				echo "$prefix<div class=number>$num</div>"
+			fi
+			if $showKey; then
+				echo "$prefix\t<div class=key>$ul1</div>"
+				echo "$prefix\t<div class=key>$ul3</div>"
+			fi
+			echo "$prefix\t<div class=quote>$quote31</div>"
+			echo "$prefix\t<div class=attr>$attr31</div>"
+			echo "$prefix</div>"
+		else
+			if $showKey; then
+				echo "$prefix# $ul1"
+				echo "$prefix# $ul3"
+			fi
+			if $showNumber; then
+				echo "$prefix# $num. $quote31"
+			else
+				echo "$prefix# $quote31"
+			fi
+			echo "$prefix# $attr31"
+		fi
+	fi
 done
